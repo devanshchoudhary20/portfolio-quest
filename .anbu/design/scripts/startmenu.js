@@ -1,0 +1,11 @@
+s=scr("Start menu/default","overworld-day.png",[[184,208,32,32],[328,208,32,32],[880,184,32,32],[1056,184,32,32]])
+Insert(s,{type:"rectangle",name:"Scrim",x:0,y:0,width:W,height:H,fill:"#1B1F2E73"})
+top(s,t=>ban(t,"Gear City"))
+m=bx(s,880,96,352,{pad:14,gap:2,name:"Start menu"})
+for(const r of [["Skilldex",1],["Bugdex",0],["Trainer Card",0],["World Map",0],["Resume Mart",0],["Recruiter Mode",0],["Options",0],["Save",0],["Close",0]]){row(m,r[0],!!r[1],{fs:22})}
+i=bx(s,48,100,330,{pad:16,gap:6,name:"Progress box"})
+tx(i,"Badges 3 / 5",{fontSize:26})
+tx(i,"Time 12:40",{fontSize:26})
+tx(i,"Skills seen 14 / 32",{fontSize:26})
+dlg(s,null,"Skilldex. Every skill on the resume, and where it shows up.")
+done(s,"Start menu/default",7000)

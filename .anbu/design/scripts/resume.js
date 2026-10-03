@@ -1,0 +1,51 @@
+lk=(p,c,o={})=>Insert(p,{type:"text",name:o.name||c.slice(0,24),content:c,fontFamily:"$font-read",fontSize:17,fill:"$rs-accent",underline:true,...o})
+sec=(p,t)=>{const s=fr(p,{name:"Section "+t,layout:"vertical",gap:12,width:"fill_container"});const h=fr(s,{name:"Heading "+t,layout:"vertical",width:"fill_container",padding:[0,0,6,0],stroke:"$rs-border",strokeWidth:{bottom:1}});tx(h,t,{fontSize:20,fill:"$rs-text"});return s}
+bl=(p,t)=>{const r=fr(p,{name:"Bullet",layout:"horizontal",gap:10,width:"fill_container"});Insert(r,{type:"text",name:"Dot",content:"•",fontFamily:"$font-read",fontSize:17,fill:"$rs-muted"});rd(r,t);return r}
+job=(p,co,loc,role,dt,bs)=>{const j=fr(p,{name:"Job "+co+" "+dt,layout:"vertical",gap:6,width:"fill_container"});const h=fr(j,{layout:"horizontal",width:"fill_container",justifyContent:"space_between",alignItems:"end"});rd(h,co,{fontWeight:"700",fontSize:18});rd(h,loc,{textGrowth:"auto",width:undefined,fill:"$rs-muted",fontSize:15});const h2=fr(j,{layout:"horizontal",width:"fill_container",justifyContent:"space_between"});rd(h2,role,{fontStyle:"italic",fill:"$rs-muted"});rd(h2,dt,{textGrowth:"auto",width:undefined,fill:"$rs-muted",fontSize:15});for(const b of bs){bl(j,b)}return j}
+cta=(p,mob)=>{const a=fr(p,{name:"Actions",layout:mob?"vertical":"horizontal",gap:12,width:"fill_container"});const d=fr(a,{name:"Download PDF",layout:"horizontal",gap:8,alignItems:"center",justifyContent:"center",fill:"$rs-accent",cornerRadius:"$radius-resume",padding:[12,22],...(mob?{width:"fill_container"}:{})});Insert(d,{type:"icon",library:"lucide",icon:"download",width:18,height:18,fill:"$rs-on-accent",name:"Download icon"});Insert(d,{type:"text",name:"Download label",content:"Download PDF",fontFamily:"$font-read",fontWeight:"700",fontSize:17,fill:"$rs-on-accent"});const e=fr(a,{name:"Email me",layout:"horizontal",gap:8,alignItems:"center",justifyContent:"center",stroke:"$rs-accent",strokeWidth:2,strokeAlignment:"inner",cornerRadius:"$radius-resume",padding:[12,22],...(mob?{width:"fill_container"}:{})});Insert(e,{type:"icon",library:"lucide",icon:"mail",width:18,height:18,fill:"$rs-accent",name:"Mail icon"});Insert(e,{type:"text",name:"Email label",content:"Email me",fontFamily:"$font-read",fontWeight:"700",fontSize:17,fill:"$rs-accent"})}
+TM=["Built KaneAI's authoring cursor, a persistent insertion point in a step tree the LLM keeps rewriting: identity-anchored so it survives regenerated ids, self-heals across deletes, lives inside If/Else and While, drives Run From Here / Run Till Here and every insert. Shipped for both editors behind a flag; requested by 10+ enterprise customers.","Built the If/Else and While block editor over LLM-generated steps: plain-English or operand/operator conditions, conditionals and modules nesting inside loops, blocks runnable as one unit, draft state coherent while the LLM regenerates any subtree. 90% of block-using tests nest.","Replaced the step editor's full-tree save with a diff of changed rows: a typical long-test save went from 300 KB to 3 KB, across nested If/Else and While, behind feature flags with a full-payload fallback.","Shipped bulk API import and response assertions for both editors: ~500 calls with assertions in one pass, roughly halving authoring time for API-heavy tests, with evaluation server-side so previews match what runs.","Owned cross-project test-case sharing, taking test cases from locked-to-one-project to usable anywhere a user has access: permission-aware target picker, borrowed-case handling on every list and run, project-level settings. Found five silent data-loss bugs by checking every payload against the Go backend.","Migrated 10+ components from @primer/react to the internal lt-components design system, drove WCAG 2.1 AA passes, and shipped the Accessibility Score widget."]
+SUM="Frontend engineer (React, TypeScript) at LambdaTest, on KaneAI's AI test-authoring editor. I build the stateful core of an editor whose content an LLM keeps rewriting, and work across the Go and Python services behind it."
+NOW="Member of Technical Staff, Frontend at TestMu AI (formerly LambdaTest). Nov 2025 to Present."
+head=(r,mob)=>{const h=fr(r,{name:"Site bar",layout:"horizontal",width:"fill_container",justifyContent:"space_between",alignItems:"center",padding:mob?[16,20]:[20,64],stroke:"$rs-border",strokeWidth:{bottom:1}});tx(h,"Portfolio Quest",{fontSize:16,fill:"$rs-muted"});lk(h,"Play the game",{name:"Play the game link"});const hero=fr(r,{name:"Hero",layout:"vertical",gap:12,width:"fill_container",padding:mob?[28,20,20,20]:[48,64,32,64]});tx(hero,"Devansh Choudhary",{fontSize:mob?34:56,fill:"$rs-text",lineHeight:1,textGrowth:"fixed-width",width:"fill_container"});rd(hero,"Frontend Engineer",{fontSize:mob?20:26,fill:"$rs-muted"});rd(hero,NOW,{fontSize:mob?16:18});const ln=fr(hero,{name:"Links",layout:mob?"vertical":"horizontal",gap:mob?6:20});lk(ln,"devanshchoudhary999@gmail.com");lk(ln,"GitHub");lk(ln,"LinkedIn");cta(hero,mob)}
+mk=(name,x,y,mob)=>fr(document,{name,x,y,width:mob?390:1280,...(mob?{height:844,clip:true}:{}),layout:"vertical",fill:"$rs-bg",theme:{mode:"light"}})
+r=mk("Recruiter/default/light",18200,0,false)
+head(r,false)
+bd=fr(r,{name:"Body",layout:"horizontal",gap:56,width:"fill_container",padding:[16,64,64,64]})
+mn=fr(bd,{name:"Main column",layout:"vertical",gap:32,width:720})
+s1=sec(mn,"Summary")
+rd(s1,SUM)
+s2=sec(mn,"Experience")
+job(s2,"TestMu AI (formerly LambdaTest)","Noida, India","Member of Technical Staff, Frontend","Nov 2025 to Present",TM)
+job(s2,"Junglee Games","Bengaluru, India","Software Engineer I, Frontend","Jan 2025 to Nov 2025",["Returned to Junglee as an engineer after a year there as a Product Analyst. Owned the frontend for the company-wide 2FA and account-security flow: state machine, recovery paths, and a feature-flagged rollout across the gaming platform.","Built the public Blog / CMS frontend (React + Tailwind) with SSR-friendly metadata, search, pagination and analytics. Awarded Best Developer (Quarterly), 2025."])
+job(s2,"Marrfa","Remote","Frontend Engineer (Contract)","Nov 2024 to Jan 2025",["Property-management admin dashboard (React + Firebase): role-based access for three user types, real-time sync, mobile-responsive UI."])
+job(s2,"Junglee Games","Bengaluru, India","Product Analyst","Jun 2023 to Jun 2024",["Ran A/B experiments on player-facing features."])
+s3=sec(mn,"Selected project")
+rd(s3,"KoalaLab, Sole Frontend Developer",{fontWeight:"700",fontSize:18})
+rd(s3,"Next.js 15, React 19, TypeScript, Tailwind, Shadcn UI",{fill:"$rs-muted"})
+rd(s3,"Built the entire customer-facing site for a container-security platform for GitHub Actions: SBOM viewer, Vulnerability & Advisory tabs, container directory, tag and comparison views. Configured Netlify deploys and the CI lint pipeline.")
+lk(s3,"koalalab.com")
+sd=fr(bd,{name:"Side column",layout:"vertical",gap:32,width:"fill_container"})
+s4=sec(sd,"Skills")
+for(const g of [["Core","React 18/19, TypeScript, Next.js 15, Redux / Redux Saga / RTK, React Query, React Router v6, Tailwind, Shadcn UI"],["Design System & A11y","Primer (@primer/react), internal component libraries, WCAG 2.1 AA, ARIA, focus management, keyboard navigation"],["Monorepo & Tooling","Turborepo, Yarn Workspaces, Webpack, Vite, Jest, MSW, Git"],["Cross-stack & AI","Go / Python backend contracts, feature-flagged rollouts, Claude Code"],["Backend (working knowledge)","Node.js, Express, REST API design, MySQL, PostgreSQL, Firebase"]]){const q=fr(s4,{name:"Skill group "+g[0],layout:"vertical",gap:2,width:"fill_container"});rd(q,g[0],{fontWeight:"700"});rd(q,g[1],{fill:"$rs-muted",fontSize:16})}
+s5=sec(sd,"Education")
+rd(s5,"B.Tech, Mechanical Engineering",{fontWeight:"700"})
+rd(s5,"Indian Institute of Technology Patna, 2019 to 2023",{fill:"$rs-muted"})
+dk=Copy(r,document,{name:"Recruiter/default/dark",x:19600,y:0,theme:{mode:"dark"}})
+Update(r,{name:"Recruiter/default/light"})
+m=mk("Recruiter/mobile/light",21000,0,true)
+head(m,true)
+bm=fr(m,{name:"Body",layout:"vertical",gap:24,width:"fill_container",padding:[8,20,24,20]})
+sm=sec(bm,"Summary")
+rd(sm,SUM,{fontSize:16})
+sx=sec(bm,"Experience")
+rd(sx,"TestMu AI (formerly LambdaTest)",{fontWeight:"700",fontSize:17})
+rd(sx,"Member of Technical Staff, Frontend. Nov 2025 to Present",{fill:"$rs-muted",fontSize:15})
+bl(sx,TM[0])
+mdk=Copy(m,document,{name:"Recruiter/mobile/dark",x:22400,y:0,theme:{mode:"dark"}})
+Export([r,dk,m,mdk],"png","raw")
+Print("EXPORT","Recruiter/default","light",r)
+Print("EXPORT","Recruiter/default","dark",dk)
+Print("EXPORT","Recruiter/mobile","light",m)
+Print("EXPORT","Recruiter/mobile","dark",mdk)
+Get(r,(q,c)=>c.problems&&Print("PROBLEM",q.name,c.problems))
+Get(m,(q,c)=>c.problems&&Print("PROBLEM mobile",q.name,c.problems))

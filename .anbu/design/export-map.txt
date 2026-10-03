@@ -1,0 +1,40 @@
+EXPORT Overworld/dialog/desktop day I5pOK  
+EXPORT Overworld/dialog/desktop night Nadlh  
+EXPORT Overworld/dialog/mobile day x8JJj  
+EXPORT Overworld/dialog/mobile night VqtVB
+EXPORT Title/default day oXvNC  
+EXPORT Title/default night FOP1M  
+EXPORT Title/loading day CQBEK  
+EXPORT Title/loading night yNBVy
+EXPORT Professor intro/default day fTQId  
+EXPORT Professor intro/default night E313V  
+EXPORT Starter pick/default day lsxlP  
+EXPORT Starter pick/default night EY3PN
+EXPORT Start menu/default day w6mq1t  
+EXPORT Start menu/default night BuEZe
+EXPORT Battle/default day Orvij  
+EXPORT Battle/default night of2rm  
+EXPORT Battle/champion day D8uPDw  
+EXPORT Battle/champion night IScyY
+EXPORT Skilldex/default day ebdJg  
+EXPORT Skilldex/default night NpflY
+EXPORT Trainer Card/default day N6KMWx  
+EXPORT Trainer Card/default night U3GVz
+EXPORT Patch Center/default day Luj0M  
+EXPORT Patch Center/default night j82gOj
+EXPORT Resume Mart/default day Q98hoo  
+EXPORT Resume Mart/default night AEG8F
+EXPORT Loading/default day oGa8E  
+EXPORT Loading/default night nNm8d
+EXPORT World map/default day nlPZk  
+EXPORT World map/default night M3joPM  
+EXPORT Recruiter/default light FJB2d  
+EXPORT Recruiter/default dark r5y5rW  
+EXPORT Recruiter/mobile light H6u5YJ  
+EXPORT Recruiter/mobile dark J8iZ7  
+EXPORT Loading/error day HInDO  
+EXPORT Loading/error night X6Iu30
+EXPORT Patch Center/partial day ZCTsK  
+EXPORT Patch Center/partial night E6hC9  
+EXPORT Patch Center/error day Om1zH  
+EXPORT Patch Center/error night bTUs2

@@ -1,0 +1,7 @@
+node_modules/
+dist/
+spike/
+.playwright-mcp/
+.netlify/
+*.log
+.DS_Store
