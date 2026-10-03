@@ -1,6 +1,6 @@
 import type Phaser from 'phaser';
 
-export type ObjectKind = 'npc' | 'sign' | 'item' | 'warp' | 'door' | 'spawn';
+export type ObjectKind = 'npc' | 'sign' | 'item' | 'warp' | 'door' | 'spawn' | 'gate';
 
 export interface WorldObject {
   name: string;
@@ -10,7 +10,7 @@ export interface WorldObject {
   props: Record<string, string>;
 }
 
-const LAYERS = ['npcs', 'signs', 'items', 'warps'];
+const LAYERS = ['npcs', 'signs', 'items', 'warps', 'gates'];
 
 // Tiled stores object positions in pixels
 export function readObjects(map: Phaser.Tilemaps.Tilemap): WorldObject[] {

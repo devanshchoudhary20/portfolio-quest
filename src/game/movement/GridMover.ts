@@ -1,5 +1,5 @@
 import type Phaser from 'phaser';
-import { Direction, GridEngine, NoPathFoundStrategy } from 'grid-engine';
+import { Direction, GridEngine, MoveToResult, NoPathFoundStrategy, PathBlockedStrategy } from 'grid-engine';
 import type { WalkingAnimationMapping } from 'grid-engine';
 import type { Dir } from '../world/save';
 
@@ -7,6 +7,8 @@ export interface Tile {
   x: number;
   y: number;
 }
+
+export type WalkResult = 'arrived' | 'stopped' | 'blocked';
 
 export interface CharOptions {
   speed: number;
@@ -26,6 +28,13 @@ const FROM_DIRECTION: Partial<Record<Direction, Dir>> = {
   [Direction.LEFT]: 'left',
   [Direction.RIGHT]: 'right',
 };
+
+const WALK_RESULTS: Partial<Record<MoveToResult, WalkResult>> = {
+  [MoveToResult.SUCCESS]: 'arrived',
+  [MoveToResult.MOVEMENT_TERMINATED]: 'stopped',
+};
+const BLOCKED_RETRIES = 12;
+const BLOCKED_BACKOFF_MS = 400;
 
 export const OPPOSITE: Record<Dir, Dir> = { up: 'down', down: 'up', left: 'right', right: 'left' };
 
@@ -64,13 +73,36 @@ export class GridMover {
     });
   }
 
+  // a character with no sprite still blocks its tile, which is how a closed gate holds the path
+  addBlocker(id: string, tile: Tile) {
+    this.engine.addCharacter({ id, startPosition: tile });
+  }
+
+  // terrain only: characters and blockers do not count
+  tileBlocked(tile: Tile) {
+    return this.engine.isTileBlocked(tile);
+  }
+
+  remove(id: string) {
+    if (this.engine.hasCharacter(id)) this.engine.removeCharacter(id);
+  }
+
   move(id: string, dir: Dir) {
     this.engine.move(id, TO_DIRECTION[dir]);
   }
 
-  // a blocked or unreachable target walks to the closest reachable tile, which is how a tapped NPC gets approached
-  moveTo(id: string, tile: Tile, onDone?: () => void) {
-    this.engine.moveTo(id, tile, { noPathFoundStrategy: NoPathFoundStrategy.CLOSEST_REACHABLE }).subscribe(() => onDone?.());
+  // arrived: stood on the target (or, when not exact, the closest tile that can be reached); stopped: another command took over; blocked: no path, or the path stayed blocked
+  // a wall that appears mid-walk is retried, which is how a walk survives the rewriting maze
+  moveTo(id: string, tile: Tile, onDone?: (result: WalkResult) => void, exact = false) {
+    this.engine
+      .moveTo(id, tile, {
+        noPathFoundStrategy: exact ? NoPathFoundStrategy.STOP : NoPathFoundStrategy.CLOSEST_REACHABLE,
+        pathBlockedStrategy: PathBlockedStrategy.RETRY,
+        pathBlockedMaxRetries: BLOCKED_RETRIES,
+        pathBlockedRetryBackoffMs: BLOCKED_BACKOFF_MS,
+        emitFinishedEvent: 'END_MOVEMENT',
+      })
+      .subscribe(({ result }) => onDone?.(WALK_RESULTS[result ?? MoveToResult.SUCCESS] ?? 'blocked'));
   }
 
   stop(id: string) {

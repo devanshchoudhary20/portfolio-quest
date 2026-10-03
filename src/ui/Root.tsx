@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react';
 import { isCoarsePointer, landscapeScale } from '../game/viewport';
+import { AskPanel } from './AskPanel';
 import { Dialog } from './Dialog';
 import { Hud } from './Hud';
 import { ProfessorIntro } from './ProfessorIntro';
@@ -42,6 +43,7 @@ export function Root() {
         {panel === 'menu' ? <StartMenu /> : null}
         {panel === 'options' ? <OptionsPanel /> : null}
         {panel === 'recruiter' ? <RecruiterMode /> : null}
+        {panel === 'ask' ? <AskPanel /> : null}
         {dialog ? <Dialog dialog={dialog} /> : null}
         {travel ? <TravelCard travel={travel} /> : null}
         <p className="pq-sr" aria-live="polite">

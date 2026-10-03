@@ -3,8 +3,9 @@ import { education, jobs, profile, skillGroups } from '../content';
 import { contactLinks, currentRoleLine, educationLine, jobView, projectHeading, projectSummary, summaryText } from '../resume/view';
 import { actions } from './useGame';
 import { useCaptureKeys } from './useCaptureKeys';
+import { useFocusTrap } from './useFocusTrap';
 
-const CLOSE_KEYS = ['Escape', 'x', 'X'];
+const CLOSE_KEYS = ['x', 'X'];
 const SCROLL_STEP = 48;
 const jobViews = jobs.map(jobView);
 
@@ -20,13 +21,9 @@ export function RecruiterMode() {
     closeButton.current?.focus();
   }, []);
 
+  useFocusTrap(panel, backToMenu);
   useCaptureKeys((event) => {
-    const focusable = [...(panel.current?.querySelectorAll<HTMLElement>('a[href], button') ?? [])];
-    const at = focusable.indexOf(document.activeElement as HTMLElement);
-    // from outside the panel (at -1) Shift+Tab lands on the last item
-    const backward = at <= 0 ? focusable.length - 1 : at - 1;
     if (CLOSE_KEYS.includes(event.key)) backToMenu();
-    else if (event.key === 'Tab') focusable[event.shiftKey ? backward : (at + 1) % focusable.length]?.focus();
     else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') panel.current?.scrollBy({ top: event.key === 'ArrowDown' ? SCROLL_STEP : -SCROLL_STEP });
     else if (event.key === 'Enter' || event.key === 'z' || event.key === 'Z') (document.activeElement as HTMLElement | null)?.click();
     else return false;

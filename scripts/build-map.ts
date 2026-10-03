@@ -7,8 +7,8 @@ const ROOT = resolve(import.meta.dirname, '..');
 const T = 16;
 const COLUMNS = 16;
 const HEADERS = new Set(['map', 'pack', 'sheets', 'legend', 'ground', 'things', 'objects', 'regions']);
-const OBJECT_LAYERS = ['npcs', 'signs', 'items', 'warps'] as const;
-const KIND_OF_LAYER: Record<string, string> = { npcs: 'npc', signs: 'sign', items: 'item', warps: 'warp' };
+const OBJECT_LAYERS = ['npcs', 'signs', 'items', 'warps', 'gates'] as const;
+const KIND_OF_LAYER: Record<string, string> = { npcs: 'npc', signs: 'sign', items: 'item', warps: 'warp', gates: 'gate' };
 
 const args = process.argv.slice(2);
 const flag = (name: string) => (args.includes(name) ? args[args.indexOf(name) + 1] : undefined);
@@ -183,11 +183,11 @@ for (const line of sections.get('objects') ?? []) {
   layer!.objects.push({ id: nextObjectId++, name: objName, type: props.kind, x: Number(ox) * T, y: Number(oy) * T, width: T, height: T, rotation: 0, visible: true, properties });
 }
 
-// camera regions, "name x,y,w,h [indoor]" in tiles: the camera clamps to the region the player stands in, so a small room is centered; indoor regions skip the day/night tint
+// camera regions, "name x,y,w,h [indoor] [maze]" in tiles: the camera clamps to the region the player stands in, so a small room is centered; indoor regions skip the day/night tint; a maze region gets runtime walls
 const regions = (sections.get('regions') ?? []).map((line) => {
-  const [, rect = '', kind = ''] = line.trim().split(/\s+/);
-  if (!/^\d+,\d+,\d+,\d+$/.test(rect) || (kind !== '' && kind !== 'indoor')) fail(`regions: cannot read "${line.trim()}"`);
-  return kind ? `${rect},${kind}` : rect;
+  const [, rect = '', ...kinds] = line.trim().split(/\s+/);
+  if (!/^\d+,\d+,\d+,\d+$/.test(rect) || kinds.some((kind) => kind !== 'indoor' && kind !== 'maze')) fail(`regions: cannot read "${line.trim()}"`);
+  return [rect, ...kinds].join(',');
 });
 
 const tileLayer = (id: number, layerName: string, data: number[], extra: object = {}) => ({
@@ -258,7 +258,7 @@ if (preview) {
   const dot = (x: number, y: number, rgb: number[]) => {
     for (let py = 4; py < T * Z - 4; py++) for (let px = 4; px < T * Z - 4; px++) out.data.set([...rgb, 255], ((y * T * Z + py) * out.width + x * T * Z + px) * 4);
   };
-  const colors: Record<string, number[]> = { npcs: [255, 0, 255], signs: [255, 255, 0], items: [0, 255, 255], warps: [255, 0, 0] };
+  const colors: Record<string, number[]> = { npcs: [255, 0, 255], signs: [255, 255, 0], items: [0, 255, 255], warps: [255, 0, 0], gates: [255, 140, 0] };
   for (const l of objectLayers) for (const o of l.objects as { x: number; y: number }[]) dot(o.x / T, o.y / T, colors[l.name]!);
   writeFileSync(resolve(preview), PNG.sync.write(out));
 }

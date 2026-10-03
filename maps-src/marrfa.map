@@ -1,5 +1,5 @@
-// Marrfa Estates: a small contract town at x 0-31 with three role doors, and the Backend side gym room at x 38.
-map marrfa 52 22
+// Marrfa Estates: a small contract town at x 0-31 with three role doors, the Backend side gym room at x 38, and the Owner, Agent and Tenant houses at x 54, 70 and 86.
+map marrfa 100 22
 pack vendor/ninja-adventure
 
 sheets
@@ -20,7 +20,7 @@ legend
   c ground floor:8,7
   d stamp nature:0,0 2x2 solid
   e tile elem:0,2 solid
-  f stamp house:0,0 4x3 solid
+  F stamp house:0,0 4x3 solid walk=1,2
   g stamp house:26,0 3x3 solid walk=1,2
   h tile wall:0,0 solid
   i tile wall:1,0 solid
@@ -46,57 +46,58 @@ legend
   C tile nature:5,10
 
 ground
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa____________________
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa____________________
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa____________________
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa____________________
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa____________________
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa____________________
-aaaaasaaaaasaaaaasaaaaaaaaaaaaaa____________________
-aaaaasaaaaasaaaaasaaaaaaaaaaaaaa______ccccccccc_____
-aaassssssssssssssssssssssssssssa______ccccccccc_____
-aaaaaaaaaaaaaaarrrrrrrrrrrrrrrrr______ccccccccc_____
-aaaaaaaaaaaaaaarrrrrrrrrrrrrrrrr______ccccccccc_____
-aaaaaasaaaaaaasrrssssssssssssssa______ccccccccc_____
-aaaaaaaaaaaaaasrrsaaaaasaaaaaaaa______ccccccccc_____
-aaaaaaaaaaaaaasrrsaaaaasaaaaaaaa______ccccccccc_____
-aaaaaaaaaaaaaasrrsaaaaasaaaaaaaa______ccccccccc_____
-aaaaaaaaaaaaaasrrsaaaaasaaaaaaaa____________________
-aaaaaaaaaaaaaasrrsaaaaabaaaaaaaa____________________
-aaaaaaaaaaaaaasrrsaaaaaaaaaaaaaa____________________
-aaaaaaaaaaaaaasrrsaaaaaaaaaaaaaa____________________
-aaaaaaaaaaaaaasrrsaaaaaaaaaaaaaa____________________
-aaaaaaaaaaaaaaarraaaaaaaaaaaaaaa____________________
-aaaaaaaaaaaaaaarraaaaaaaaaaaaaaa____________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa____________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa____________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa____________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa____________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa____________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa____________________________________________________________________
+aaaaasaaaaasaaaaasaaaaaaaaaaaaaa____________________________________________________________________
+aaaaasaaaaasaaaaasaaaaaaaaaaaaaa______ccccccccc_______ccccccc_________ccccccc_________ccccccc_______
+aaassssssssssssssssssssssssssssa______ccccccccc_______ccccccc_________ccccccc_________ccccccc_______
+aaaaaaaaaaaaaaarrrrrrrrrrrrrrrrr______ccccccccc_______ccccccc_________ccccccc_________ccccccc_______
+aaaaaaaaaaaaaaarrrrrrrrrrrrrrrrr______ccccccccc_______ccccccc_________ccccccc_________ccccccc_______
+aaaaaasaaaaaaasrrssssssssssssssa______ccccccccc_______ccccccc_________ccccccc_________ccccccc_______
+aaaaaaaaaaaaaasrrsaaaaasaaaaaaaa______ccccccccc_______ccccccc_________ccccccc_________ccccccc_______
+aaaaaaaaaaaaaasrrsaaaaasaaaaaaaa______ccccccccc_____________________________________________________
+aaaaaaaaaaaaaasrrsaaaaasaaaaaaaa______ccccccccc_____________________________________________________
+aaaaaaaaaaaaaasrrsaaaaasaaaaaaaa____________________________________________________________________
+aaaaaaaaaaaaaasrrsaaaaabaaaaaaaa____________________________________________________________________
+aaaaaaaaaaaaaasrrsaaaaaaaaaaaaaa____________________________________________________________________
+aaaaaaaaaaaaaasrrsaaaaaaaaaaaaaa____________________________________________________________________
+aaaaaaaaaaaaaasrrsaaaaaaaaaaaaaa____________________________________________________________________
+aaaaaaaaaaaaaaarraaaaaaaaaaaaaaa____________________________________________________________________
+aaaaaaaaaaaaaaarraaaaaaaaaaaaaaa____________________________________________________________________
 
 things
-d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.....................
-....................................................
-d...uuuu..uuuuC.uuuu......C...d.....................
-....f...utf...uyf...v.d.B...d.......................
-d..t....u.....uv.........A....d.....................
-........u.....u.....................................
-d...t..tB.v.tvB.w..w...d......d.....................
-...........e......ey.......v..........hiiiiiiij.....
-d.....................................kp....p.l.....
-...y..B.....B.........................k.......l.....
-d.....................................k.......l.....
-...tt........v.........d..z...........kq.....ql.....
-d..uuu.uuu..z......d.......d..d.......k.......l.....
-...u.y...u............g...............k.......l.....
-d..u.x.y.u.w................B.d.......mnnn.nnno.....
-...uuuuuuu.v......Cz.........B......................
-d..uuuCuuu..z.................d.....................
-...u..t..uy........d.tB.............................
-d..utt.x.u...C................d.....................
-...uuuuuuu.C..............w.........................
-d.d.d.d.d.d.d.....d.d.d.d.d.d.d.....................
-....................................................
+d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.....................................................................
+....................................................................................................
+d...uuuu..uuuuC.uuuu......C...d.....................................................................
+....F...utF...uyF...v.d.B...d.......................................................................
+d..t....u.....uv.........A....d.....................................................................
+........u.....u.....................................................................................
+d...t..tB.v.tvB.w..w...d......d.....................................................................
+......e.....e.....ey.......v..........hiiiiiiij.......hiiiiij.........hiiiiij.........hiiiiij.......
+d.....................................kp....p.l.......k.p...l.........k.p...l.........k.p...l.......
+...y..B.....B.........................k.......l.......k.....l.........k.....l.........k.....l.......
+d.....................................k.......l.......k.....l.........k.....l.........k.....l.......
+...tt........v.........d..z...........kq.....ql.......k.....l.........k.....l.........k.....l.......
+d..uuu.uuu..z......d.......d..d.......k.......l.......mnn.nno.........mnn.nno.........mnn.nno.......
+...u.y...u............g...............k.......l.....................................................
+d..u.x.y.u.w................B.d.......mnnn.nnno.....................................................
+...uuuuuuu.v......Cz.........B......................................................................
+d..uuuCuuu..z.................d.....................................................................
+...u..t..uy........d.tB.............................................................................
+d..utt.x.u...C................d.....................................................................
+...uuuuuuu.C..............w.........................................................................
+d.d.d.d.d.d.d.....d.d.d.d.d.d.d.....................................................................
+....................................................................................................
 
 objects
-  signs    dashboard      11,7 factId=marrfa.dashboard speaker="Dashboard"
-  signs    sync           18,7 factId=marrfa.dashboard speaker="Live Sync"
-  npcs     manager        8,8 sprite=manager face=right factId=marrfa.dashboard speaker="Property Manager"
+  signs    dashboard      12,7 factId=marrfa.dashboard speaker="Agent Door"
+  signs    owner-sign     6,7 factId=marrfa.dashboard speaker="Owner Door"
+  signs    sync           18,7 factId=marrfa.dashboard speaker="Tenant Door"
+  npcs     manager        8,8 sprite=manager face=right factId=marrfa.dashboard speaker="Property Manager" cycle=role.owner,role.agent,role.tenant
   warps    door-gym       23,15 to=marrfa spawn=gym-in
   warps    gym-door       23,16 kind=door face=down
   warps    route-junglee-a 15,21 to=junglee spawn=marrfa-road
@@ -109,7 +110,25 @@ objects
   npcs     backend-leader 42,10 sprite=backend face=down factId=skill.backend speaker="Backend Leader"
   warps    gym-exit       42,14 to=marrfa spawn=gym-door
   warps    gym-in         42,13 kind=door face=up
+  warps    door-owner     5,5 to=marrfa spawn=owner-in needs=role.owner
+  warps    owner-door     5,6 kind=door face=down
+  warps    owner-exit     57,12 to=marrfa spawn=owner-door
+  warps    owner-in     57,11 kind=door face=up
+  signs    owner-screen     57,9 factId=marrfa.dashboard speaker="Dashboard"
+  warps    door-agent     11,5 to=marrfa spawn=agent-in needs=role.agent
+  warps    agent-door     11,6 kind=door face=down
+  warps    agent-exit     73,12 to=marrfa spawn=agent-door
+  warps    agent-in     73,11 kind=door face=up
+  signs    agent-screen     73,9 factId=marrfa.dashboard speaker="Dashboard"
+  warps    door-tenant     17,5 to=marrfa spawn=tenant-in needs=role.tenant
+  warps    tenant-door     17,6 kind=door face=down
+  warps    tenant-exit     89,12 to=marrfa spawn=tenant-door
+  warps    tenant-in     89,11 kind=door face=up
+  signs    tenant-screen     89,9 factId=marrfa.dashboard speaker="Dashboard"
 
 regions
   town 0,0,32,22
   gym 38,7,9,8 indoor
+  owner 54,7,7,6 indoor
+  agent 70,7,7,6 indoor
+  tenant 86,7,7,6 indoor

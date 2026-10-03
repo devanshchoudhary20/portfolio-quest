@@ -4,6 +4,7 @@ export type FactId = Brand<string, 'FactId'>;
 export type TownId = Brand<string, 'TownId'>;
 export type SkillGroupId = Brand<string, 'SkillGroupId'>;
 export type FlagId = Brand<string, 'FlagId'>;
+export type DestId = Brand<string, 'DestId'>;
 
 // patch-center holds the KoalaLab PC box; it has no town map of its own
 export const TOWN_IDS = [
@@ -22,6 +23,7 @@ export type TownKey = (typeof TOWN_IDS)[number];
 export const townId = (id: TownKey) => id as TownId;
 export const skillGroupId = (id: string) => id as SkillGroupId;
 export const flagId = (id: string) => id as FlagId;
+export const destId = (id: string) => id as DestId;
 
 export const isTownId = (value: unknown): value is TownId =>
   typeof value === 'string' && (TOWN_IDS as readonly string[]).includes(value);

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { saveNow } from '../game/world/autosave';
+import { SAVED, SAVE_FAILED } from '../game/world/lines';
 import { canStore } from '../game/world/save';
 import { TEXT_SPEED_LABELS, writeTextSpeed } from '../state/prefs';
 import type { TextSpeed } from '../state/prefs';
@@ -7,8 +8,6 @@ import { Menu } from './Menu';
 import type { MenuItem } from './Menu';
 import { actions, useGame } from './useGame';
 
-const SAVED = 'Progress saved.';
-const SAVE_FAILED = 'Could not save in this browser. Progress will not carry over.';
 const NEXT_SPEED: Record<TextSpeed, TextSpeed> = { 1: 2, 2: 3, 3: 4, 4: 1 };
 
 function save() {

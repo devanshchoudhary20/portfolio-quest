@@ -17,8 +17,11 @@ export function startKeyboard() {
 
   const sync = () => actions.setHeld(down.at(-1) ?? null);
 
+  // a text field owns its key presses: typing "x" must not run, and Enter submits the form. Releases always count, or a key held while a prompt opens would stay down
+  const typing = (event: KeyboardEvent) => event.target instanceof HTMLElement && event.target.closest('input, textarea') !== null;
+
   const onKeyDown = (event: KeyboardEvent) => {
-    if (event.ctrlKey || event.metaKey || event.altKey || store.getState().phase !== 'play') return;
+    if (typing(event) || event.ctrlKey || event.metaKey || event.altKey || store.getState().phase !== 'play') return;
     const dir = DIR_KEYS[event.key];
     if (dir) {
       if (!down.includes(dir)) down.push(dir);

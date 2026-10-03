@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { basename } from 'node:path';
+import { isOpen } from '../src/game/world/conditions';
 
 const TILE = 16;
 // Tiled packs flip flags into the top bits of a gid
@@ -75,10 +76,18 @@ export const neighbors = (tile: Tile) => OFFSETS.map(([, dx, dy]) => ({ x: tile.
 
 export const isWarp = (o: MapObject) => o.props.kind === 'warp';
 
-// tiles a player can stand on after starting at `starts`: NPCs block, warps are endpoints, and a warp inside the same town hands over to its spawn tile
-export function reachableTiles(map: TownMap, starts: Tile[]): Set<string> {
-  const npcs = new Set(map.objects.filter((o) => o.layer === 'npcs').map((o) => key(o.tile)));
-  const warps = new Map(map.objects.filter(isWarp).map((o) => [key(o.tile), o]));
+export const isGate = (o: MapObject) => o.props.kind === 'gate';
+
+// a warp with needs or unless only fires while its condition holds
+export const warpIsActive = (o: MapObject, flags: ReadonlySet<string>) => isWarp(o) && isOpen(o.props, [...flags]);
+
+// tiles a player can stand on after starting at `starts` while holding `flags`: NPCs and closed gates block, active warps are endpoints, and an active warp inside the same town hands over to its spawn tile
+export function reachableTiles(map: TownMap, starts: Tile[], flags: ReadonlySet<string> = new Set()): Set<string> {
+  const held = [...flags];
+  const blocked = new Set(
+    map.objects.filter((o) => o.layer === 'npcs' || (isGate(o) && !isOpen(o.props, held))).map((o) => key(o.tile)),
+  );
+  const warps = new Map(map.objects.filter((o) => warpIsActive(o, flags)).map((o) => [key(o.tile), o]));
   const spawns = new Map(map.objects.filter((o) => o.layer === 'warps' && !isWarp(o)).map((o) => [o.name, o.tile]));
   const seen = new Set(starts.map(key));
   const queue = [...starts];
@@ -93,7 +102,7 @@ export function reachableTiles(map: TownMap, starts: Tile[]): Set<string> {
       continue;
     }
     for (const next of neighbors(tile)) {
-      if (seen.has(key(next)) || !map.walkable(next) || npcs.has(key(next))) continue;
+      if (seen.has(key(next)) || !map.walkable(next) || blocked.has(key(next))) continue;
       seen.add(key(next));
       queue.push(next);
     }

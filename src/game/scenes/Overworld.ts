@@ -1,53 +1,36 @@
 import Phaser from 'phaser';
-import { flagId } from '../../content';
+import { factId } from '../../content';
 import { isUiOpen, store } from '../../state/store';
 import type { WorldRequest } from '../../state/store';
-import { timeBand } from '../../state/timeBand';
-import type { TimeBand } from '../../state/timeBand';
 import { GridMover, OPPOSITE } from '../movement/GridMover';
+import { DayTint } from './DayTint';
+import { Gates } from './Gates';
+import { Maze } from './Maze';
+import { Navigator } from './Navigator';
+import { Travel } from './Travel';
 import type { Tile } from '../movement/GridMover';
-import { interactWith } from '../world/interact';
+import { isOpen } from '../world/conditions';
+import { FLAGS } from '../world/flags';
+import { interactWith, lockedLine } from '../world/interact';
+import { PLANTED_LINE, survivedLine } from '../world/lines';
 import { objectAt, readObjects } from '../world/objects';
 import type { WorldObject } from '../world/objects';
+import { parseRegions } from '../world/regions';
+import type { Region } from '../world/regions';
 import type { Dir } from '../world/save';
-import { DEFAULT_SPAWN, isBuiltTown, townName } from '../world/towns';
+import { DEFAULT_SPAWN, isBuiltTown } from '../world/towns';
 
 // 0.27 s per tile; holding B with the Running Shoes doubles it
 const WALK_SPEED = 1 / 0.27;
 const RUN_SPEED = WALK_SPEED * 2;
 const FADE_MS = 220;
 const QUEUE_AFTER = 0.6;
-// a cached or quick load never flashes the travel card
-const SLOW_LOAD_MS = 300;
 const TILE = 16;
 const PLAYER = 'player';
+// above the maze walls and the planted flag, which sit at depth 0
+const ACTOR_DEPTH = 1;
 const NPC_PREFIX = 'npc:';
-const SHOES = flagId('shoes');
-
-const TINTS: Record<TimeBand, { color: number; alpha: number; blend: string } | null> = {
-  day: null,
-  dusk: { color: 0xe8793a, alpha: 0.2, blend: 'NORMAL' },
-  night: { color: 0x1b2a6e, alpha: 0.55, blend: 'MULTIPLY' },
-};
-
-interface Region {
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-  // interiors ignore the day/night tint
-  indoor: boolean;
-}
-
-// the map's "regions" property: "x,y,w,h[,indoor]" tile rectangles joined by semicolons
-function parseRegions(properties: unknown): Region[] {
-  const raw = (Array.isArray(properties) ? (properties as { name: string; value: unknown }[]).find((p) => p.name === 'regions')?.value : '') ?? '';
-  return String(raw)
-    .split(';')
-    .map((rect) => rect.split(','))
-    .filter((parts) => parts.slice(0, 4).length === 4 && parts.slice(0, 4).every((n) => Number.isFinite(Number(n))))
-    .map(([x = '0', y = '0', w = '0', h = '0', kind]) => ({ x: Number(x), y: Number(y), w: Number(w), h: Number(h), indoor: kind === 'indoor' }));
-}
+const CURSOR_FACT = factId('testmu.cursor');
 
 export class Overworld extends Phaser.Scene {
   private request!: WorldRequest;
@@ -56,16 +39,15 @@ export class Overworld extends Phaser.Scene {
   private busy = true;
   private lastPulse = 0;
   private speed = WALK_SPEED;
-  private tint: Phaser.GameObjects.Rectangle | null = null;
+  private tint: DayTint | null = null;
   private indoor = false;
   private cleanups: (() => void)[] = [];
   private regions: Region[] = [];
   private tapping = false;
   private tile: Tile = { x: 0, y: 0 };
-  private loadFailed = false;
-  private loadProgress = 0;
-  private loadTimer: ReturnType<typeof setTimeout> | undefined;
-  private cardShown = false;
+  private travel!: Travel;
+  private maze: Maze | null = null;
+  private navigator!: Navigator;
 
   constructor() {
     super('Overworld');
@@ -80,9 +62,12 @@ export class Overworld extends Phaser.Scene {
     this.cleanups = [];
     this.tapping = false;
     this.speed = WALK_SPEED;
-    this.loadFailed = false;
-    this.loadProgress = 0;
-    this.cardShown = false;
+    this.maze = null;
+    this.travel = new Travel(this, request, {
+      fadeThen: (leave) => this.fadeThen(leave),
+      walkTo: (name) => this.walkTo(name),
+      busy: () => this.busy,
+    });
   }
 
   preload() {
@@ -90,29 +75,19 @@ export class Overworld extends Phaser.Scene {
     if (this.cache.tilemap.exists(`map-${town}`)) return;
     this.load.tilemapTiledJSON(`map-${town}`, `/maps/${town}.json`);
     this.load.image(`tiles-${town}`, `/assets/ninja-adventure/tiles-${town}.png`);
-    this.load.on('loaderror', () => {
-      this.loadFailed = true;
-    });
-    this.load.on('progress', (value: number) => {
-      this.loadProgress = value;
-      if (this.cardShown) this.showTravelCard();
-    });
-    this.loadTimer = setTimeout(() => {
-      this.cardShown = true;
-      this.showTravelCard();
-    }, SLOW_LOAD_MS);
+    this.travel.trackLoad();
   }
 
   create() {
     const { town } = this.request;
-    clearTimeout(this.loadTimer);
+    this.travel.loaded();
     this.events.once('shutdown', () => {
-      clearTimeout(this.loadTimer);
+      this.travel.loaded();
       this.cleanups.forEach((fn) => fn());
     });
-    this.cleanups.push(this.watchTravel());
-    if (this.loadFailed || !this.cache.tilemap.exists(`map-${town}`) || !this.textures.exists(`tiles-${town}`)) {
-      this.showTravelError();
+    this.cleanups.push(this.travel.watchChoice());
+    if (this.travel.failed || !this.cache.tilemap.exists(`map-${town}`) || !this.textures.exists(`tiles-${town}`)) {
+      this.travel.error();
       return;
     }
     store.getState().actions.setTravel(null);
@@ -120,11 +95,12 @@ export class Overworld extends Phaser.Scene {
     const map = this.make.tilemap({ key: `map-${town}` });
     const tileset = map.addTilesetImage(town, `tiles-${town}`);
     if (!tileset) {
-      this.showTravelError();
+      this.travel.error();
       return;
     }
     map.createLayer('ground', tileset)?.setDepth(-2);
-    map.createLayer('things', tileset)?.setDepth(-1);
+    const things = map.createLayer('things', tileset);
+    things?.setDepth(-1);
     // the movement layer reads collision from a created tile layer
     map.createLayer('collide', tileset)?.setVisible(false);
     this.objects = readObjects(map);
@@ -133,25 +109,31 @@ export class Overworld extends Phaser.Scene {
     this.mover.create(map);
     const start = this.resolveStart();
     if (!start) {
-      this.showTravelError();
+      this.travel.error();
       return;
     }
-    const player = this.add.sprite(0, 0, PLAYER);
+    const player = this.add.sprite(0, 0, PLAYER).setDepth(ACTOR_DEPTH);
     this.mover.addChar(PLAYER, player, start.tile, { speed: WALK_SPEED, facing: start.facing });
     this.addNpcs();
+    const gates = new Gates(this.mover, things ?? null, this.objects, store.getState().flags);
 
     this.regions = parseRegions(map.properties);
+    this.navigator = new Navigator(this.mover, this.objects, this.regions, town, PLAYER, gates, (goal) => this.faceTile(goal));
+    const mazeRegion = this.regions.find((r) => r.maze);
+    if (mazeRegion) this.maze = new Maze(this, this.mover, mazeRegion, this.objects, PLAYER);
     const camera = this.cameras.main;
     camera.startFollow(player, true);
     camera.setZoom(store.getState().stage.scale);
     this.clampCamera(start.tile);
-    this.addTint();
+    this.tint = new DayTint(this);
     this.input.on('pointerdown', this.onTap, this);
 
     this.cleanups.push(
       this.mover.onArrived((id, tile) => this.onArrived(id, tile)),
       this.watchStepBack(),
+      this.travel.watchNav(),
       store.subscribe((state, prev) => {
+        if (state.flags !== prev.flags) gates.sync(state.flags);
         if (state.stage === prev.stage) return;
         camera.setZoom(state.stage.scale);
         this.clampCamera(this.tile);
@@ -163,22 +145,25 @@ export class Overworld extends Phaser.Scene {
 
     if (!store.getState().reducedMotion) camera.fadeIn(FADE_MS);
     this.busy = false;
+    this.maze?.enter(start.tile);
+    this.travel.resumeNav();
   }
 
   update() {
     const state = store.getState();
     const pulsed = state.aPulse !== this.lastPulse;
     this.lastPulse = state.aPulse;
-    this.syncTint();
+    this.tint?.sync(this.indoor);
     if (this.busy || isUiOpen(state)) return;
 
-    const want = state.run && state.flags.includes(SHOES) ? RUN_SPEED : WALK_SPEED;
+    const want = state.run && state.flags.includes(FLAGS.shoes) ? RUN_SPEED : WALK_SPEED;
     if (want !== this.speed) {
       this.speed = want;
       this.mover.setSpeed(PLAYER, want);
     }
     // a tap moves one tile; a held key queues the next tile once this one is mostly done
     const canQueue = !this.mover.isMoving(PLAYER) || this.mover.progress(PLAYER) > QUEUE_AFTER;
+    if (state.held && this.navigator.active) this.navigator.cancel();
     if (state.held && this.tapping) {
       this.tapping = false;
       this.mover.stop(PLAYER);
@@ -201,7 +186,7 @@ export class Overworld extends Phaser.Scene {
 
   private addNpcs() {
     for (const npc of this.objects.filter((o) => o.kind === 'npc')) {
-      const sprite = this.add.sprite(0, 0, `npc-${npc.props.sprite ?? ''}`);
+      const sprite = this.add.sprite(0, 0, `npc-${npc.props.sprite ?? ''}`).setDepth(ACTOR_DEPTH);
       this.mover.addChar(`${NPC_PREFIX}${npc.name}`, sprite, { x: npc.x, y: npc.y }, { speed: WALK_SPEED, facing: (npc.props.face ?? 'down') as Dir });
     }
   }
@@ -223,6 +208,7 @@ export class Overworld extends Phaser.Scene {
   private onTap(pointer: Phaser.Input.Pointer) {
     const state = store.getState();
     if (this.busy || isUiOpen(state)) return;
+    this.navigator.cancel();
     const target = { x: Math.floor(pointer.worldX / TILE), y: Math.floor(pointer.worldY / TILE) };
     const here = this.mover.position(PLAYER);
     if (target.x === here.x && target.y === here.y) return;
@@ -243,19 +229,6 @@ export class Overworld extends Phaser.Scene {
     this.mover.turn(PLAYER, dx > 0 ? 'right' : dx < 0 ? 'left' : dy > 0 ? 'down' : 'up');
   }
 
-  private addTint() {
-    const config = TINTS[timeBand()];
-    if (!config) return;
-    this.tint = this.add.rectangle(0, 0, 1, 1, config.color, config.alpha).setDepth(1_000_000).setBlendMode(config.blend);
-  }
-
-  private syncTint() {
-    if (!this.tint) return;
-    this.tint.setVisible(!this.indoor);
-    const view = this.cameras.main.worldView;
-    this.tint.setPosition(view.centerX, view.centerY).setSize(view.width + 64, view.height + 64);
-  }
-
   private onArrived(id: string, tile: Tile) {
     if (id !== PLAYER) return;
     const { actions } = store.getState();
@@ -263,8 +236,11 @@ export class Overworld extends Phaser.Scene {
     actions.setPlayer(town, tile, this.mover.facing(PLAYER));
     actions.requestSave();
     this.clampCamera(tile);
+    this.maze?.enter(tile);
+    if (this.maze?.isFlag(tile)) this.reportFlag();
     const warp = objectAt(this.objects, tile, ['warp']);
-    if (warp && !this.busy) this.warp(warp);
+    if (warp && isOpen(warp.props, store.getState().flags) && !this.busy) this.warp(warp);
+    else if (warp) this.lockedDoor(warp);
   }
 
   private interact() {
@@ -272,7 +248,10 @@ export class Overworld extends Phaser.Scene {
     const charId = this.mover.charAt(front);
     const npc = charId?.startsWith(NPC_PREFIX) ? this.objects.find((o) => o.kind === 'npc' && `${NPC_PREFIX}${o.name}` === charId) : undefined;
     const target = npc ?? objectAt(this.objects, front, ['sign', 'item']);
-    if (!target) return;
+    if (!target) {
+      this.plantFlag(front);
+      return;
+    }
     if (npc && charId) this.mover.turn(charId, OPPOSITE[this.mover.facing(PLAYER)]);
     interactWith(target);
   }
@@ -281,13 +260,19 @@ export class Overworld extends Phaser.Scene {
     const to = obj.props.to ?? '';
     const spawn = obj.props.spawn;
     if (!isBuiltTown(to)) {
-      this.closedRoad(to);
+      this.travel.closedRoad(to, 'stepBack');
       return;
     }
     this.busy = true;
-    const camera = this.cameras.main;
+    // a warp that fires only while a flag is missing is a while loop: the HUD counts the laps
+    if (obj.props.unless !== undefined) store.getState().actions.bumpLoop();
     const from: WorldRequest = { town: this.request.town, pos: { x: obj.x, y: obj.y }, facing: this.mover.facing(PLAYER) };
-    const leave = () => (to === this.request.town ? this.teleport(spawn) : this.go({ town: to, spawn, from }));
+    this.fadeThen(() => (to === this.request.town ? this.teleport(spawn) : this.travel.go({ town: to, spawn, from })));
+  }
+
+  private fadeThen(leave: () => void) {
+    this.busy = true;
+    const camera = this.cameras.main;
     if (store.getState().reducedMotion) leave();
     else {
       camera.fadeOut(FADE_MS);
@@ -295,15 +280,11 @@ export class Overworld extends Phaser.Scene {
     }
   }
 
-  // the one place a town (re)starts, so every caller passes a typed request
-  private go(request: WorldRequest) {
-    this.scene.restart(request);
-  }
-
   // test API only: put the player on a tile facing a direction, as a warp spawn does
   stand(tile: Tile, facing: Dir) {
     this.mover.place(PLAYER, tile, facing);
     this.clampCamera(tile);
+    this.maze?.enter(tile);
     store.getState().actions.setPlayer(this.request.town, tile, facing);
   }
 
@@ -315,10 +296,33 @@ export class Overworld extends Phaser.Scene {
     }
     if (!store.getState().reducedMotion) this.cameras.main.fadeIn(FADE_MS);
     this.busy = false;
+    this.navigator.step();
   }
 
-  private closedRoad(to: string) {
-    store.getState().actions.openDialog({ speaker: '', portrait: null, lines: [`${townName(to) ?? 'That town'} is not open yet.`], after: 'stepBack' });
+  // a door that needs a role names it instead of staying silent
+  private lockedDoor(warp: WorldObject) {
+    store.getState().actions.openDialog({ speaker: '', portrait: null, lines: [lockedLine(warp.props) ?? ''] });
+  }
+
+  private walkTo(name: string | undefined) {
+    const at = this.objects.find((o) => o.name === name);
+    if (at) this.navigator.begin({ x: at.x, y: at.y });
+    return Boolean(at);
+  }
+
+  private plantFlag(front: Tile) {
+    if (!this.maze || !store.getState().flags.includes(FLAGS.cursor)) return;
+    if (this.maze.plant(front)) store.getState().actions.openDialog({ speaker: '', portrait: null, lines: [PLANTED_LINE] });
+  }
+
+  private reportFlag() {
+    const line = survivedLine(this.maze?.survived() ?? 0);
+    store.getState().actions.openFact(CURSOR_FACT, { speaker: 'Flag', portrait: null }, [line]);
+  }
+
+  // test API only: what the maze floor is doing
+  mazeInfo() {
+    return this.maze?.info() ?? null;
   }
 
   // the dialog says what should happen once it closes; the scene does it
@@ -326,28 +330,5 @@ export class Overworld extends Phaser.Scene {
     return store.subscribe((state, prev) => {
       if (prev.dialog?.after === 'stepBack' && !state.dialog) this.mover.move(PLAYER, OPPOSITE[this.mover.facing(PLAYER)]);
     });
-  }
-
-  // the travel card only records a choice; the scene restarts the town
-  private watchTravel() {
-    return store.subscribe((state) => {
-      const choice = state.travel?.choice;
-      if (!choice) return;
-      const { from } = this.request;
-      store.getState().actions.setTravel(null);
-      this.go(choice === 'back' && from ? from : this.request);
-    });
-  }
-
-  private showTravelCard() {
-    store.getState().actions.setTravel({ status: 'loading', town: this.request.town, progress: this.loadProgress, canGoBack: false, choice: null });
-  }
-
-  // drop the half-loaded keys so Retry fetches again; Back returns to the tile the player warped from
-  private showTravelError() {
-    const { town, from } = this.request;
-    this.cache.tilemap.remove(`map-${town}`);
-    if (this.textures.exists(`tiles-${town}`)) this.textures.remove(`tiles-${town}`);
-    store.getState().actions.setTravel({ status: 'error', town, progress: 0, canGoBack: Boolean(from), choice: null });
   }
 }

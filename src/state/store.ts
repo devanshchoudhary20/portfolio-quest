@@ -1,6 +1,7 @@
 import { createStore } from 'zustand/vanilla';
 import { factById } from '../content';
-import type { FactId, FlagId, TownId } from '../content';
+import type { DestId, FactId, FlagId, TownId } from '../content';
+import { SEEN_TEN, SEEN_TEN_COUNT } from '../game/world/conditions';
 import type { Dir, Mode, SaveV1, Starter } from '../game/world/save';
 import { START } from '../game/world/towns';
 import { readTextSpeed } from './prefs';
@@ -8,7 +9,7 @@ import type { TextSpeed } from './prefs';
 
 export type Phase = 'title' | 'intro' | 'play';
 export type LoadStatus = 'idle' | 'loading' | 'ready' | 'error';
-export type Panel = 'none' | 'menu' | 'options' | 'recruiter';
+export type Panel = 'none' | 'menu' | 'options' | 'recruiter' | 'ask';
 export type Portrait = 'devansh' | 'mom' | 'professor';
 
 // the title bar's first 40% is the game chunk itself, the shared atlas fills the rest
@@ -20,7 +21,7 @@ export interface DialogState {
   lines: string[];
   index: number;
   // what the Overworld does once the player closes this dialog
-  after?: 'stepBack';
+  after?: 'stepBack' | 'ask';
 }
 
 export interface WorldRequest {
@@ -74,6 +75,10 @@ export interface State {
   held: Dir | null;
   run: boolean;
   aPulse: number;
+  // times a while-loop warp sent the player back; the HUD counts them
+  loops: number;
+  // a destination the robot was asked for; the Overworld walks or warps there and clears it
+  nav: DestId | null;
   world: WorldRequest | null;
   pendingWarp: WorldRequest | null;
   continueSave: SaveV1 | null;
@@ -104,11 +109,14 @@ interface Actions {
   warpGame: (warp: WorldRequest) => void;
   beginPlay: () => void;
   openDialog: (dialog: Omit<DialogState, 'index'>) => void;
-  openFact: (id: FactId, speaker: Speaker, extra?: string[]) => void;
+  openFact: (id: FactId, speaker: Speaker, extra?: string[], after?: DialogState['after']) => void;
   advanceDialog: () => void;
   advanceOrFinish: () => void;
   closeDialog: () => void;
   addFlag: (flag: FlagId) => void;
+  removeFlag: (flag: FlagId) => void;
+  bumpLoop: () => void;
+  setNav: (nav: DestId | null) => void;
   openPanel: (panel: Panel) => void;
   closePanel: () => void;
   setHeld: (dir: Dir | null) => void;
@@ -127,7 +135,13 @@ const FRESH = {
   panel: 'none' as Panel,
   held: null,
   run: false,
+  loops: 0,
+  nav: null as DestId | null,
 };
+
+// seen.10 is derived, never granted by an object
+const withDerived = (flags: FlagId[], seen: FactId[]) =>
+  seen.length >= SEEN_TEN_COUNT && !flags.includes(SEEN_TEN) ? [...flags, SEEN_TEN] : flags;
 
 export const isUiOpen = (state: Pick<State, 'phase' | 'dialog' | 'panel'>) =>
   state.phase !== 'play' || state.dialog !== null || state.panel !== 'none';
@@ -170,7 +184,7 @@ export const store = createStore<State>()((set, get) => ({
       if (!save) return;
       set({
         ...FRESH,
-        flags: save.flags,
+        flags: withDerived(save.flags, save.seen),
         seen: save.seen,
         starter: save.starter,
         mode: save.mode,
@@ -185,15 +199,16 @@ export const store = createStore<State>()((set, get) => ({
       const lines = dialog.lines.filter((line) => line.trim() !== '');
       if (lines.length > 0) set({ dialog: { ...dialog, lines, index: 0 } });
     },
-    openFact: (id, speaker, extra = []) => {
+    openFact: (id, speaker, extra = [], after) => {
       const { mode, seen, actions } = get();
       const fact = factById.get(id);
       if (!fact) return;
       if (!seen.includes(id)) {
-        set({ seen: [...seen, id] });
+        const next = [...seen, id];
+        set((s) => ({ seen: next, flags: withDerived(s.flags, next) }));
         actions.requestSave();
       }
-      actions.openDialog({ ...speaker, lines: [mode === 'engineer' ? (fact.long ?? fact.short) : fact.short, ...extra] });
+      actions.openDialog({ ...speaker, lines: [mode === 'engineer' ? (fact.long ?? fact.short) : fact.short, ...extra], ...(after ? { after } : {}) });
     },
     advanceDialog: () => {
       const dialog = get().dialog;
@@ -207,13 +222,25 @@ export const store = createStore<State>()((set, get) => ({
       if (typing) set((s) => ({ finishTick: s.finishTick + 1 }));
       else actions.advanceDialog();
     },
-    closeDialog: () => set({ dialog: null, typing: false }),
+    closeDialog: () => {
+      const { dialog, actions } = get();
+      set({ dialog: null, typing: false });
+      if (dialog?.after === 'ask') actions.openPanel('ask');
+    },
     addFlag: (flag) => {
       const { flags, actions } = get();
       if (flags.includes(flag)) return;
       set({ flags: [...flags, flag] });
       actions.requestSave();
     },
+    removeFlag: (flag) => {
+      const { flags, actions } = get();
+      if (!flags.includes(flag)) return;
+      set({ flags: flags.filter((held) => held !== flag) });
+      actions.requestSave();
+    },
+    bumpLoop: () => set((s) => ({ loops: s.loops + 1 })),
+    setNav: (nav) => set({ nav }),
     openPanel: (panel) => set({ panel, held: null, run: false }),
     closePanel: () => set({ panel: 'none' }),
     setHeld: (held) => set({ held }),

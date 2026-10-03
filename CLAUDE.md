@@ -9,7 +9,7 @@ A Gen-3-style 2D top-down portfolio game for Devansh Choudhary (Phaser 4 + grid-
 - `spike/` is a throwaway Phase 0 proof. Read it, never import from it.
 
 ## Hard rules
-- Facts come only from `.anbu/resume.pdf` plus "400+ LeetCode problems solved" and "B.Tech in Mechanical Engineering". Every mechanic maps to a `FactId` in `src/content/`. No `FactId`, no mechanic. Every NPC, sign and item carries a `factId`; maps hold no free text (check-content allows only a fixed property-key list per kind and fails on any other key, such as `say`, `after` or `text`). The only non-fact lines are item pickups in `ITEM_LINES` (`src/game/world/interact.ts`).
+- Facts come only from `.anbu/resume.pdf` plus "400+ LeetCode problems solved" and "B.Tech in Mechanical Engineering". Every mechanic maps to a `FactId` in `src/content/`. No `FactId`, no mechanic. Every NPC, sign and item carries a `factId`; maps hold no free text (check-content allows only a fixed property-key list per kind and fails on any other key, such as `say`, `after` or `text`). The only non-fact lines live in `src/game/world/lines.ts` (pickups, roles, locks, robot replies, HUD labels); check-content fails a map flag that has no line there.
 - The phone number never appears in `src`, `public/maps`, or built `dist` html/js/json. `scripts/check-content.ts` enforces it (the PDF is published on purpose).
 - No Nintendo assets, names, or fonts. Banned words are enforced by the same script. The same script also walks each built map from its default spawn and fails on an unreachable npc, sign, item or warp, or a fact that sits only on an unreachable object. Each folder under `public/assets` needs a LICENSE.
 - Reuse before create. Grep by behavior first.

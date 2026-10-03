@@ -22,6 +22,8 @@ function snapshot() {
     mode: s.mode,
     flags: s.flags,
     seen: s.seen,
+    loops: s.loops,
+    held: s.held,
     panel: s.panel,
     dialog: s.dialog ? { speaker: s.dialog.speaker, text: s.dialog.lines[s.dialog.index] ?? '' } : null,
   };
@@ -58,6 +60,9 @@ export function installTestApi(game: Phaser.Game) {
     stand(x: number, y: number, facing: Dir) {
       (game.scene.getScene('Overworld') as Overworld).stand({ x, y }, facing);
     },
+    maze() {
+      return (game.scene.getScene('Overworld') as Overworld).mazeInfo();
+    },
     warp(town: string, spawn?: string) {
       const { phase, actions } = store.getState();
       const world = { town: townId(town as TownKey), ...(spawn ? { spawn } : {}) };
@@ -74,6 +79,7 @@ declare global {
       interact: () => void;
       walk: (dir: Dir, tiles?: number) => Promise<ReturnType<typeof snapshot>>;
       warp: (town: string, spawn?: string) => void;
+      maze: () => ReturnType<Overworld['mazeInfo']>;
       stand: (x: number, y: number, facing: Dir) => void;
       tileToClient: (x: number, y: number) => { x: number; y: number };
     };
