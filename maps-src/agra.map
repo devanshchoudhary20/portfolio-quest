@@ -1,0 +1,101 @@
+// Agra: the town at x 0-29, Devansh's bedroom at x 56-64 and the kitchen at x 90-98. Rooms sit far apart so the camera never shows a neighbor.
+map agra 100 20
+pack vendor/ninja-adventure
+
+sheets
+  field   Backgrounds/Tilesets/TilesetField.png
+  house   Backgrounds/Tilesets/TilesetHouse.png
+  nature  Backgrounds/Tilesets/TilesetNature.png
+  elem    Backgrounds/Tilesets/TilesetElement.png
+  bed     Backgrounds/Tilesets/tileset_bed.png
+  floor   Backgrounds/Tilesets/Interior/TilesetInteriorFloor.png
+  wall    Backgrounds/Tilesets/Interior/TilesetWallSimple.png
+
+legend
+  g ground field:3,3
+  p ground field:3,0
+  f ground floor:8,1
+  T stamp nature:0,0 2x2 solid
+  H stamp house:0,0 4x3 solid walk=1,2
+  S stamp house:4,0 4x3 solid walk=1,2
+  D stamp house:6,11 3x3 solid
+  o tile nature:0,11
+  s tile elem:0,2 solid
+  1 tile wall:0,0 solid
+  2 tile wall:1,0 solid
+  3 tile wall:4,0 solid
+  4 tile wall:0,1 solid
+  5 tile wall:4,1 solid
+  6 tile wall:0,4 solid
+  7 tile wall:1,4 solid
+  8 tile wall:4,4 solid
+  B stamp bed:7,3 2x3 solid
+  C tile elem:10,0 solid
+  K stamp elem:3,7 2x2 solid
+  A tile elem:8,11
+  M tile elem:7,8 solid
+  P tile elem:0,8 solid
+
+ground
+gggggggggggggggggggggggggggggg______________________________________________________________________
+gggggggggggggggggggggggggggggg__________________________fffffffff_________________________fffffffff_
+gggggggggggggggggggggggggggggg__________________________fffffffff_________________________fffffffff_
+gggggggggggggggggggggggggggggg__________________________fffffffff_________________________fffffffff_
+gggggggggggggggggggggggggggggg__________________________fffffffff_________________________fffffffff_
+gggggggggggggggggggggggggggggg__________________________fffffffff_________________________fffffffff_
+gggggggggggggggggggggggggggggg__________________________fffffffff_________________________fffffffff_
+gggggggpgggggggggggpgggggggggg__________________________fffffffff_________________________fffffffff_
+gggggggpgggggggggggpgggggggggg__________________________fffffffff_________________________fffffffff_
+gggggggpgggggggggggpgggggggggg____________________________________________________________fffffffff_
+gggggggppppppppppppppppppppppp______________________________________________________________________
+gggggggppppppppppppppppppppppp______________________________________________________________________
+gggggggggggggggggggggggggggggg______________________________________________________________________
+gggggggggggggggggggggggggggggg______________________________________________________________________
+gggggggggggggggggggggggggggggg______________________________________________________________________
+gggggggggggggggggggggggggggggg______________________________________________________________________
+gggggggggggggggggggggggggggggg______________________________________________________________________
+gggggggggggggggggggggggggggggg______________________________________________________________________
+gggggggggggggggggggggggggggggg______________________________________________________________________
+gggggggggggggggggggggggggggggg______________________________________________________________________
+
+things
+T.T.T.T.T.T.T.T.T.T.T.T.T.T.T.......................................................................
+........................................................122222223.........................122222223.
+T.........o.................T...........................4B..C.K.5.........................4K.....A5.
+........................T...............................4.......5.........................4..M....5.
+T.....H...........S.........T...........................4.......5.........................4.......5.
+........................................................4.......5.........................4.......5.
+T............o..............T...........................4.......5.........................4....P..5.
+.....................s..................................4......A5.........................4.......5.
+T....o...o................o.T...........................677777778.........................4.......5.
+...............o.......o..s...............................................................6777.7778.
+T...................................................................................................
+....................................................................................................
+T...........................T.......................................................................
+..T......T..D...o...................................................................................
+T...................o....T..T.......................................................................
+....o...............................................................................................
+T...........................T.......................................................................
+....................................................................................................
+T.T.T.T.T.T.T.T.T.T.T.T.T.T.T.......................................................................
+....................................................................................................
+
+objects
+  items   pc            60,2  factId=agra.summary speaker=Devansh portrait=devansh
+  npcs    mom           94,4  sprite=mom face=down factId=gear.btech flag=shoes speaker=Mom portrait=mom
+  warps   door-home     7,6   to=agra spawn=ground-door
+  warps   ground-exit   94,9  to=agra spawn=home-door
+  warps   ground-stairs 97,2  to=agra spawn=bedroom-landing
+  warps   bedroom-stairs 63,7 to=agra spawn=ground-landing
+  warps   route-gear-a  29,10 to=gear spawn=agra-road
+  warps   route-gear-b  29,11 to=gear spawn=agra-road
+  warps   bedroom       60,3  kind=spawn face=up
+  warps   home-door     7,7   kind=door face=down
+  warps   ground-door   94,8  kind=door face=up
+  warps   bedroom-landing 62,7 kind=spawn face=left
+  warps   ground-landing  96,2 kind=spawn face=left
+
+regions
+  town    0,0,30,20
+  bedroom 56,1,9,8
+  kitchen 90,1,9,9

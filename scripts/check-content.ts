@@ -131,6 +131,7 @@ function checkMaps() {
         if (FACT_KINDS.has(kind) || FACT_LAYERS.has(layer.name)) {
           if (typeof p.factId !== 'string' || p.factId === '') errors.push(`${where}: missing factId`);
         }
+        if ('say' in p || 'after' in p) errors.push(`${where}: free text in a map, use a factId`);
         if (typeof p.factId === 'string' && p.factId !== '') {
           covered.add(p.factId);
           if (!isFactId(p.factId)) errors.push(`${where}: unknown factId ${p.factId}`);

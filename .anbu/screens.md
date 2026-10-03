@@ -55,7 +55,7 @@ The "leave" moment with the most care is **Recruiter step 3**: the first screen 
 | `save.badges` | storage | `0` and five empty badge slots |
 | `save.skillsSeen` | storage | `0 / 32` and all entries show `???` |
 | `save.bugsSeen` | storage | `0 / 5` |
-| `save.textSpeed` | storage | `Normal` |
+| `prefs.textSpeed` (`pq.prefs.v1`) | storage | `Normal` |
 | `save.textSize` | storage | `Normal` |
 | Corrupt save JSON | storage | Discard, start fresh, one dialog line: "Save data was unreadable. Starting a new game." |
 | Clock (`new Date()`) | browser | NaN or throw: day |

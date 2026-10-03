@@ -18,7 +18,6 @@ export interface SaveV1 {
   seen: FactId[];
   starter?: Starter;
   mode: Mode;
-  textSpeed: 1 | 2 | 3;
   // null when the stored timestamp is unreadable: the UI shows "Last played: unknown"
   savedAt: string | null;
 }
@@ -46,12 +45,11 @@ const strings = (value: unknown): string[] | null =>
   Array.isArray(value) && value.every((item) => typeof item === 'string') ? value : null;
 
 function parseV1(raw: Record<string, unknown>): SaveV1 | null {
-  const { town, pos, facing, flags, seen, starter, mode, textSpeed, savedAt } = raw;
+  const { town, pos, facing, flags, seen, starter, mode, savedAt } = raw;
   const flagList = strings(flags);
   const seenList = strings(seen);
   if (!isMapTownId(town) || !isRecord(pos) || !isCoord(pos.x) || !isCoord(pos.y)) return null;
   if (!isDir(facing) || !isMode(mode) || !flagList || !seenList) return null;
-  if (textSpeed !== 1 && textSpeed !== 2 && textSpeed !== 3) return null;
   if (starter !== undefined && !isStarter(starter)) return null;
 
   return {
@@ -64,7 +62,6 @@ function parseV1(raw: Record<string, unknown>): SaveV1 | null {
     seen: seenList.filter(isFactId),
     ...(starter !== undefined ? { starter } : {}),
     mode,
-    textSpeed,
     savedAt: typeof savedAt === 'string' && !Number.isNaN(Date.parse(savedAt)) ? savedAt : null,
   };
 }
@@ -78,4 +75,57 @@ export function loadSave(raw: unknown): SaveV1 | null {
     current = { ...step(current), v: current.v + 1 };
   }
   return current.v === CURRENT ? parseV1(current) : null;
+}
+
+export const SAVE_KEY = 'pq.save.v1';
+
+export type StoredSave = { status: 'none' } | { status: 'ok'; save: SaveV1 } | { status: 'corrupt' };
+
+export function readStoredSave(): StoredSave {
+  let raw: string | null;
+  try {
+    raw = localStorage.getItem(SAVE_KEY);
+  } catch {
+    return { status: 'none' };
+  }
+  if (raw === null) return { status: 'none' };
+  try {
+    const save = loadSave(JSON.parse(raw));
+    return save ? { status: 'ok', save } : { status: 'corrupt' };
+  } catch {
+    return { status: 'corrupt' };
+  }
+}
+
+export function writeSave(save: SaveV1): boolean {
+  try {
+    localStorage.setItem(SAVE_KEY, JSON.stringify(save));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function clearSave() {
+  try {
+    localStorage.removeItem(SAVE_KEY);
+  } catch {
+    // storage blocked: nothing to clear
+  }
+}
+
+export function lastPlayedLabel(savedAt: string | null): string {
+  const time = savedAt === null ? Number.NaN : Date.parse(savedAt);
+  if (Number.isNaN(time)) return 'Last played: unknown';
+  return `Last played: ${new Date(time).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}`;
+}
+
+export function canStore(): boolean {
+  try {
+    localStorage.setItem('pq.probe', '1');
+    localStorage.removeItem('pq.probe');
+    return true;
+  } catch {
+    return false;
+  }
 }

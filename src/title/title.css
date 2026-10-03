@@ -1,0 +1,148 @@
+@font-face {
+  font-family: "Jersey 10";
+  src: url("../resume/fonts/Jersey10-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+
+:root {
+  --ink: #1b1f2e;
+  --panel: #f7f5ea;
+  --panel-2: #dcd8c0;
+  --muted: #4a4f63;
+  --line: #2e8ba6;
+  --cursor: #c8493f;
+  --s: 4;
+}
+
+.title {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--s) * 4px);
+  padding-top: calc(var(--s) * 8px);
+  box-sizing: border-box;
+  overflow: auto;
+  background: var(--ink) url("./title-bg.png") center bottom / auto 100% no-repeat;
+  image-rendering: pixelated;
+  font-family: "Jersey 10", system-ui, sans-serif;
+  color: var(--ink);
+}
+.title[hidden], .playing .title { display: none; }
+.title::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: #0f1b5e8c;
+  opacity: 0;
+}
+.title.night::after { opacity: 1; }
+.title.dusk::after { background: #e8793a33; opacity: 1; }
+
+.plate, .menu {
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  border: 2px solid var(--ink);
+  outline: 2px solid var(--line);
+  outline-offset: -5px;
+  border-radius: 8px;
+  background: var(--panel);
+}
+.plate {
+  width: min(calc(var(--s) * 148px), calc(100vw - 32px));
+  padding: calc(var(--s) * 4px) 12px;
+  text-align: center;
+}
+.plate p { margin: 0; }
+.logo { display: flex; flex-direction: column; font-size: max(40px, calc(var(--s) * 20px)); line-height: 1.05; text-transform: uppercase; letter-spacing: 0.04em; }
+.logo-q { color: var(--cursor); }
+.byline { font-size: max(16px, calc(var(--s) * 5px)); color: var(--muted); }
+
+.strip {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  padding: 6px 16px;
+  border: 2px solid var(--panel);
+  border-radius: 8px;
+  background: var(--ink);
+  color: var(--panel);
+  font-size: max(16px, calc(var(--s) * 6px));
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: default;
+}
+.strip.ready { cursor: pointer; }
+.bar { width: calc(var(--s) * 40px); max-width: 40vw; height: 10px; border-radius: 5px; background: var(--panel-2); overflow: hidden; }
+.bar > i { display: block; height: 100%; width: 0; background: #3cc6e8; }
+
+.menu {
+  width: min(calc(var(--s) * 76px), calc(100vw - 32px));
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 16px;
+}
+.menu button, .menu a {
+  display: block;
+  position: relative;
+  padding: 4px 8px 4px calc(var(--s) * 6px);
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  font-size: max(20px, calc(var(--s) * 7px));
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+.menu button[hidden] { display: none; }
+.menu small { display: block; font-size: max(16px, calc(var(--s) * 4.5px)); color: var(--muted); }
+.menu button:disabled { color: var(--muted); cursor: default; }
+.menu button:focus-visible, .menu a:focus-visible, .menu button:hover:not(:disabled), .menu a:hover { background: var(--panel-2); outline: none; }
+.menu button:focus-visible::before, .menu a:focus-visible::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  translate: 0 -50%;
+  border-left: 10px solid var(--cursor);
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+}
+
+.sheet {
+  border: 2px solid var(--ink);
+  outline: 2px solid var(--line);
+  outline-offset: -5px;
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--ink);
+  font: inherit;
+  font-size: 22px;
+  padding: 20px 28px;
+}
+.sheet::backdrop { background: #1b1f2ecc; }
+.sheet h2 { margin: 0 0 8px; font-weight: 400; font-size: 30px; }
+.sheet fieldset { border: 0; margin: 0 0 12px; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.sheet legend { padding: 0; margin-bottom: 6px; color: var(--muted); }
+.sheet label { padding: 4px 12px; border: 2px solid var(--ink); border-radius: 4px; cursor: pointer; }
+.sheet label:has(input:checked) { background: var(--panel-2); }
+.sheet label:has(input:focus-visible), .sheet button:focus-visible { outline: 2px solid var(--cursor); outline-offset: 2px; }
+.sheet input { position: absolute; opacity: 0; }
+.sheet button { font: inherit; font-size: 22px; padding: 4px 16px; border: 2px solid var(--ink); border-radius: 4px; background: var(--panel); cursor: pointer; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .bar > i { transition: width 0.2s linear; }
+}
+
+#game { position: fixed; z-index: 0; overflow: hidden; image-rendering: pixelated; touch-action: none; }
+#game canvas { display: block; }
+.title { z-index: 5; }

@@ -24,10 +24,21 @@ BODY_IDLE = {
     "up": [".#wwwwwwwwwwww#.", ".#wwwwwccwwwww#.", ".#cwwwwwwwwwwc#.", ".#ss#wwwwww#ss#.", "...#nnnnnnnn#...", "...#ooo##ooo#..."],
     "left": ["..#wwwsswwwww#..", "..#wwwwwwwwww#..", "..#cwwwwwwwwc#..", "..#ss#wwwww#s#..", "...#nnnnnnn#....", "...#ooo#ooo#...."],
 }
+# step frames: shirt shrinks to 3 rows, legs take 3 rows. Pose A plants the left foot and lifts the right (shoe at the first leg row); pose B mirrors it.
+_DOWN_A = ["...#nnnnnnnn#...", "..#nnn#..#oo#...", "..#ooo#........."]
+_UP_A = _DOWN_A
+_LEFT_A = ["...#nnnnnnn#....", "..#nnn#..#oo#...", "..#ooo#........."]
+_LEFT_B = ["...#nnnnnnn#....", "..#oo#...#nnn#..", ".........#ooo#.."]
+
+
+def _mirror(rows):
+    return [r[::-1] for r in rows]
+
+
 STEP_LEGS = {
-    "down": [["...#nnnnnnnn#...", "..#ooo#.#ooo#..."], ["...#nnnnnnnn#...", "...#ooo#.#ooo#.."]],
-    "up": [["...#nnnnnnnn#...", "..#ooo#.#ooo#..."], ["...#nnnnnnnn#...", "...#ooo#.#ooo#.."]],
-    "left": [["...#nnnnnnn#....", "..#ooo#..#oo#..."], ["...#nnnnnnn#....", "...#oo#..#ooo#.."]],
+    "down": [_DOWN_A, _mirror(_DOWN_A)],
+    "up": [_UP_A, _mirror(_UP_A)],
+    "left": [_LEFT_A, _LEFT_B],
 }
 
 
@@ -39,7 +50,7 @@ def frame(direction, row):
         rows = ["." * 16] + head + body
     else:
         legs = STEP_LEGS[direction][0 if row == 1 else 1]
-        rows = ["." * 16, "." * 16] + head + [body[0], body[2], body[3]] + legs
+        rows = ["." * 16] + head + [body[0], body[2], body[3]] + legs
     rows = rows[:16]
     assert len(rows) == 16 and all(len(r) == 16 for r in rows), (direction, row, [len(r) for r in rows], len(rows))
     im = Image.new("RGBA", (16, 16), (0, 0, 0, 0))

@@ -77,7 +77,7 @@ Tiled contract: objects in layers `npcs`, `signs`, `items`, `warps`, `encounters
 
 `scripts/check-content.ts` (prebuild + CI) fails the build when: a `factId` is unknown; a warp `to` or its `spawn` doesn't exist; a fact is referenced by zero maps (warn in dev, fail in CI from phase 3); the phone number pattern appears in `src/content`, any map, or `dist`; an asset folder lacks a LICENSE; a banned word (nintendo, pokemon, pikachu, game freak) appears in `src`, `public`, or `dist`.
 
-Every mechanic maps to a `FactId`. A mechanic without one is cut.
+Every mechanic maps to a `FactId`. A mechanic without one is cut. Strict (user, 2026-10-03): every NPC, sign and item carries a fact, no flavor text in maps; item pickup lines live in `ITEM_LINES`.
 
 ## 4. Scene architecture
 
@@ -91,7 +91,7 @@ Every mechanic maps to a `FactId`. A mechanic without one is cut.
 
 ```ts
 interface SaveV1 { v: 1; town: TownId; pos: { x: number; y: number }; facing: Dir; flags: FlagId[];
-  seen: FactId[]; starter?: 'react' | 'node' | 'claude'; mode: Mode; textSpeed: 1 | 2 | 3; savedAt: string }
+  seen: FactId[]; starter?: 'react' | 'node' | 'claude'; mode: Mode; savedAt: string | null }  // text speed lives in prefs (pq.prefs.v1), not the save
 export function loadSave(raw: unknown): SaveV1 | null  // migration chain; unknown v -> null
 ```
 Autosave on warp, flag change, dex open (debounced 500 ms).

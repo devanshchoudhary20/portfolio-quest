@@ -1,0 +1,160 @@
+#ui { position: fixed; inset: 0; z-index: 10; pointer-events: none; font-family: "Jersey 10", system-ui, sans-serif; color: var(--ink); }
+#ui button { font-family: inherit; }
+
+.pq-stage { position: fixed; pointer-events: none; overflow: hidden; }
+.pq-full { inset: 0; width: auto; height: auto; overflow: visible; background: #c5cde0; }
+.pq-full::before { content: ""; position: absolute; inset: 22% 0 0; background: #e6dcb9 repeating-conic-gradient(#ddd0aa 0 25%, transparent 0 50%) 0 0 / calc(var(--px) * 32) calc(var(--px) * 32); }
+
+.pq-banner, .pq-hint {
+  position: absolute;
+  padding: calc(var(--px) * 1.5) calc(var(--px) * 4);
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  background: var(--panel);
+  font-size: max(16px, calc(var(--px) * 6));
+}
+.pq-banner { left: calc(var(--px) * 4); top: calc(var(--px) * 4); }
+.pq-hint { right: calc(var(--px) * 4); bottom: calc(var(--px) * 4); color: var(--muted); }
+@media (pointer: coarse) { .pq-hint { display: none; } }
+
+.pq-dialog { position: absolute; left: calc(var(--px) * 8); right: calc(var(--px) * 8); bottom: calc(var(--px) * 5); pointer-events: auto; }
+.pq-intro .pq-dialog { position: fixed; bottom: calc(var(--px) * 6); }
+.pq-tab {
+  display: inline-block;
+  margin-left: calc(var(--px) * 4);
+  padding: 0 calc(var(--px) * 4);
+  border-radius: 8px 8px 0 0;
+  border: 2px solid var(--panel);
+  border-bottom: 0;
+  background: var(--ink);
+  color: var(--panel);
+  font-size: max(16px, calc(var(--px) * 6));
+}
+.pq-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: calc(var(--px) * 4);
+  min-height: calc(var(--px) * 40);
+  padding: calc(var(--px) * 4) calc(var(--px) * 8) calc(var(--px) * 4) calc(var(--px) * 4);
+  box-sizing: border-box;
+  border: 2px solid var(--ink);
+  outline: 2px solid var(--line);
+  outline-offset: -5px;
+  border-radius: 8px;
+  background: var(--panel);
+  cursor: pointer;
+}
+.pq-portrait { flex: none; width: calc(var(--px) * 38); height: calc(var(--px) * 38); image-rendering: pixelated; border-radius: 4px; }
+.pq-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.pq-text { flex: 1; margin: 0; font-size: max(18px, calc(var(--px) * 7)); line-height: 1.3; }
+.pq-text span { opacity: clamp(0, calc(var(--n) - var(--i)), 1); }
+.pq-arrow {
+  position: absolute;
+  right: calc(var(--px) * 6);
+  bottom: calc(var(--px) * 5);
+  border-top: 10px solid var(--cursor);
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  animation: pq-blink 1s steps(1) infinite;
+}
+@keyframes pq-blink { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .pq-arrow { animation: none; } }
+
+.pq-start, .pq-choice {
+  position: absolute;
+  right: calc(var(--px) * 6);
+  top: calc(var(--px) * 16);
+  min-width: max(180px, calc(var(--px) * 56));
+  pointer-events: auto;
+}
+.pq-choice { position: fixed; top: 40%; right: calc(var(--px) * 12); }
+.pq-start > .pq-menu { margin: 0; }
+.pq-menu {
+  list-style: none;
+  margin: 0;
+  padding: calc(var(--px) * 2);
+  border: 2px solid var(--ink);
+  outline: 2px solid var(--line);
+  outline-offset: -5px;
+  border-radius: 8px;
+  background: var(--panel);
+}
+.pq-menu button {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: calc(var(--px) * 1) calc(var(--px) * 3) calc(var(--px) * 1) calc(var(--px) * 8);
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: var(--ink);
+  font-size: max(18px, calc(var(--px) * 7));
+  text-align: left;
+  cursor: pointer;
+}
+.pq-menu small { display: block; font-size: max(16px, calc(var(--px) * 5)); color: var(--muted); }
+.pq-menu button.is-active { background: var(--panel-2); }
+.pq-menu button:focus-visible { outline: 2px solid var(--cursor); outline-offset: -2px; }
+.pq-menu button.is-active::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--px) * 2);
+  top: 50%;
+  translate: 0 -50%;
+  border-left: 10px solid var(--cursor);
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+}
+.pq-note { margin: 8px 0 0; padding: 4px 8px; border-radius: 4px; background: var(--panel); font-size: 16px; }
+.pq-next { position: absolute; right: calc(var(--px) * 3); bottom: calc(var(--px) * 3); padding: 8px; border: 0; border-radius: 4px; background: none; cursor: pointer; }
+.pq-next .pq-arrow { position: static; display: block; }
+.pq-next:focus-visible { outline: 2px solid var(--cursor); }
+
+.pq-touch { position: fixed; inset: 0; pointer-events: none; touch-action: none; user-select: none; -webkit-user-select: none; --pad: #2b3150; }
+.pq-touch button { position: absolute; pointer-events: auto; touch-action: none; border: 0; color: var(--panel); background: var(--pad); font-size: 24px; line-height: 1; padding: 0; -webkit-tap-highlight-color: transparent; }
+.pq-touch button:active { filter: brightness(1.35); }
+.pq-touch .pq-pad { position: absolute; left: 24px; bottom: 96px; width: 144px; height: 144px; }
+.pq-touch .pq-pad button { width: 48px; height: 48px; }
+.pq-touch .pq-pad-up { left: 48px; top: 0; border-radius: 8px 8px 0 0; }
+.pq-touch .pq-pad-left { left: 0; top: 48px; border-radius: 8px 0 0 8px; }
+.pq-touch .pq-pad-right { left: 96px; top: 48px; border-radius: 0 8px 8px 0; }
+.pq-touch .pq-pad-down { left: 48px; top: 96px; border-radius: 0 0 8px 8px; }
+.pq-touch .pq-pad::after { content: ""; position: absolute; left: 48px; top: 48px; width: 48px; height: 48px; background: var(--pad); pointer-events: none; }
+.pq-touch .pq-a, .pq-touch .pq-b { width: 56px; height: 56px; border-radius: 50%; font-size: 28px; }
+.pq-touch .pq-a { right: 24px; bottom: 168px; background: var(--cursor); }
+.pq-touch .pq-b { right: 96px; bottom: 120px; background: var(--panel-2); color: var(--ink); }
+.pq-touch .pq-menu-btn { left: 50%; bottom: 24px; translate: -50% 0; min-width: 96px; min-height: 48px; padding: 0 16px; border-radius: 8px; border: 2px solid var(--panel-2); font-size: 22px; }
+@media (orientation: landscape) {
+  .pq-touch .pq-pad, .pq-touch .pq-a, .pq-touch .pq-b { opacity: 0.7; }
+  .pq-touch .pq-pad { bottom: 24px; }
+  .pq-touch .pq-a { bottom: 72px; }
+  .pq-touch .pq-b { bottom: 24px; }
+  .pq-touch .pq-menu-btn { left: 24px; right: auto; top: 24px; bottom: auto; translate: none; }
+}
+
+.pq-travel {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  min-width: min(calc(var(--px) * 120), 90%);
+  padding: calc(var(--px) * 5) calc(var(--px) * 8);
+  box-sizing: border-box;
+  border: 2px solid var(--ink);
+  outline: 2px solid var(--line);
+  outline-offset: -5px;
+  border-radius: 8px;
+  background: var(--panel);
+  text-align: center;
+  pointer-events: auto;
+}
+.pq-travel p { margin: 0 0 calc(var(--px) * 3); font-size: max(18px, calc(var(--px) * 7)); }
+.pq-travel small { display: block; margin-top: calc(var(--px) * 2); font-size: max(16px, calc(var(--px) * 5)); color: var(--muted); }
+.pq-bar { height: calc(var(--px) * 4); min-height: 10px; border-radius: 999px; background: var(--panel-2); overflow: hidden; }
+.pq-bar i { display: block; height: 100%; width: var(--p); background: #3cc6e8; }
+@media (prefers-reduced-motion: no-preference) {
+  .pq-bar i { background-image: linear-gradient(90deg, transparent, #ffffff66, transparent); background-size: 40% 100%; background-repeat: no-repeat; animation: pq-shimmer 1.2s linear infinite; }
+}
+@keyframes pq-shimmer { from { background-position: -40% 0; } to { background-position: 140% 0; } }
+.pq-travel-menu { display: inline-block; text-align: left; position: static; }

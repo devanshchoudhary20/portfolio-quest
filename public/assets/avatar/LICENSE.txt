@@ -1,0 +1,2 @@
+Hand-drawn for Portfolio Quest by the project owner (see .anbu/design/avatar/draw_sheet.py and portraits.py).
+Not licensed for reuse outside this site.

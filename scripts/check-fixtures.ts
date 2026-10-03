@@ -31,6 +31,8 @@ const cases: Case[] = [
   { name: 'object inside a group layer', args: ['--maps', 'scripts/fixtures/group-layer'], expect: 'unknown factId bogus.in.group' },
   { name: 'layer name is case sensitive', args: ['--maps', 'scripts/fixtures/layer-case'], expect: 'unknown object layer "NPCs"' },
   { name: 'npc without factId', args: ['--maps', 'scripts/fixtures/npc-no-fact'], expect: 'missing factId' },
+  { name: 'flavor npc with a flag and its own text', args: ['--maps', 'scripts/fixtures/flavor-text'], expect: 'free text in a map' },
+  { name: 'flavor text does not stand in for a fact', args: ['--maps', 'scripts/fixtures/flavor-text'], expect: 'missing factId' },
   { name: '--maps without a value', args: ['--maps'], expect: '--maps requires a directory' },
   { name: 'phone with double spaces', args: ['--maps', generated('phone-a', { 'agra.json': note(spacedPhone) })], expect: 'phone number pattern' },
   { name: 'phone with dashes', args: ['--maps', generated('phone-b', { 'agra.json': note(dashedPhone) })], expect: 'phone number pattern' },

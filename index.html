@@ -22,11 +22,14 @@
         "sameAs": ["https://github.com/devanshchoudhary20", "https://www.linkedin.com/in/devansh-choudhary-2381041b1/"]
       }
     </script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <script>document.documentElement.className = 'js';</script>
     <style>
       body { margin: 0; background: #1b1f2e; color: #f7f5ea; font: 18px/1.6 system-ui, sans-serif; }
       main { max-width: 720px; margin: 0 auto; padding: 72px 24px 48px; }
       a { color: #f7f5ea; }
-      .skip { position: fixed; top: 12px; right: 12px; padding: 8px 16px; border-radius: 999px; background: #f7f5ea; color: #1b1f2e; text-decoration: none; font-size: 16px; }
+      .js #seo { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+      .skip { position: fixed; top: 12px; right: 12px; z-index: 100; padding: 8px 16px; border-radius: 8px; border: 2px solid #1b1f2e; background: #f7f5ea; color: #1b1f2e; text-decoration: none; font: 20px "Jersey 10", system-ui, sans-serif; }
       .skip:focus-visible { outline: 2px solid #c8493f; outline-offset: 2px; }
     </style>
   </head>
@@ -38,8 +41,27 @@
       <p>Current role: Member of Technical Staff, Frontend at TestMu AI (formerly LambdaTest). Nov 2025 to Present.</p>
       <p><a href="/resume/">Read the resume</a> or <a href="/resume.pdf">download the PDF</a>.</p>
     </main>
+    <section id="title" class="title" aria-label="Portfolio Quest" hidden>
+      <div class="plate">
+        <p class="logo"><span>Portfolio</span><span class="logo-q">Quest</span></p>
+        <p class="byline">Devansh Choudhary, Frontend Engineer</p>
+      </div>
+      <p id="strip" class="strip" role="status"></p>
+      <nav id="menu" class="menu" aria-label="Main menu">
+        <button type="button" data-act="new">New Game</button>
+        <button type="button" data-act="continue" hidden>Continue<small id="continue-sub"></small></button>
+        <button type="button" data-act="options">Options</button>
+        <a href="/resume/" data-act="recruiter">Recruiter Mode<small>Plain resume, one page.</small></a>
+      </nav>
+      <dialog id="options" class="sheet" aria-labelledby="options-title">
+        <h2 id="options-title">Options</h2>
+        <fieldset id="speed-group"><legend>Text speed</legend></fieldset>
+        <button type="button" id="options-close">Close</button>
+      </dialog>
+    </section>
     <div id="game" aria-hidden="true"></div>
     <div id="ui"></div>
+    <script type="module" src="/src/title/main.ts"></script>
     <script>
       // old single-page anchors (/#experience) now live on /resume/
       (function () {

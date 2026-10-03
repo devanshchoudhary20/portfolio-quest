@@ -9,7 +9,6 @@ const valid = {
   flags: ['shoes'],
   seen: ['agra.summary', 'removed.fact'],
   mode: 'recruiter',
-  textSpeed: 2,
   savedAt: '2026-10-03T10:00:00.000Z',
 };
 
@@ -19,7 +18,7 @@ describe('loadSave', () => {
   });
 
   it('returns null for garbage', () => {
-    for (const raw of [null, undefined, 42, 'x', [], {}, { v: 1 }, { ...valid, town: 'nowhere' }, { ...valid, textSpeed: 9 }, { ...valid, town: 'patch-center' }]) {
+    for (const raw of [null, undefined, 42, 'x', [], {}, { v: 1 }, { ...valid, town: 'nowhere' }, { ...valid, town: 'patch-center' }]) {
       expect(loadSave(raw)).toBeNull();
     }
   });
@@ -27,6 +26,10 @@ describe('loadSave', () => {
   it('keeps the save when savedAt is unreadable', () => {
     expect(loadSave({ ...valid, savedAt: 'last tuesday' })?.savedAt).toBeNull();
     expect(loadSave({ ...valid, savedAt: undefined })?.savedAt).toBeNull();
+  });
+
+  it('ignores a textSpeed field: preferences own it', () => {
+    expect(loadSave({ ...valid, textSpeed: 3 })).not.toHaveProperty('textSpeed');
   });
 
   it('returns null for unknown versions', () => {

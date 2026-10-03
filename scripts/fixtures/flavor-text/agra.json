@@ -1,0 +1,30 @@
+{
+ "layers": [
+  {
+   "name": "npcs",
+   "type": "objectgroup",
+   "objects": [
+    {
+     "name": "mute",
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "npc"
+      },
+      {
+       "name": "flag",
+       "type": "string",
+       "value": "shoes"
+      },
+      {
+       "name": "say",
+       "type": "string",
+       "value": "Good morning!"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
