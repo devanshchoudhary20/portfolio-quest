@@ -183,11 +183,11 @@ for (const line of sections.get('objects') ?? []) {
   layer!.objects.push({ id: nextObjectId++, name: objName, type: props.kind, x: Number(ox) * T, y: Number(oy) * T, width: T, height: T, rotation: 0, visible: true, properties });
 }
 
-// camera regions, "x,y,w,h" in tiles: the camera clamps to the region the player stands in, so a small room is centered
+// camera regions, "name x,y,w,h [indoor]" in tiles: the camera clamps to the region the player stands in, so a small room is centered; indoor regions skip the day/night tint
 const regions = (sections.get('regions') ?? []).map((line) => {
-  const rect = line.trim().split(/\s+/)[1] ?? '';
-  if (!/^\d+,\d+,\d+,\d+$/.test(rect)) fail(`regions: cannot read "${line.trim()}"`);
-  return rect;
+  const [, rect = '', kind = ''] = line.trim().split(/\s+/);
+  if (!/^\d+,\d+,\d+,\d+$/.test(rect) || (kind !== '' && kind !== 'indoor')) fail(`regions: cannot read "${line.trim()}"`);
+  return kind ? `${rect},${kind}` : rect;
 });
 
 const tileLayer = (id: number, layerName: string, data: number[], extra: object = {}) => ({

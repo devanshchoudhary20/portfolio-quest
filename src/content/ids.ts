@@ -9,8 +9,7 @@ export type FlagId = Brand<string, 'FlagId'>;
 export const TOWN_IDS = [
   'agra',
   'gear',
-  'junglee-a',
-  'junglee-b',
+  'junglee',
   'marrfa',
   'testmu',
   'elite',

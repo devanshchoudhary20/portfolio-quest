@@ -2,6 +2,7 @@ import type Phaser from 'phaser';
 import { townId } from '../content';
 import type { TownKey } from '../content';
 import { store } from '../state/store';
+import type { Overworld } from './scenes/Overworld';
 import type { Dir } from './world/save';
 
 const HOLD_MS = 70;
@@ -54,6 +55,9 @@ export function installTestApi(game: Phaser.Game) {
         y: rect.top + ((y * 16 + 8 - camera.worldView.y) * camera.zoom) / dpr,
       };
     },
+    stand(x: number, y: number, facing: Dir) {
+      (game.scene.getScene('Overworld') as Overworld).stand({ x, y }, facing);
+    },
     warp(town: string, spawn?: string) {
       const { phase, actions } = store.getState();
       const world = { town: townId(town as TownKey), ...(spawn ? { spawn } : {}) };
@@ -70,6 +74,7 @@ declare global {
       interact: () => void;
       walk: (dir: Dir, tiles?: number) => Promise<ReturnType<typeof snapshot>>;
       warp: (town: string, spawn?: string) => void;
+      stand: (x: number, y: number, facing: Dir) => void;
       tileToClient: (x: number, y: number) => { x: number; y: number };
     };
   }

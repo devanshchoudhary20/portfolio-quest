@@ -1,22 +1,17 @@
 import { jobs, profile } from '../content';
 import { ContactForm } from './ContactForm';
 import { Education, Experience, SelectedProject, Skills, sectionHead } from './Sections';
-import { currentRoleLine, jobView, summaryText } from './view';
+import { contactLinks, currentRoleLine, jobView, mailtoHref, summaryText } from './view';
 
 const btnBase = 'inline-flex min-h-11 items-center justify-center gap-2 rounded-md px-4 py-2 font-bold no-underline';
 
 export function Resume() {
   const jobViews = jobs.map(jobView);
-  const mailto = `mailto:${profile.email}`;
-  const links = [
-    { label: profile.email, href: mailto },
-    { label: 'GitHub', href: profile.github },
-    { label: 'LinkedIn', href: profile.linkedin },
-  ].map((link) => (
-      <a key={link.label} className="text-accent underline-offset-2 hover:underline" href={link.href}>
-        {link.label}
-      </a>
-    ));
+  const links = contactLinks.map((link) => (
+    <a key={link.label} className="text-accent underline-offset-2 hover:underline" href={link.href}>
+      {link.label}
+    </a>
+  ));
 
   return (
     <>
@@ -42,7 +37,7 @@ export function Resume() {
           <a id="download-pdf" className={`${btnBase} bg-accent text-on-accent`} href="/resume.pdf" download>
             Download PDF
           </a>
-          <a className={`${btnBase} border-2 border-accent text-accent`} href={mailto}>
+          <a className={`${btnBase} border-2 border-accent text-accent`} href={mailtoHref}>
             Email me
           </a>
         </div>

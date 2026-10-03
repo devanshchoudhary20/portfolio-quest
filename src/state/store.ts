@@ -8,7 +8,7 @@ import type { TextSpeed } from './prefs';
 
 export type Phase = 'title' | 'intro' | 'play';
 export type LoadStatus = 'idle' | 'loading' | 'ready' | 'error';
-export type Panel = 'none' | 'menu' | 'options';
+export type Panel = 'none' | 'menu' | 'options' | 'recruiter';
 export type Portrait = 'devansh' | 'mom' | 'professor';
 
 // the title bar's first 40% is the game chunk itself, the shared atlas fills the rest

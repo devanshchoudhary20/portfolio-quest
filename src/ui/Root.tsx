@@ -3,6 +3,7 @@ import { isCoarsePointer, landscapeScale } from '../game/viewport';
 import { Dialog } from './Dialog';
 import { Hud } from './Hud';
 import { ProfessorIntro } from './ProfessorIntro';
+import { RecruiterMode } from './RecruiterMode';
 import { OptionsPanel, StartMenu } from './StartMenu';
 import { Touch } from './Touch';
 import { TravelCard } from './TravelCard';
@@ -40,6 +41,7 @@ export function Root() {
         <Hud />
         {panel === 'menu' ? <StartMenu /> : null}
         {panel === 'options' ? <OptionsPanel /> : null}
+        {panel === 'recruiter' ? <RecruiterMode /> : null}
         {dialog ? <Dialog dialog={dialog} /> : null}
         {travel ? <TravelCard travel={travel} /> : null}
         <p className="pq-sr" aria-live="polite">

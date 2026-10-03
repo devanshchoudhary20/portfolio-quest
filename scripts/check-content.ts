@@ -1,6 +1,10 @@
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { basename, extname, join, relative, resolve } from 'node:path';
 import { education, facts, isFactId, isMapTownId, isTownId, jobs, profile, project, skillGroups, summaryFactId } from '../src/content';
+import { NPC_SPRITES } from '../src/game/world/npcSprites';
+import { DEFAULT_SPAWN } from '../src/game/world/towns';
+import { isWarp, key, neighbors, readMap, reachableTiles } from './tiledMap';
+import type { MapObject, TownMap } from './tiledMap';
 
 const ROOT = resolve(import.meta.dirname, '..');
 const args = process.argv.slice(2);
@@ -25,7 +29,18 @@ const BANNED = /nintendo|pokemon|pikachu|game[\s_-]?freak/i;
 const OBJECT_LAYERS = new Set(['npcs', 'signs', 'items', 'warps', 'encounters']);
 const FACT_LAYERS = new Set(['npcs', 'signs', 'items']);
 const FACT_KINDS = new Set(['npc', 'sign', 'item']);
-const KINDS = new Set(['npc', 'sign', 'item', 'warp', 'grass', 'door', 'spawn']);
+// maps hold no free text: any property key outside its kind's list is an error
+const KEYS_BY_KIND: Record<string, string[]> = {
+  npc: ['kind', 'factId', 'sprite', 'face', 'speaker', 'portrait', 'flag'],
+  sign: ['kind', 'factId', 'speaker'],
+  item: ['kind', 'factId', 'speaker', 'portrait'],
+  warp: ['kind', 'to', 'spawn'],
+  door: ['kind', 'face'],
+  spawn: ['kind', 'face'],
+  grass: ['kind', 'pool'],
+};
+// the Bedroom is where a new game starts, and no door leads back into it from the street
+const EXTRA_START: Record<string, string> = { agra: 'bedroom' };
 const TEXT_EXTS = ['.ts', '.tsx', '.js', '.css', '.json', '.html', '.svg', '.txt', '.xml', '.webmanifest', '.md'];
 
 const errors: string[] = [];
@@ -51,18 +66,11 @@ function scanText(files: string[]) {
   }
 }
 
-interface TiledObject { name?: string; properties?: { name: string; value: unknown }[] }
-interface TiledLayer { name: string; type: string; objects?: TiledObject[]; layers?: TiledLayer[] }
-
-const propsOf = (obj: TiledObject) => Object.fromEntries((obj.properties ?? []).map((p) => [p.name, p.value]));
-const flatten = (layers: TiledLayer[]): TiledLayer[] => layers.flatMap((l) => (l.type === 'group' ? flatten(l.layers ?? []) : [l]));
-
 function loadMaps(dir: string) {
-  const maps = new Map<string, TiledLayer[]>();
+  const maps = new Map<string, TownMap>();
   for (const file of walk(dir, ['.json'])) {
     try {
-      const json = JSON.parse(readFileSync(file, 'utf8')) as { layers?: TiledLayer[] };
-      maps.set(basename(file, '.json'), flatten(json.layers ?? []).filter((l) => l.type === 'objectgroup'));
+      maps.set(basename(file, '.json'), readMap(file));
     } catch {
       errors.push(`${rel(file)} is not valid JSON`);
     }
@@ -101,61 +109,100 @@ function checkContent() {
     for (const key of ['company', 'role', 'start', 'end', 'location'] as const) required.push([`job ${job.id} ${key}`, job[key]]);
   }
   for (const [label, value] of required) if (blank(value)) errors.push(`${label} is empty`);
+  for (const group of skillGroups) if (!isMapTownId(group.town)) errors.push(`skill ${group.id} is set in ${group.town}, which is not a town with a map`);
   if (skillGroups.length === 0) errors.push('skillGroups is empty');
+}
+
+// returns the npc, sign and item objects the player can stand next to
+function checkReach(map: TownMap) {
+  const town = map.name;
+  const talkable = new Set<MapObject>();
+  if (!map.hasGround) {
+    errors.push(`${town}: map has no ground layer`);
+    return talkable;
+  }
+  const starts = [DEFAULT_SPAWN, EXTRA_START[town]].flatMap((name) => (name === undefined ? [] : [name]));
+  const spawnObjects = map.objects.filter((o) => o.layer === 'warps' && !isWarp(o));
+  for (const o of spawnObjects) {
+    if (!map.walkable(o.tile)) errors.push(`${town}/warps/${o.name || '?'}: spawn sits on a blocked tile ${key(o.tile)}`);
+  }
+  const startTiles: MapObject[] = [];
+  for (const name of starts) {
+    const found = spawnObjects.find((o) => o.name === name);
+    if (found) startTiles.push(found);
+    else if (name === DEFAULT_SPAWN) errors.push(`${town}: no "${DEFAULT_SPAWN}" spawn`);
+    else errors.push(`${town}: no "${name}" spawn`);
+  }
+  const reached = reachableTiles(map, startTiles.map((o) => o.tile).filter((t) => map.walkable(t)));
+  const warpTiles = new Set(map.objects.filter(isWarp).map((o) => key(o.tile)));
+  for (const obj of map.objects) {
+    const where = `${town}/${obj.layer}/${obj.name || '?'}`;
+    if (FACT_LAYERS.has(obj.layer)) {
+      if (neighbors(obj.tile).some((n) => reached.has(key(n)) && !warpTiles.has(key(n)))) talkable.add(obj);
+      else errors.push(`${where}: unreachable, no open tile beside ${key(obj.tile)} that the player can walk to`);
+    } else if (isWarp(obj) && !reached.has(key(obj.tile))) {
+      errors.push(`${where}: warp tile ${key(obj.tile)} is never reached`);
+    }
+  }
+  return talkable;
 }
 
 function checkMaps() {
   if (mapsValue === '') {
     errors.push('--maps requires a directory');
-    return 0;
+    return;
   }
   const maps = loadMaps(mapsDir);
   const covered = new Set<string>();
   const spawns = new Map<string, Set<string>>();
+  const before = errors.length;
+  const talkable = new Set<MapObject>();
 
-  for (const [town, layers] of maps) {
-    for (const layer of layers) {
-      if (!OBJECT_LAYERS.has(layer.name)) errors.push(`${town}: unknown object layer "${layer.name}"`);
+  for (const [town, map] of maps) {
+    for (const layer of map.objectLayers) {
+      if (!OBJECT_LAYERS.has(layer)) errors.push(`${town}: unknown object layer "${layer}"`);
     }
-    const names = layers.filter((l) => OBJECT_LAYERS.has(l.name)).flatMap((l) => (l.objects ?? []).map((o) => o.name ?? '').filter(Boolean));
+    const names = map.objects.filter((o) => OBJECT_LAYERS.has(o.layer)).map((o) => o.name).filter(Boolean);
     spawns.set(town, new Set(names));
+    for (const obj of checkReach(map)) talkable.add(obj);
   }
+  const reachErrors = errors.length - before;
 
-  for (const [town, layers] of maps) {
-    for (const layer of layers.filter((l) => OBJECT_LAYERS.has(l.name))) {
-      for (const obj of layer.objects ?? []) {
-        const where = `${town}/${layer.name}/${obj.name || '?'}`;
-        const p = propsOf(obj);
-        const kind = typeof p.kind === 'string' ? p.kind : '';
-        if (!KINDS.has(kind)) errors.push(`${where}: missing or unknown kind "${kind}"`);
-        if (FACT_KINDS.has(kind) || FACT_LAYERS.has(layer.name)) {
-          if (typeof p.factId !== 'string' || p.factId === '') errors.push(`${where}: missing factId`);
-        }
-        if ('say' in p || 'after' in p) errors.push(`${where}: free text in a map, use a factId`);
-        if (typeof p.factId === 'string' && p.factId !== '') {
-          covered.add(p.factId);
-          if (!isFactId(p.factId)) errors.push(`${where}: unknown factId ${p.factId}`);
-        }
-        for (const id of typeof p.pool === 'string' ? p.pool.split(',').map((s) => s.trim()).filter(Boolean) : []) {
-          covered.add(id);
-          if (!isFactId(id)) errors.push(`${where}: unknown factId ${id} in pool`);
-        }
-        if (kind === 'warp') {
-          const to = String(p.to ?? '');
-          const spawn = String(p.spawn ?? '');
-          const target = spawns.get(to);
-          if (!isMapTownId(to)) errors.push(`${where}: dead warp, ${to || '(empty)'} is not a town with a map`);
-          else if (!spawn) errors.push(`${where}: warp to ${to} has no spawn`);
-          else if (!target) warnings.push(`${where}: warp to ${to}, map not built yet`);
-          else if (!target.has(spawn)) errors.push(`${where}: dead spawn ${spawn} in ${to}`);
-        }
+  for (const [town, map] of maps) {
+    for (const obj of map.objects.filter((o) => OBJECT_LAYERS.has(o.layer))) {
+      const where = `${town}/${obj.layer}/${obj.name || '?'}`;
+      const p = obj.props;
+      const kind = p.kind ?? '';
+      const allowed = KEYS_BY_KIND[kind];
+      if (!allowed) errors.push(`${where}: missing or unknown kind "${kind}"`);
+      for (const prop of Object.keys(p)) {
+        if (allowed && !allowed.includes(prop)) errors.push(`${where}: property "${prop}" is not allowed on a ${kind}, maps hold no free text, use a factId`);
+      }
+      if (FACT_KINDS.has(kind) || FACT_LAYERS.has(obj.layer)) {
+        if (!p.factId) errors.push(`${where}: missing factId`);
+      }
+      if (p.factId && !isFactId(p.factId)) errors.push(`${where}: unknown factId ${p.factId}`);
+      // only facts a player can reach count as shown; encounter pools join once encounters ship
+      if (p.factId && talkable.has(obj) && isFactId(p.factId)) covered.add(p.factId);
+      for (const id of p.pool ? p.pool.split(',').map((s) => s.trim()).filter(Boolean) : []) {
+        if (!isFactId(id)) errors.push(`${where}: unknown factId ${id} in pool`);
+      }
+      if (kind === 'npc' && !(NPC_SPRITES as readonly string[]).includes(p.sprite ?? '')) errors.push(`${where}: unknown sprite "${p.sprite ?? ''}"`);
+      if (kind === 'warp') {
+        const to = p.to ?? '';
+        const spawn = p.spawn ?? '';
+        const target = spawns.get(to);
+        if (!isMapTownId(to)) errors.push(`${where}: dead warp, ${to || '(empty)'} is not a town with a map`);
+        else if (!spawn) errors.push(`${where}: warp to ${to} has no spawn`);
+        else if (!target) warnings.push(`${where}: warp to ${to}, map not built yet`);
+        else if (!target.has(spawn)) errors.push(`${where}: dead spawn ${spawn} in ${to}`);
       }
     }
   }
 
   const uncovered = facts.filter((fact) => !covered.has(fact.id)).map((fact) => fact.id);
-  if (uncovered.length) warnings.push(`${uncovered.length} facts not referenced by any map: ${uncovered.join(', ')}`);
-  return maps.size;
+  if (uncovered.length) errors.push(`${uncovered.length} facts not on any reachable npc, sign or item: ${uncovered.join(', ')}`);
+  if (reachErrors === 0) console.log(`check-content: ${facts.length} facts, ${maps.size} maps, all objects reachable`);
 }
 
 function checkLicenses() {
@@ -173,12 +220,11 @@ if (distMode) {
   scanText(walk(distDir, TEXT_EXTS));
 } else {
   checkContent();
-  const mapCount = checkMaps();
+  checkMaps();
   const scanned = [...walk(join(ROOT, 'src'), TEXT_EXTS), ...walk(join(ROOT, 'public'), TEXT_EXTS)];
   if (mapsValue) scanned.push(...walk(mapsDir, ['.json']));
   scanText([...new Set(scanned)]);
   checkLicenses();
-  console.log(`check-content: ${facts.length} facts, ${mapCount} maps`);
 }
 
 for (const w of warnings) console.warn(`WARN  ${w}`);

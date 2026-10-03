@@ -1,0 +1,167 @@
+{
+ "width": 8,
+ "height": 5,
+ "tilewidth": 16,
+ "tileheight": 16,
+ "tilesets": [],
+ "layers": [
+  {
+   "name": "ground",
+   "type": "tilelayer",
+   "width": 8,
+   "height": 5,
+   "data": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "name": "collide",
+   "type": "tilelayer",
+   "width": 8,
+   "height": 5,
+   "data": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "name": "npcs",
+   "type": "objectgroup",
+   "objects": [
+    {
+     "id": 1,
+     "name": "guard",
+     "x": 80,
+     "y": 32,
+     "width": 16,
+     "height": 16,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "npc"
+      },
+      {
+       "name": "factId",
+       "type": "string",
+       "value": "agra.summary"
+      },
+      {
+       "name": "sprite",
+       "type": "string",
+       "value": "mom"
+      },
+      {
+       "name": "text",
+       "type": "string",
+       "value": "Hello there"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "warps",
+   "type": "objectgroup",
+   "objects": [
+    {
+     "id": 2,
+     "name": "default",
+     "x": 16,
+     "y": 32,
+     "width": 16,
+     "height": 16,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "spawn"
+      },
+      {
+       "name": "face",
+       "type": "string",
+       "value": "down"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

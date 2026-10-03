@@ -149,7 +149,7 @@ Happy path
 2. Rows: **Skilldex**, **Bugdex**, **Trainer Card**, **World Map**, **Resume Mart**, **Recruiter Mode**, **Options**, **Save**, **Close**.
 3. Up/down moves the cursor. A opens the row. B or Close shuts the menu.
 4. Save: dialog "Progress saved." Footer of the panel shows "Badges 3 / 5" and "Time 12:40" from the save.
-5. Recruiter Mode row goes to `/resume`.
+5. Recruiter Mode row opens the in-game Recruiter panel (the resume as plain text over the paused game, with contact links). Close or B returns to the Start menu. The Title row and the Professor's offer still go to `/resume/`; `?mode=recruiter` opens the panel after load, or goes to `/resume/` if the engine fails.
 
 | State | What the visitor sees |
 |---|---|

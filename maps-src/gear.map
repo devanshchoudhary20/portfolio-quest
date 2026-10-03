@@ -1,0 +1,171 @@
+// Gear City: the town at x 0-43, then the library (x 50), the Core gym (x 72) and the Patch Center (x 94). Rooms sit far apart so the camera never shows a neighbor.
+map gear 108 24
+pack vendor/ninja-adventure
+
+sheets
+  field   Backgrounds/Tilesets/TilesetField.png
+  house   Backgrounds/Tilesets/TilesetHouse.png
+  nature  Backgrounds/Tilesets/TilesetNature.png
+  elem    Backgrounds/Tilesets/TilesetElement.png
+  floor   Backgrounds/Tilesets/Interior/TilesetInteriorFloor.png
+  wall    Backgrounds/Tilesets/Interior/TilesetWallSimple.png
+  water   Backgrounds/Tilesets/TilesetWater.png
+  pipes   Backgrounds/Tilesets/Pipes.png
+  logic   Backgrounds/Tilesets/TilesetLogic.png
+  ofloor  Backgrounds/Tilesets/TilesetFloor.png
+
+legend
+  a ground field:3,3
+  b ground floor:8,1
+  c ground floor:8,7
+  d stamp nature:0,0 2x2 solid
+  e stamp nature:2,0 2x2 solid
+  f tile elem:0,2 solid
+  g stamp house:12,0 4x3 solid walk=1,2
+  h stamp house:0,0 4x3 solid
+  i stamp house:4,0 4x3 solid
+  j stamp house:8,0 4x3 solid
+  k stamp house:23,0 3x3 solid walk=1,2
+  l stamp house:26,0 3x3 solid walk=1,2
+  m stamp house:16,0 3x3 solid
+  n stamp house:19,0 4x3 solid walk=2,2
+  o stamp house:26,0 3x3 solid
+  p tile wall:0,0 solid
+  q tile wall:1,0 solid
+  r tile wall:4,0 solid
+  s tile wall:0,1 solid
+  t tile wall:4,1 solid
+  u tile wall:0,4 solid
+  v tile wall:1,4 solid
+  w tile wall:4,4 solid
+  x stamp elem:3,7 2x2 solid
+  y stamp elem:8,7 2x2 solid
+  z stamp elem:10,7 2x2 solid
+  A stamp elem:0,7 1x2 solid
+  B stamp elem:2,10 3x1 solid
+  C tile elem:10,0 solid
+  D ground floor:6,13
+  E ground floor:8,1
+  F ground floor:15,0
+  G ground floor:16,0
+  H ground floor:17,0
+  I ground floor:18,0
+  J ground floor:15,1
+  K ground floor:16,1
+  L ground floor:17,1
+  M ground floor:18,1
+  N ground floor:15,2
+  O ground floor:16,2
+  P ground floor:17,2
+  Q ground floor:18,2
+  R ground floor:15,3
+  S ground floor:16,3
+  T ground floor:17,3
+  U ground floor:18,3
+  V ground floor:13,13
+  W stamp house:25,14 4x5 solid walk=9,9
+  X stamp house:25,14 4x5 solid walk=1,4
+  Y stamp elem:6,3 1x2 solid
+  Z stamp water:0,6 3x3 solid
+  0 stamp house:29,11 2x2 solid
+  1 stamp house:29,13 2x2 solid
+  2 stamp house:31,12 2x3 solid
+  3 stamp house:29,8 2x2 solid
+  4 stamp elem:0,3 2x2 solid
+  5 tile elem:4,0 solid
+  6 tile elem:5,0 solid
+  7 stamp pipes:6,0 3x1 solid
+  8 tile pipes:5,0 solid
+  9 tile pipes:5,1 solid
+  ! tile nature:1,11
+  @ tile nature:6,11
+  # tile nature:0,11
+  $ tile nature:3,11
+  % tile nature:5,10
+  & tile nature:9,10
+  * tile nature:3,10
+
+ground
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa____________________________ccccccccccc_________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa______bbbbbbbbbbb___________ccccccccccc___________bbbbbbbbb_____
+EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE______bbbbbbbbbbb___________ccccccccccc___________bbbbbbbbb_____
+DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD______bbbbbbbbbbb___________ccccccccccc___________bbbbbbbbb_____
+DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD______bbbbbbbbbbb___________ccccccccccc___________bbbbbbbbb_____
+EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE______bbbbbbbbbbb___________ccccccccccc___________bbbbbbbbb_____
+aaaaaaaaaaaaaaDDaaaaaDDaaaaaaaaVVVVVVVVVVaaa______bbbbbbbbbbb___________ccccccccccc___________bbbbbbbbb_____
+aaaaaaaaaaaaaaDDaaaaFGHIaaaaaaaVVVVVVVVVVaaa______bbbbbbbbbbb___________ccccccccccc___________bbbbbbbbb_____
+aaaaaaaaaaaaaaaaaaaaJKLMaaaaaaaVVVVVVVVVVaaa______bbbbbbbbbbb___________ccccccccccc___________bbbbbbbbb_____
+aaaaaaaaaaaaaaaaaaaaNOPQaaaaaaaVVVVVVVVVVaaa______bbbbbbbbbbb___________ccccccccccc_________________________
+aaaaaaaaaaaaaaaaaaaaRSTUaaaaaaaVVVVVVVVVVaaa________________________________________________________________
+aaaaDDDDDDDDDDDDDDDDDDDDDDDDDDVVVVVVVVVVVaaa________________________________________________________________
+aaaaDDDDDDDDDDDDDDDDDDDDDDDDDDVVVVVVVVVVVaaa________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaVVVVVVVVVVaaa________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaVVVVVVVVVVaaa________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa________________________________________________________________
+
+things
+d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.................................................................
+............................................................................................................
+d.h....m...W.....j...$n.....o...i....m....d.................................................................
+............................................................................................................
+d...................................$.....d.................................................................
+..i.................*......%!..$.h.....*....................................................................
+d.....k...#....!.g.....h....#l........o...d.................................................................
+..............*!............!...#.......................................pqqqqqqqqqr.........................
+d.@..................%...........&........d.......pqqqqqqqqqr...........sz......z.t...........pqqqqqqqr.....
+...............f..................................sx.y.y.x..t...........s.........t...........sz..C.z.t.....
+..................................................s.........t...........s.........t...........s.......t.....
+..................................................s.........t...........s.........t...........s.......t.....
+d..f......................................d.......s.........t...........s.........t...........sA.....At.....
+..d...#%%X...............%..@!$.......2...........s.B....A..t...........sA.......At...........s.......t.....
+d...Z..............Y....Ye..d.*.0..1.....&d.......s.........t...........s.........t...........s.......t.....
+..&....%.......e.e................................s.........t...........s.........t...........uvvv.vvvw.....
+d.e................$......e..e.7..8.......d.......uvvvv.vvvvw...........uvvvv.vvvvw.........................
+....$..$.....@...........!........9.........................................................................
+d.d.............................3.........d.................................................................
+...................................4....5...................................................................
+d.......!..%.#&........................65*d.................................................................
+..$....@..*..!...%&%........%&...........@..................................................................
+d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.................................................................
+............................................................................................................
+
+objects
+  warps    door-library   7,8 to=gear spawn=library-in
+  warps    library-door   7,9 kind=door face=down
+  warps    door-gym       18,8 to=gear spawn=gym-in
+  warps    gym-door       18,9 kind=door face=down
+  signs    gym-sign       15,9 factId=skill.core speaker="Core Gym"
+  warps    door-patch     30,8 to=gear spawn=patch-in
+  warps    patch-door     30,9 kind=door face=down
+  signs    iit-sign       3,12 factId=gear.btech speaker="IIT Patna"
+  npcs     student        15,13 sprite=student face=left factId=gear.btech speaker="Student"
+  warps    route-agra-a   0,10 to=agra spawn=gear-road
+  warps    route-agra-b   0,11 to=agra spawn=gear-road
+  warps    route-junglee-a 43,10 to=junglee spawn=gear-road
+  warps    route-junglee-b 43,11 to=junglee spawn=gear-road
+  warps    agra-road      1,10 kind=spawn face=right
+  warps    junglee-road   42,10 kind=spawn face=left
+  warps    default        8,10 kind=spawn face=right
+  npcs     librarian      55,11 sprite=librarian face=down factId=gear.leetcode speaker="Librarian"
+  warps    library-exit   55,16 to=gear spawn=library-door
+  warps    library-in     55,15 kind=door face=up
+  npcs     core-leader    77,10 sprite=core face=down factId=skill.core speaker="Core Leader"
+  warps    gym-exit       77,16 to=gear spawn=gym-door
+  warps    gym-in         77,15 kind=door face=up
+  items    pc-box         98,9 factId=patch-center.koalalab speaker="PC"
+  warps    patch-exit     98,15 to=gear spawn=patch-door
+  warps    patch-in       98,14 kind=door face=up
+
+regions
+  town 0,0,44,24
+  library 50,8,11,9 indoor
+  gym 72,7,11,10 indoor
+  patch 94,8,9,8 indoor

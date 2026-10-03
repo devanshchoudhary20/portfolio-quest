@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { CHUNK_SHARE, store } from '../../state/store';
+import { NPC_SPRITES } from '../world/npcSprites';
 
 const FRAME = { frameWidth: 16, frameHeight: 16 };
 
@@ -22,7 +23,7 @@ export class Preload extends Phaser.Scene {
       actions.setLoad('error');
     });
     this.load.spritesheet('player', '/assets/avatar/devansh-walk-sheet-64x64.png', FRAME);
-    this.load.spritesheet('npc-mom', '/assets/ninja-adventure/mom-sheet.png', FRAME);
+    for (const key of NPC_SPRITES) this.load.spritesheet(`npc-${key}`, `/assets/ninja-adventure/${key}-sheet.png`, FRAME);
   }
 
   create() {

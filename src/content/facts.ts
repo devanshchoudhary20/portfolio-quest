@@ -1,5 +1,6 @@
 import { factId, skillGroupId, townId } from './ids';
 import type { TownKey } from './ids';
+import { skillGroups } from './resume';
 import type { Fact } from './types';
 
 const f = (id: string, town: TownKey, short: string, long?: string, tags?: string[]): Fact => ({
@@ -10,6 +11,10 @@ const f = (id: string, town: TownKey, short: string, long?: string, tags?: strin
   ...(tags ? { tags: tags.map(skillGroupId) } : {}),
 });
 
+const skillFacts = skillGroups.map(
+  (group): Fact => ({ id: factId(`skill.${group.id}`), town: group.town, short: `${group.label}: ${group.items.join(', ')}.`, tags: [group.id] }),
+);
+
 export const facts: Fact[] = [
   f(
     'agra.summary',
@@ -19,20 +24,20 @@ export const facts: Fact[] = [
   ),
   f('gear.btech', 'gear', 'B.Tech in Mechanical Engineering, Indian Institute of Technology Patna, 2019 to 2023.'),
   f('gear.leetcode', 'gear', '400+ LeetCode problems solved.'),
-  f('junglee-a.ab', 'junglee-a', 'Product Analyst at Junglee Games, Jun 2023 to Jun 2024.', 'Ran A/B experiments on player-facing features.'),
+  f('junglee-a.ab', 'junglee', 'Product Analyst at Junglee Games, Jun 2023 to Jun 2024.', 'Ran A/B experiments on player-facing features.'),
   f(
     'junglee-b.2fa',
-    'junglee-b',
+    'junglee',
     'Owned the frontend for the company-wide 2FA and account-security flow.',
     'Returned to Junglee as an engineer after a year there as a Product Analyst. Owned the frontend for the company-wide 2FA and account-security flow: state machine, recovery paths, and a feature-flagged rollout across the gaming platform.',
   ),
   f(
     'junglee-b.blog',
-    'junglee-b',
+    'junglee',
     'Built the public Blog / CMS frontend (React + Tailwind).',
     'Built the public Blog / CMS frontend (React + Tailwind) with SSR-friendly metadata, search, pagination and analytics. Awarded Best Developer (Quarterly), 2025.',
   ),
-  f('junglee-b.award', 'junglee-b', 'Awarded Best Developer (Quarterly), 2025.'),
+  f('junglee-b.award', 'junglee', 'Awarded Best Developer (Quarterly), 2025.'),
   f(
     'marrfa.dashboard',
     'marrfa',
@@ -91,4 +96,5 @@ export const facts: Fact[] = [
     'KoalaLab: sole frontend developer on a container-security platform for GitHub Actions.',
     'Built the entire customer-facing site for a container-security platform for GitHub Actions: SBOM viewer, Vulnerability & Advisory tabs, container directory, tag and comparison views. Configured Netlify deploys and the CI lint pipeline.',
   ),
+  ...skillFacts,
 ];

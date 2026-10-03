@@ -4,8 +4,7 @@ import type { TownId, TownKey } from '../../content';
 export const TOWN_NAMES: Record<TownKey, string> = {
   agra: 'Agra',
   gear: 'Gear City',
-  'junglee-a': 'Junglee Jungle',
-  'junglee-b': 'Junglee Jungle',
+  junglee: 'Junglee Jungle',
   marrfa: 'Marrfa Estates',
   testmu: 'TestMu City',
   elite: 'Victory Road',
@@ -16,9 +15,12 @@ export const TOWN_NAMES: Record<TownKey, string> = {
 export const townName = (town: string): string | undefined => (TOWN_NAMES as Record<string, string | undefined>)[town];
 
 // towns whose map ships in public/maps; a warp to any other town gets a "not open yet" line
-export const BUILT_TOWNS: readonly TownId[] = [townId('agra')];
+export const BUILT_TOWNS: readonly TownId[] = (['agra', 'gear', 'junglee', 'marrfa', 'testmu'] as const).map(townId);
 
 export const START = { town: townId('agra'), spawn: 'bedroom' };
+
+// every town map names one landing for a deep link or a fly jump
+export const DEFAULT_SPAWN = 'default';
 
 export const isBuiltTown = (town: string): town is TownId => (BUILT_TOWNS as readonly string[]).includes(town);
 

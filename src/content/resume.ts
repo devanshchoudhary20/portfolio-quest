@@ -23,7 +23,7 @@ export const jobs: [Job, ...Job[]] = [
     facts: ['testmu.cursor', 'testmu.blocks', 'testmu.save', 'testmu.import', 'testmu.sharing', 'testmu.a11y'].map(factId),
   },
   {
-    id: townId('junglee-b'),
+    id: townId('junglee'),
     company: 'Junglee Games',
     role: 'Software Engineer I, Frontend',
     start: 'Jan 2025',
@@ -41,7 +41,7 @@ export const jobs: [Job, ...Job[]] = [
     facts: [factId('marrfa.dashboard')],
   },
   {
-    id: townId('junglee-a'),
+    id: townId('junglee'),
     company: 'Junglee Games',
     role: 'Product Analyst',
     start: 'Jun 2023',
@@ -57,30 +57,35 @@ export const skillGroups: SkillGroup[] = [
     label: 'Core',
     items: ['React 18/19', 'TypeScript', 'Next.js 15', 'Redux / Redux Saga / RTK', 'React Query', 'React Router v6', 'Tailwind', 'Shadcn UI'],
     gymBadge: 'Core Badge',
+    town: townId('gear'),
   },
   {
     id: skillGroupId('design-system'),
     label: 'Design System & A11y',
     items: ['Primer (@primer/react)', 'internal component libraries', 'WCAG 2.1 AA', 'ARIA', 'focus management', 'keyboard navigation'],
     gymBadge: 'Design Badge',
+    town: townId('testmu'),
   },
   {
     id: skillGroupId('monorepo'),
     label: 'Monorepo & Tooling',
     items: ['Turborepo', 'Yarn Workspaces', 'Webpack', 'Vite', 'Jest', 'MSW', 'Git'],
     gymBadge: 'Tooling Badge',
+    town: townId('junglee'),
   },
   {
     id: skillGroupId('cross-stack'),
     label: 'Cross-stack & AI',
     items: ['Go / Python backend contracts', 'feature-flagged rollouts', 'Claude Code'],
     gymBadge: 'Stack Badge',
+    town: townId('testmu'),
   },
   {
     id: skillGroupId('backend'),
     label: 'Backend (working knowledge)',
     items: ['Node.js', 'Express', 'REST API design', 'MySQL', 'PostgreSQL', 'Firebase'],
     gymBadge: 'Backend Badge',
+    town: townId('marrfa'),
   },
 ];
 

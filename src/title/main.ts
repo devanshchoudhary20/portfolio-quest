@@ -1,6 +1,7 @@
 import './title.css';
 import { clearSave, lastPlayedLabel, readStoredSave } from '../game/world/save';
 import { landscapeScale } from '../game/viewport';
+import { START } from '../game/world/towns';
 import { CHUNK_SHARE, store } from '../state/store';
 import { TEXT_SPEED_LABELS, writeTextSpeed } from '../state/prefs';
 import type { LoadStatus } from '../state/store';
@@ -35,6 +36,7 @@ const { actions } = store.getState();
 let notice = '';
 let lastStatus: LoadStatus = 'idle';
 let started = false;
+const wantsRecruiter = new URLSearchParams(location.search).get('mode') === 'recruiter';
 
 function fitScale() {
   root.style.setProperty('--s', String(Math.min(landscapeScale(innerWidth, innerHeight), 6)));
@@ -168,6 +170,14 @@ function loadGame() {
     });
 }
 
+// ?mode=recruiter: the in-game panel over the paused start town, or the static resume when the engine cannot load
+function openRecruiter() {
+  begin(() => {
+    actions.warpGame(store.getState().pendingWarp ?? { town: START.town });
+    actions.openPanel('recruiter');
+  });
+}
+
 function onStore() {
   const state = store.getState();
   if (state.phase !== 'title') {
@@ -175,7 +185,9 @@ function onStore() {
     return;
   }
   render();
-  if (state.load.status === 'ready' && state.pendingWarp) actions.warpGame(state.pendingWarp);
+  if (wantsRecruiter && state.load.status === 'error') location.replace('/resume/');
+  else if (state.load.status === 'ready' && wantsRecruiter) openRecruiter();
+  else if (state.load.status === 'ready' && state.pendingWarp) actions.warpGame(state.pendingWarp);
 }
 
 function init() {

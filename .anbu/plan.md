@@ -40,7 +40,7 @@ grid-engine 2.52.1 on Phaser 4.2.1 via npm override, behind a 6-method adapter `
 index.html                 game shell: SEO text block, skip link, #game, #ui
 resume/index.html          Vite MPA entry; prerendered at build
 netlify.toml               build cmd, functions dir, headers, redirects
-public/maps/<town>.json    Tiled exports (agra, gear, junglee-a, junglee-b, marrfa, testmu, elite)
+public/maps/<town>.json    Tiled exports (agra, gear, junglee, marrfa, testmu, elite); Junglee is one map with an Analyst-era and an SE I-era area
 public/assets/<pack>/      sprites + LICENSE per pack (checked in CI)
 src/content/               resume facts
 src/state/store.ts

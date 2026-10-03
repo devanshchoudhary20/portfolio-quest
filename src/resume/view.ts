@@ -1,4 +1,4 @@
-import { education, factById, jobs, project, summaryFactId } from '../content';
+import { education, factById, jobs, profile, project, summaryFactId } from '../content';
 import type { FactId, Job } from '../content';
 
 export interface JobView {
@@ -10,7 +10,7 @@ export interface JobView {
   bullets: { key: string; text: string }[];
 }
 
-// build-time only: a bad id fails the prerender instead of rendering a fallback
+// the prerender and the game both import this; check-content's job-fact check keeps a bad id from reaching either
 function requireFact(id: FactId) {
   const fact = factById.get(id);
   if (!fact) throw new Error(`unknown factId ${id}`);
@@ -45,3 +45,13 @@ export const projectHeading = `${project.name}, ${project.role}`;
 export const projectHost = new URL(project.url).host.replace(/^www\./, '');
 const projectFact = requireFact(project.id);
 export const projectSummary = projectFact.long ?? projectFact.short;
+
+export const mailtoHref = `mailto:${profile.email}`;
+
+// the phone number is never a contact link
+export const contactLinks = [
+  { label: profile.email, href: mailtoHref },
+  { label: 'GitHub', href: profile.github },
+  { label: 'LinkedIn', href: profile.linkedin },
+  { label: project.name, href: project.url },
+];

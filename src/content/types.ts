@@ -23,6 +23,8 @@ export interface SkillGroup {
   label: string;
   items: string[];
   gymBadge: string;
+  // the town whose gym leader reads this group
+  town: TownId;
 }
 
 export interface Project {

@@ -94,8 +94,10 @@ objects
   warps   ground-door   94,8  kind=door face=up
   warps   bedroom-landing 62,7 kind=spawn face=left
   warps   ground-landing  96,2 kind=spawn face=left
+  warps   gear-road     28,10 kind=spawn face=left
+  warps   default       7,8   kind=spawn face=down
 
 regions
   town    0,0,30,20
-  bedroom 56,1,9,8
-  kitchen 90,1,9,9
+  bedroom 56,1,9,8 indoor
+  kitchen 90,1,9,9 indoor

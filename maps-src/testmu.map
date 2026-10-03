@@ -1,0 +1,290 @@
+// TestMu City: the town at x 0-55 (formerly Lambda City), the KaneAI tower as stacked rooms at x 62-182 (lobby, four floors, basement), and the Design System and Cross-stack gym rooms at x 206 and 230. Rooms sit far apart so the camera never shows a neighbor.
+map testmu 242 36
+pack vendor/ninja-adventure
+
+sheets
+  field   Backgrounds/Tilesets/TilesetField.png
+  house   Backgrounds/Tilesets/TilesetHouse.png
+  nature  Backgrounds/Tilesets/TilesetNature.png
+  elem    Backgrounds/Tilesets/TilesetElement.png
+  floor   Backgrounds/Tilesets/Interior/TilesetInteriorFloor.png
+  wall    Backgrounds/Tilesets/Interior/TilesetWallSimple.png
+  water   Backgrounds/Tilesets/TilesetWater.png
+  pipes   Backgrounds/Tilesets/Pipes.png
+  logic   Backgrounds/Tilesets/TilesetLogic.png
+  ofloor  Backgrounds/Tilesets/TilesetFloor.png
+
+legend
+  a ground field:3,3
+  b ground floor:8,7
+  c stamp nature:0,0 2x2 solid
+  d tile elem:0,2 solid
+  e stamp house:8,0 4x3 solid walk=1,2
+  f stamp house:12,0 4x3 solid walk=1,2
+  g stamp house:0,0 4x3 solid
+  h stamp house:8,0 4x3 solid
+  i stamp house:12,0 4x3 solid
+  j stamp house:16,0 3x3 solid
+  k stamp house:26,0 3x3 solid
+  l stamp house:25,14 4x5 solid walk=1,4
+  m tile wall:0,0 solid
+  n tile wall:1,0 solid
+  o tile wall:4,0 solid
+  p tile wall:0,1 solid
+  q tile wall:4,1 solid
+  r tile wall:0,4 solid
+  s tile wall:1,4 solid
+  t tile wall:4,4 solid
+  u stamp elem:3,7 2x2 solid
+  v stamp elem:8,7 2x2 solid
+  w stamp elem:10,7 2x2 solid
+  x stamp elem:0,7 1x2 solid
+  y stamp elem:2,10 3x1 solid
+  z tile elem:8,11
+  A tile elem:0,0 solid
+  B tile elem:5,9 solid
+  C tile elem:6,0 solid
+  D ground floor:6,13
+  E ground floor:8,1
+  F ground floor:13,13
+  G ground floor:15,0
+  H ground floor:16,0
+  I ground floor:17,0
+  J ground floor:18,0
+  K ground floor:15,1
+  L ground floor:16,1
+  M ground floor:17,1
+  N ground floor:18,1
+  O ground floor:15,2
+  P ground floor:16,2
+  Q ground floor:17,2
+  R ground floor:18,2
+  S ground floor:15,3
+  T ground floor:16,3
+  U ground floor:17,3
+  V ground floor:18,3
+  W stamp house:27,20 1x2 solid
+  X stamp elem:6,3 1x2 solid
+  Y stamp house:19,0 4x3 solid
+  Z stamp house:23,0 3x3 solid
+  0 stamp elem:11,1 4x1 solid
+  1 tile nature:1,10 solid
+  2 stamp water:0,6 3x3 solid
+  3 tile nature:0,11
+  4 tile nature:1,11
+  5 tile nature:6,11
+  6 tile nature:3,11
+  7 tile nature:3,10
+  8 tile nature:5,10
+  9 tile nature:9,10
+  ! ground floor:12,7
+  @ tile wall:5,6 solid
+  # tile wall:5,10 solid
+  $ tile wall:6,6 solid
+  % tile wall:6,10 solid
+  & tile wall:9,6 solid
+  * tile wall:9,10 solid
+  + tile wall:5,7 solid
+  - tile wall:9,7 solid
+  ~ ground floor:15,6
+  ^ ground floor:16,6
+  ? ground floor:17,6
+  : ground floor:18,6
+  ; ground floor:15,7
+  < ground floor:16,7
+  > ground floor:17,7
+  | ground floor:18,7
+  À ground floor:15,8
+  Á ground floor:16,8
+  Â ground floor:17,8
+  Ã ground floor:18,8
+  Ä ground floor:15,9
+  Å ground floor:16,9
+  Æ ground floor:17,9
+  Ç ground floor:18,9
+  È ground floor:19,7
+  É tile logic:0,0 solid
+  Ê tile logic:0,4
+  Ë tile logic:0,5
+  Ì ground floor:8,7
+  Í tile logic:6,0 solid
+  Î tile logic:2,4
+  Ï tile logic:0,6
+  Ð tile logic:2,5
+  Ñ tile logic:3,1
+  Ò tile wall:0,0 solid
+  Ó tile wall:0,4 solid
+  Ô tile wall:1,0 solid
+  Õ tile wall:1,4 solid
+  Ö tile wall:4,0 solid
+  Ø tile wall:4,4 solid
+  Ù tile wall:0,1 solid
+  Ú tile wall:4,1 solid
+  Û ground floor:12,1
+  Ü ground water:6,14
+  Ý tile wall:0,6 solid
+  Þ tile wall:0,10 solid
+  ß tile wall:1,6 solid
+  α tile wall:1,10 solid
+  β tile wall:4,6 solid
+  γ tile wall:4,10 solid
+  δ tile wall:0,7 solid
+  ε tile wall:4,7 solid
+  ζ tile elem:4,2 solid
+  η tile logic:5,0
+  θ tile logic:0,0
+  ι tile logic:1,0
+  κ tile logic:2,0
+  λ tile logic:3,0
+  μ tile logic:4,0
+  ν tile logic:6,0
+  ξ tile logic:7,0
+  π tile pipes:6,0 solid
+  ρ tile pipes:7,0 solid
+  σ tile pipes:8,0 solid
+
+ground
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa__________________________________________________________________________________________________________________________________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa__________________________________________________________________________________________________________________________________________________________________________________________
+aaDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDaa______!!!!!!!!!!!_____________ÈÈÈÈÈÈÈÈÈÈÈ_____________EEEEEEEEEEE_____________EEEEEEEEEEE_____________ÜÜÜÜÜÜÜÜÜÜÜ_____________FFFFFFFFFFF_____________bbbbbbbbbbb_____________bbbbbbbbbbb_
+aaDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDaa______!!!!!!!!!!!_____________ÈÈÈÈÈÈÈÈÈÈÈ_____________EEEEEEEEEEE_____________EEEEEEEEEEE_____________ÜÜÜÜÜÜÜÜÜÜÜ_____________FFFFFFFFFFF_____________bbbbbbbbbbb_____________bbbbbbbbbbb_
+aaDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDaa______!!!!!!!!!!!_____________ÈÈÈÈÈÈÈÈÈÈÈ_____________EEEEEEEEEEE_____________EEEEEEEEEEE_____________ÜÜÜÜÜÜÜÜÜÜÜ_____________FFFFFFFFFFF_____________bbbbbbbbbbb_____________bbbbbbbbbbb_
+aaDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDaa______!!!!~^?:!!!_____________ÈÈÈÈÈÈÈÈÈÈÈ_____________EEEEEEEEEEE_____________EEEEEÛÛEEEE_____________ÜÜÜÜÜÜÜÜÜÜÜ_____________FFFFFFFFFFF_____________bbbbbbbbbbb_____________bbbbbbbbbbb_
+aaDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDaa______!!!!;<>|!!!_____________ÈÈÈÈÈÈÈÈÈÈÈ_____________EEEEEEEEEEE_____________EEEEEEEEEEE_____________ÜÜÜÜÜÜÜÜÜÜÜ_____________FFFFFFFFFFF_____________bbbbbbbbbbb_____________bbbbbbbbbbb_
+aaDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDaa______!!!!ÀÁÂÃ!!!_____________ÈÈÈÈÈÈÈÈÈÈÈ_____________EÌÌÌÌÌÌÌÌÌE_____________EEEEEEEEEEE_____________ÜÜÜÜÜÜÜÜÜÜÜ_____________FFFFFFFFFFF_____________bbbbbbbbbbb_____________bbbbbbbbbbb_
+aaDDDDDDDDDDDDDDDDDDDDDDDGHIJDDDDDDDDDDDDDDDDDDDDDDDDDaa______!!!!ÄÅÆÇ!!!_____________ÈÈÈÈÈÈÈÈÈÈÈ_____________EÌÌÌÌÌÌÌÌÌE_____________EEEEEEEEEEE_____________ÜÜÜÜÜÜÜÜÜÜÜ_____________FFFFFFFFFFF_____________bbbbbbbbbbb_____________bbbbbbbbbbb_
+aaDDDDDDDDDDDDDDDDDDDDDDDKLMNDDDDDDDDDDDDDDDDDDDDDDDDDaa______!!!!!!!!!!!_____________ÈÈÈÈÈÈÈÈÈÈÈ_____________EÌÌÌÌÌÌÌÌÌE_____________EEEEEEEEEEE_____________ÜÜÜÜÜÜÜÜÜÜÜ_____________FFFFFFFFFFF_____________bbbbbbbbbbb_____________bbbbbbbbbbb_
+aaDDDDDDDDDDDDDDDDDDDDDDDOPQRDDDDDDDDDDDDDDDDDDDDDDDDDaa______!!!!!!!!!!!_____________ÈÈÈÈÈÈÈÈÈÈÈ_____________EEEEEEEEEEE_____________EEEEEEEEEEE_____________ÜÜÜÜÜÜÜÜÜÜÜ_____________FFFFFFFFFFF_____________bbbbbbbbbbb_____________bbbbbbbbbbb_
+EEEEEEEEEEEEEEEEEEEEEEEEESTUVEEEEEEEEEEEEEEEEEEEEEEEEEEE______________________________________________________________________________________________________________________________________________________bbbbbbbbbbb_____________bbbbbbbbbbb_
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF__________________________________________________________________________________________________________________________________________________________________________________________
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF__________________________________________________________________________________________________________________________________________________________________________________________
+EEEEEEEEEEEEEEEEEEEEEEEEEEEEFFEEEEEEEEEEEEEEEEEEEEEEEEEE__________________________________________________________________________________________________________________________________________________________________________________________
+aaDDDDDDDDDDDDDDDDDDDDDDDDDEFFEDDDDDDDDDDDDDDDDDDDDDDDaa__________________________________________________________________________________________________________________________________________________________________________________________
+aaDDDDDDDDDDDDDDDDDDDDDDDDDEFFEDDDDDDDDDDDDDDDDDDDDDDDaa__________________________________________________________________________________________________________________________________________________________________________________________
+aaDDDDDDDDDDDDDDDDDDDDDDDDDEFFEDDDDDDDDDDDDDDDDDDDDDDDaa__________________________________________________________________________________________________________________________________________________________________________________________
+aaDDDDDDDDDDDDDDDDDDDDDDDDDEFFEDDDDDDDDDDDDDDDDDDDDDDDaa__________________________________________________________________________________________________________________________________________________________________________________________
+aaDDDDDDDDDDDDDDDDDDDDDDDDDEFFEDDDDDDDDDDDDDDDDDDDDDDDaa__________________________________________________________________________________________________________________________________________________________________________________________
+aaDDDDDDDDDDDDDDDDDDDDDDDDDEFFEDDDDDDDDDDDDDDDDDDDDDDDaa__________________________________________________________________________________________________________________________________________________________________________________________
+aaDDDDDDDDDDDDDDDDDDDDDDDDDEFFEDDDDDDDDDDDDDDDDDDDDDDDaa__________________________________________________________________________________________________________________________________________________________________________________________
+aaDDDDDDDDDDDDDDDDDDDDDDDDDEFFEDDDDDDDDDDDDDDDDDDDDDDDaa__________________________________________________________________________________________________________________________________________________________________________________________
+aaEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEaa__________________________________________________________________________________________________________________________________________________________________________________________
+aaFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFaa__________________________________________________________________________________________________________________________________________________________________________________________
+aaFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFaa__________________________________________________________________________________________________________________________________________________________________________________________
+aaEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEaa__________________________________________________________________________________________________________________________________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaEFFEaaaaaaaaaaaaaaaaaaaaaaaaa__________________________________________________________________________________________________________________________________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaEFFEaaaaaaaaaaaaaaaaaaaaaaaaa__________________________________________________________________________________________________________________________________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaEFFEaaaaaaaaaaaaaaaaaaaaaaaaa__________________________________________________________________________________________________________________________________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaEFFEaaaaaaaaaaaaaaaaaaaaaaaaa__________________________________________________________________________________________________________________________________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaEFFEaaaaaaaaaaaaaaaaaaaaaaaaa__________________________________________________________________________________________________________________________________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaEFFEaaaaaaaaaaaaaaaaaaaaaaaaa__________________________________________________________________________________________________________________________________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaEFFEaaaaaaaaaaaaaaaaaaaaaaaaa__________________________________________________________________________________________________________________________________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaFFaaaaaaaaaaaaaaaaaaaaaaaaaa__________________________________________________________________________________________________________________________________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaFFaaaaaaaaaaaaaaaaaaaaaaaaaa__________________________________________________________________________________________________________________________________________________________________________________________
+
+things
+c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c.c...........................................................................................................................................................................................
+..................................................................................................................................................................................................................................................
+c.....................................................c.......@$$$$$$$$$&.............@$$$$$$$$$&.............@$$$$$$$$$&.............ÒÔÔÔÔÔÔÔÔÔÖ.............Ýßßßßßßßßßβ.............Ýßßßßßßßßßβ.............mnnnnnnnnno.............mnnnnnnnnno.
+..i...k..g...j..h........l.......j..g...k..h...i..............+z.......z-.............+........z-.............+.Î......z-.............Ù.u...v..zÚ.............δ.........ε.............δ...ζ..ζ.zε.............pw......w.q.............pw......w.q.
+c...................................................1.c.......+...y.....-.............+ÉÉÉdÉÉÉ..-.............+.........-.............Ù.........Ú.............δ.AAA.AAACε.............δ......η..ε.............p.........q.............p.........q.
+.....................1..W....W................................+x........-.............+........Ê-.............+......Ï..-.............Ù...A..B..Ú.............δ.A....A..ε.............δ..η......ε.............p.........q.............p.........q.
+c..1...1..0....1....1...........1.....1.....0....1..1.c.......+.........-.............+.ÉÉÉÉÉÉÉÉ-.............+.ÍÍÍÍÍÍÍ.-.............Ù.........Ú.............δ.........ε.............δζ....η...ε.............p.........q.............p.........q.
+..............................................................+x.......x-.............+Ë........-.............+.........-.............Ù..x......Ú.............δ.AA....AAε.............δ...η.....ε.............pθικλμηνξ.q.............p.πρσ.πρσ.q.
+c.g...i...h...Y...j....X.......X.h...Z..g...Y...i.....c.......+.........-.............+ÉÉÉÉÉÉÉÉ.-.............+.........-.............Ù.........Ú.............δ.......A.ε.............δ.η.....η.ε.............px.......xq.............px.......xq.
+..............................................................+.........-.............+z........-.............+z.Ð....Ñ.-.............Ùz........Ú.............δz........ε.............δζ..ζ....ζε.............p.........q.............p.........q.
+c.....................................................c.......#%%%%.%%%%*.............#%%%%%%%%%*.............#%%%%%%%%%*.............ÓÕÕÕÕÕÕÕÕÕØ.............Þαααααααααγ.............Þαααααααααγ.............p.........q.............p.........q.
+..............................................................................................................................................................................................................rssss.sssst.............rssss.sssst.
+......................................................c...........................................................................................................................................................................................
+..................................................................................................................................................................................................................................................
+c..d..................................................c...........................................................................................................................................................................................
+....1.......1.......1...............1.......1.......1.............................................................................................................................................................................................
+c.h.............g.......X..........1.......g..........c...........................................................................................................................................................................................
+........f.....d.....Y............Z....e.........k.................................................................................................................................................................................................
+c...........X.......................X.................c...........................................................................................................................................................................................
+...............1..................................................................................................................................................................................................................................
+c.g.........j...i...Y............h.........g....k.....c...........................................................................................................................................................................................
+..................................................................................................................................................................................................................................................
+c.....................................................c...........................................................................................................................................................................................
+..................................................................................................................................................................................................................................................
+c.....................................................c...........................................................................................................................................................................................
+..................................................................................................................................................................................................................................................
+c.....................................................c...........................................................................................................................................................................................
+...c.....90...X...6....8...........74......4.8.....8..............................................................................................................................................................................................
+c.4...2...3c.........c..c......c....g....i....j.......c...........................................................................................................................................................................................
+...5.3...5.........94............2...............3..7.............................................................................................................................................................................................
+c..c.........56.c....6..X..........................4.8c...........................................................................................................................................................................................
+.........95...9......c................9......7....c.7.............................................................................................................................................................................................
+c.48.....c.9.c..........c...........4.c.X..9.c.......8c...........................................................................................................................................................................................
+........7...4..9.....3.........498...5......9.....3...............................................................................................................................................................................................
+c.c.c.c.c.c.c.c.c.c.c.c.c.c...c.c.c.c.c.c.c.c.c.c.c.c.c...........................................................................................................................................................................................
+..................................................................................................................................................................................................................................................
+
+objects
+  signs    rename         3,14 factId=testmu.rename speaker="Welcome Sign"
+  warps    door-tower     26,7 to=testmu spawn=lobby-in
+  warps    tower-door     26,8 kind=door face=down
+  warps    door-design    9,19 to=testmu spawn=design-in
+  warps    design-door    9,20 kind=door face=down
+  warps    door-cross     39,19 to=testmu spawn=cross-in
+  warps    cross-door     39,20 kind=door face=down
+  npcs     designer       13,16 sprite=designer face=left factId=testmu.a11y speaker="Component Designer"
+  signs    a11y-score     14,17 factId=testmu.a11y speaker="Accessibility Score"
+  warps    route-marrfa-a 0,12 to=marrfa spawn=testmu-road
+  warps    route-marrfa-b 0,13 to=marrfa spawn=testmu-road
+  warps    route-elite-a  28,35 to=elite spawn=testmu-road
+  warps    route-elite-b  29,35 to=elite spawn=testmu-road
+  warps    marrfa-road    1,12 kind=spawn face=right
+  warps    default        6,12 kind=spawn face=right
+  warps    lobby-exit     67,10 to=testmu spawn=tower-door
+  warps    lobby-in       67,9 kind=door face=up
+  warps    lobby-up       71,3 to=testmu spawn=f1-from-below
+  warps    lobby-from-above 71,4 kind=spawn face=down
+  warps    lobby-down     63,3 to=testmu spawn=basement-from-above
+  warps    lobby-from-below 64,3 kind=spawn face=down
+  npcs     reception      67,6 sprite=reception face=up factId=testmu.sharing speaker="Reception"
+  warps    f1-up          95,3 to=testmu spawn=f2-from-below
+  warps    f1-from-above  95,4 kind=spawn face=down
+  warps    f1-down        87,9 to=testmu spawn=lobby-from-above
+  warps    f1-from-below  88,9 kind=spawn face=down
+  signs    cursor-sign    90,4 factId=testmu.cursor speaker="Cursor Maze"
+  npcs     cursor-robot   91,3 sprite=robot face=down factId=testmu.cursor speaker="Robot"
+  warps    f2-up          119,3 to=testmu spawn=f3-from-below
+  warps    f2-from-above  119,4 kind=spawn face=down
+  warps    f2-down        111,9 to=testmu spawn=f1-from-above
+  warps    f2-from-below  112,9 kind=spawn face=down
+  npcs     if-else        114,4 sprite=analyst face=down factId=testmu.blocks speaker="If / Else"
+  npcs     while-loop     116,8 sprite=editor face=up factId=testmu.blocks speaker="While Loop"
+  warps    f3-up          143,3 to=testmu spawn=f4-from-below
+  warps    f3-from-above  143,4 kind=spawn face=down
+  warps    f3-down        135,9 to=testmu spawn=f2-from-above
+  warps    f3-from-below  136,9 kind=spawn face=down
+  items    save-crate     138,5 factId=testmu.save speaker="Save Crate"
+  items    save-envelope  141,5 factId=testmu.save speaker="Save Envelope"
+  warps    f4-down        159,9 to=testmu spawn=f3-from-above
+  warps    f4-from-below  160,9 kind=spawn face=down
+  items    dock-crates    167,4 factId=testmu.import speaker="Import Dock"
+  npcs     dock-worker    163,6 sprite=student face=down factId=testmu.import speaker="Dock Worker"
+  warps    basement-up    191,3 to=testmu spawn=lobby-from-below
+  warps    basement-from-above 191,4 kind=spawn face=down
+  npcs     ghost-1        184,4 sprite=ghost face=down factId=testmu.bugs speaker="Ghost Bug"
+  npcs     ghost-2        187,5 sprite=ghost face=down factId=testmu.bugs speaker="Ghost Bug"
+  npcs     ghost-3        190,6 sprite=ghost face=down factId=testmu.bugs speaker="Ghost Bug"
+  npcs     ghost-4        185,7 sprite=ghost face=down factId=testmu.bugs speaker="Ghost Bug"
+  npcs     ghost-5        188,8 sprite=ghost face=down factId=testmu.bugs speaker="Ghost Bug"
+  npcs     design-leader  211,5 sprite=design face=down factId=skill.design-system speaker="Design Leader"
+  warps    design-exit    211,11 to=testmu spawn=design-door
+  warps    design-in      211,10 kind=door face=up
+  npcs     cross-leader   235,5 sprite=cross face=down factId=skill.cross-stack speaker="Stack Leader"
+  warps    cross-exit     235,11 to=testmu spawn=cross-door
+  warps    cross-in       235,10 kind=door face=up
+
+regions
+  town 0,0,56,36
+  lobby 62,2,11,9 indoor
+  floor1 86,2,11,9 indoor
+  floor2 110,2,11,9 indoor
+  floor3 134,2,11,9 indoor
+  floor4 158,2,11,9 indoor
+  basement 182,2,11,9 indoor
+  design-gym 206,2,11,10 indoor
+  cross-gym 230,2,11,10 indoor

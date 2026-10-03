@@ -10,7 +10,7 @@ import { interactWith } from '../world/interact';
 import { objectAt, readObjects } from '../world/objects';
 import type { WorldObject } from '../world/objects';
 import type { Dir } from '../world/save';
-import { START, isBuiltTown, townName } from '../world/towns';
+import { DEFAULT_SPAWN, isBuiltTown, townName } from '../world/towns';
 
 // 0.27 s per tile; holding B with the Running Shoes doubles it
 const WALK_SPEED = 1 / 0.27;
@@ -35,16 +35,18 @@ interface Region {
   y: number;
   w: number;
   h: number;
+  // interiors ignore the day/night tint
+  indoor: boolean;
 }
 
-// the map's "regions" property: "x,y,w,h" tile rectangles joined by semicolons
+// the map's "regions" property: "x,y,w,h[,indoor]" tile rectangles joined by semicolons
 function parseRegions(properties: unknown): Region[] {
   const raw = (Array.isArray(properties) ? (properties as { name: string; value: unknown }[]).find((p) => p.name === 'regions')?.value : '') ?? '';
   return String(raw)
     .split(';')
-    .map((rect) => rect.split(',').map(Number))
-    .filter((n) => n.length === 4 && n.every(Number.isFinite))
-    .map(([x = 0, y = 0, w = 0, h = 0]) => ({ x, y, w, h }));
+    .map((rect) => rect.split(','))
+    .filter((parts) => parts.slice(0, 4).length === 4 && parts.slice(0, 4).every((n) => Number.isFinite(Number(n))))
+    .map(([x = '0', y = '0', w = '0', h = '0', kind]) => ({ x: Number(x), y: Number(y), w: Number(w), h: Number(h), indoor: kind === 'indoor' }));
 }
 
 export class Overworld extends Phaser.Scene {
@@ -55,6 +57,7 @@ export class Overworld extends Phaser.Scene {
   private lastPulse = 0;
   private speed = WALK_SPEED;
   private tint: Phaser.GameObjects.Rectangle | null = null;
+  private indoor = false;
   private cleanups: (() => void)[] = [];
   private regions: Region[] = [];
   private tapping = false;
@@ -73,6 +76,7 @@ export class Overworld extends Phaser.Scene {
     this.busy = true;
     this.objects = [];
     this.tint = null;
+    this.indoor = false;
     this.cleanups = [];
     this.tapping = false;
     this.speed = WALK_SPEED;
@@ -128,6 +132,10 @@ export class Overworld extends Phaser.Scene {
     this.mover = new GridMover(this);
     this.mover.create(map);
     const start = this.resolveStart();
+    if (!start) {
+      this.showTravelError();
+      return;
+    }
     const player = this.add.sprite(0, 0, PLAYER);
     this.mover.addChar(PLAYER, player, start.tile, { speed: WALK_SPEED, facing: start.facing });
     this.addNpcs();
@@ -184,10 +192,11 @@ export class Overworld extends Phaser.Scene {
     return spawn ? { tile: { x: spawn.x, y: spawn.y }, facing: (spawn.props.face ?? 'down') as Dir } : null;
   }
 
-  private resolveStart(): { tile: Tile; facing: Dir } {
+  // null only when the map lacks its default spawn, which check-content rejects
+  private resolveStart() {
     const { pos, facing, spawn } = this.request;
     if (pos) return { tile: pos, facing: facing ?? 'down' };
-    return this.spawnTile(spawn) ?? this.spawnTile(START.spawn) ?? { tile: { x: 0, y: 0 }, facing: 'down' };
+    return this.spawnTile(spawn) ?? this.spawnTile(DEFAULT_SPAWN);
   }
 
   private addNpcs() {
@@ -201,6 +210,7 @@ export class Overworld extends Phaser.Scene {
   private clampCamera(tile: Tile) {
     this.tile = tile;
     const region = this.regions.find((r) => tile.x >= r.x && tile.x < r.x + r.w && tile.y >= r.y && tile.y < r.y + r.h);
+    this.indoor = region?.indoor ?? false;
     if (!region) return;
     const camera = this.cameras.main;
     const width = Math.max(region.w * TILE, camera.width / camera.zoom);
@@ -241,6 +251,7 @@ export class Overworld extends Phaser.Scene {
 
   private syncTint() {
     if (!this.tint) return;
+    this.tint.setVisible(!this.indoor);
     const view = this.cameras.main.worldView;
     this.tint.setPosition(view.centerX, view.centerY).setSize(view.width + 64, view.height + 64);
   }
@@ -289,14 +300,18 @@ export class Overworld extends Phaser.Scene {
     this.scene.restart(request);
   }
 
+  // test API only: put the player on a tile facing a direction, as a warp spawn does
+  stand(tile: Tile, facing: Dir) {
+    this.mover.place(PLAYER, tile, facing);
+    this.clampCamera(tile);
+    store.getState().actions.setPlayer(this.request.town, tile, facing);
+  }
+
   private teleport(spawn: string | undefined) {
     const dest = this.spawnTile(spawn);
     if (dest) {
-      this.mover.place(PLAYER, dest.tile, dest.facing);
-      this.clampCamera(dest.tile);
-      const { actions } = store.getState();
-      actions.setPlayer(this.request.town, dest.tile, dest.facing);
-      actions.requestSave();
+      this.stand(dest.tile, dest.facing);
+      store.getState().actions.requestSave();
     }
     if (!store.getState().reducedMotion) this.cameras.main.fadeIn(FADE_MS);
     this.busy = false;

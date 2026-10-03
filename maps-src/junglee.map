@@ -1,0 +1,177 @@
+// Junglee Jungle: one forest, two eras. West of the gate (x 0-33) is the Analyst entrance with paths A and B; east of it (x 36-69) is the SE I area. The Monorepo gym room sits at x 76.
+map junglee 90 34
+pack vendor/ninja-adventure
+
+sheets
+  field   Backgrounds/Tilesets/TilesetField.png
+  house   Backgrounds/Tilesets/TilesetHouse.png
+  nature  Backgrounds/Tilesets/TilesetNature.png
+  elem    Backgrounds/Tilesets/TilesetElement.png
+  floor   Backgrounds/Tilesets/Interior/TilesetInteriorFloor.png
+  wall    Backgrounds/Tilesets/Interior/TilesetWallSimple.png
+  water   Backgrounds/Tilesets/TilesetWater.png
+  pipes   Backgrounds/Tilesets/Pipes.png
+  logic   Backgrounds/Tilesets/TilesetLogic.png
+  ofloor  Backgrounds/Tilesets/TilesetFloor.png
+
+legend
+  a ground field:3,3
+  b ground field:3,6
+  c ground floor:8,7
+  d stamp nature:0,0 2x2 solid
+  e stamp nature:2,0 2x2 solid
+  f stamp nature:3,18 3x3 solid
+  g tile nature:0,11
+  h tile elem:0,2 solid
+  i stamp house:12,0 4x3 solid walk=1,2
+  j tile wall:0,0 solid
+  k tile wall:1,0 solid
+  l tile wall:4,0 solid
+  m tile wall:0,1 solid
+  n tile wall:4,1 solid
+  o tile wall:0,4 solid
+  p tile wall:1,4 solid
+  q tile wall:4,4 solid
+  r stamp elem:10,7 2x2 solid
+  s stamp elem:0,7 1x2 solid
+  t stamp elem:7,1 1x2 solid
+  u tile elem:15,0 solid
+  v ground floor:6,13
+  w ground ofloor:12,9
+  x ground ofloor:11,8
+  y ground ofloor:12,7
+  z ground ofloor:12,8
+  A ground ofloor:13,7
+  B ground ofloor:11,7
+  C ground ofloor:13,9
+  D ground ofloor:13,8
+  E ground ofloor:11,9
+  F ground ofloor:1,7
+  G ground ofloor:1,9
+  H ground ofloor:0,7
+  I ground ofloor:2,9
+  J ground ofloor:0,9
+  K ground ofloor:2,7
+  L stamp nature:16,8 2x2 solid
+  M tile logic:0,6
+  N tile logic:0,7
+  O stamp house:0,15 1x3 solid
+  P tile logic:0,1
+  Q tile logic:3,1
+  R stamp elem:6,3 1x2 solid
+  S stamp water:0,6 3x3 solid
+  T stamp house:26,20 1x2 solid
+  U stamp house:28,20 1x2 solid
+  V stamp nature:6,0 2x2 solid
+  W tile nature:6,10 solid
+  X tile nature:2,10 solid
+  Y tile nature:1,10 solid
+  Z tile nature:3,10
+  0 tile nature:9,11
+  1 tile nature:4,11
+  2 tile nature:7,10
+  3 tile nature:5,11
+  4 tile nature:6,11
+  5 tile nature:0,11
+  6 tile nature:3,11
+  7 tile nature:1,11
+  8 tile nature:5,10
+  9 tile nature:9,10
+
+ground
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbBAbbbbbbbbbbbb____________________
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbxDbbbbbbbbbbbb____________________
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbxDbbbbbbbbbbbb____________________
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbxDbbbbbbbbbbbb____________________
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbxDbbbbbbbbbbbb____________________
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbxDbbbbbbbbbbbb____________________
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbxDbbbbbbbbbbbb____________________
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbxDbbbbbbbbbbbb____________________
+bbbbbbbbbByyyyyyyyyyAbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbxDbbbbbbbbbbbb____________________
+bbbbbbbbbxzwwwwwwwwzDbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbxDbbbbbbbbbbbb____________________
+bbbbbbbbbxDbbbbbbbbxDbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbxDbbbbbbbbbbbb______ccccccccccc___
+bbbbbbbbbxDbbbbbbbbxDbbbbbbbbbbbbbbbaaaaaaaaaaaaaaaaaaaaxDaaaaaaaaabbb______ccccccccccc___
+bbbbbbbbbxDbbbbbbbbxzyyyyyyyAbbbbbbbaavvvvvvvvvvvvvvvvvaxDaaaaaaaaabbb______ccccccccccc___
+aaaaaaaaaECaabbbbbbEwwwwwwwzDbbbbbbbaavvvvvvvvvvvvvvvvvaxDaaaaaaaaabbb______ccccccccccc___
+aaaaaaaaaaaaabbbbbbbbbbbbbbxDbbbbbbbaavvvvvvvvvvvvvvvvvaxDaaaaaaaaabbb______ccccccccccc___
+aaaaaaaaaaaaabbbbbbbbbbbbbbxDbbbbbbbaavvvvvvvvvvvvvvvvvaxDaaaaaaaaabbb______ccccccccccc___
+HFFFFFFFFFKaabbbbbbbbbbbbbbxzyyyyyAvaavvvvvvvvvvvvvvvvHFFKaaaaaaaaabbb______ccccccccccc___
+JGGGGGGGGGIaabbbbbbbbbbbbbbxzwwwwwCvaavvvvvvvvvvvvvvvvJGGIaaaaaaaaabbb______ccccccccccc___
+aaaaaaaaaaaaabbbbbbbbbbbbbbxDbbbbbbbaavvvvvvvvvvvvvvvvvaaaaaaaaaaaabbb______ccccccccccc___
+aaaaaaaaaaaaabbbbbbbbbbbbbbxDbbbbbbbaavvvvvvvvvvvvvvvvvaaaaaaaaaaaabbb______ccccccccccc___
+aaaaaaaaaBAaabbbbbbByyyyyyyzDbbbbbbbaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbb____________________
+bbbbbbbbbxDbbbbbbbbxzwwwwwwwCbbbbbbbaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbb____________________
+bbbbbbbbbxDbbbbbbbbxDbbbbbbbbbbbbbbbaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbb____________________
+bbbbbbbbbxDbbbbbbbbxDbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb____________________
+bbbbbbbbbxzyyyyyyyyzDbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb____________________
+bbbbbbbbbEwwwwwwwwwwCbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb____________________
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb____________________
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb____________________
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb____________________
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb____________________
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb____________________
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb____________________
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb____________________
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb____________________
+
+things
+e.d.V.e.e.d.e.e.d.V.f..Wf..Xd.f..WV.d.d.e.f..Wf..Xe.f..X..V.e.d.e.d.e.....................
+.......................X...W.....W...........W...W.....W..................................
+e.V.V.V.d.e.e.e.f..W...Y...WV....XV.e.V.e....Y...Ye....Y..f..Wf..WV.e.....................
+...................YWYWYYXXX..YWYY........YWXYYWYW..YWXX.....X...X........................
+d.e.e.d.f..Yf..X...XV.V.e.V.e.e.V.d.f..Xe.e.V.e.e.f..Wd......Y...Ye.d.....................
+...........Y...XWYXX...................W.............X....XYXYWWXX........................
+V.e.e.V....W...WV.e.V.V.d.e.f..YV.e....XV.d.e.e.d....Wd...d.e.V.e.f..X....................
+........WYXXYWYX...............W....WXWX..........XYYX...............Y....................
+e.f..We.W............Yd.e.e....Wd.V.f..Xe.d.e.V.f..Xd.V...d.V.V.e....W....................
+.....W..X............X......YYXW.......W...........X..............e.XY....................
+V....XV.W..Xe.d.d.W..WV.V.d.e.d.d.e....WXXWXXXYX...WWYYX..XYXWXWXY..e.......jkkkkkkkkkl...
+..d.e...W..W......X..X..............6Z.9.5....8...i...4..........9.W........mr......r.n...
+YW....WYY.MYXXe.V.Y..........Ye.V.WY...R.....T...U....R.....66.....WV.......m.........n...
+113Z213Zh..Z0Y....W..........X....OY.8...t.....u..........6.g..454.W........m.........n...
+32033.1011113Xe.f..Ye.e.f....Wd.WX.W7..................9....6..799.YV.......m.........n...
+33Z02333110ZZX.....Y.........X..Ph.W.5.................4..97...5...Y........m.........n...
+...........L.XV....YV.V.............7............................87Ye.......ms.......sn...
+.............W..WYYW....WXY.................S.............Z9.8.8g64W........m.........n...
+Z0.22Z01Z1111Ye.e.e.d.V.d.X..WV.Q3OX........................5.68.4.Xe.......m.........n...
+.Z2Z3101323Z0X............X..X..XW.Y7..R..............R7........4..X........opppp.ppppq...
+202Z31ZZh..Z3XV.d.W..........WV.e..Y................4..7.8.g.Zg.9..We.....................
+WYXWXYXYX.NWWY....W..........X....WY8.g.8.8..........698..8..5..9..Y......................
+d.f..Xf....Xe.e.e.Y..Ye.e.e.d.d.e.V................................We.....................
+.....Y.....W......X..W..............YXYXXWXXYXXWYXWYYYXYWXYXYYYXYWYW......................
+V....W...............Xf..WV.e.d.e.f..Wf..Ye.d.e.e.e.V.V.V.f..XV.e.V.e.....................
+..YXXYXWW............W...X...........X...X...................X............................
+e.e.e.d.f..XV.e.e.d.e....We.f..WV....Y...Xd.e.V.V.e.V.d.V....YV.V.d.V.....................
+...........X..........YYYX.....W..WXYWYYXX................XYWX............................
+V.e.d.e....Wf..Yd.d.e.V.d.e....Xe.e.V.d.d.V.V.f..Yd.e.e.f..Xe.f..YV.d.....................
+........XWYW...W............WXWW.................Y.........Y.....W........................
+e.V.d.V.d.V....YV.f..Ye.e.e.e.d.f..Ye.e.d.e.e....Ye.d.e....Ye....Ye.V.....................
+............XXWW.....W.............Y..........XWXY......WWWW..XYYX........................
+d.e.V.V.e.V.e.e.V....YV.d.e.V.V....Wd.e.e.e.e.e.e.d.e.e.d.e.V.e.V.V.d.....................
+..................YXYY..........WXWX......................................................
+
+objects
+  signs    path-a         8,13 factId=junglee-a.ab speaker="Path A"
+  signs    path-b         8,20 factId=junglee-a.ab speaker="Path B"
+  npcs     analyst        4,15 sprite=analyst face=down factId=junglee-a.ab speaker="Analyst"
+  signs    gate-2fa       33,15 factId=junglee-b.2fa speaker="2FA Gate"
+  npcs     recovery       36,18 sprite=reception face=up factId=junglee-b.2fa speaker="Recovery Path"
+  signs    newsstand      41,13 factId=junglee-b.blog speaker="Newsstand"
+  npcs     editor         43,15 sprite=editor face=left factId=junglee-b.blog speaker="Editor"
+  items    trophy         47,13 factId=junglee-b.award speaker="Trophy"
+  warps    door-gym       51,13 to=junglee spawn=gym-in
+  warps    gym-door       51,14 kind=door face=down
+  warps    route-gear-a   0,16 to=gear spawn=junglee-road
+  warps    route-gear-b   0,17 to=gear spawn=junglee-road
+  warps    route-marrfa-a 56,0 to=marrfa spawn=junglee-road
+  warps    route-marrfa-b 57,0 to=marrfa spawn=junglee-road
+  warps    gear-road      1,16 kind=spawn face=right
+  warps    marrfa-road    56,1 kind=spawn face=down
+  warps    default        6,17 kind=spawn face=right
+  npcs     monorepo-leader 81,13 sprite=monorepo face=down factId=skill.monorepo speaker="Tooling Leader"
+  warps    gym-exit       81,19 to=junglee spawn=gym-door
+  warps    gym-in         81,18 kind=door face=up
+
+regions
+  town 0,0,70,34
+  gym 76,10,11,10 indoor

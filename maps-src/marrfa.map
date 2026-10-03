@@ -1,0 +1,115 @@
+// Marrfa Estates: a small contract town at x 0-31 with three role doors, and the Backend side gym room at x 38.
+map marrfa 52 22
+pack vendor/ninja-adventure
+
+sheets
+  field   Backgrounds/Tilesets/TilesetField.png
+  house   Backgrounds/Tilesets/TilesetHouse.png
+  nature  Backgrounds/Tilesets/TilesetNature.png
+  elem    Backgrounds/Tilesets/TilesetElement.png
+  floor   Backgrounds/Tilesets/Interior/TilesetInteriorFloor.png
+  wall    Backgrounds/Tilesets/Interior/TilesetWallSimple.png
+  water   Backgrounds/Tilesets/TilesetWater.png
+  pipes   Backgrounds/Tilesets/Pipes.png
+  logic   Backgrounds/Tilesets/TilesetLogic.png
+  ofloor  Backgrounds/Tilesets/TilesetFloor.png
+
+legend
+  a ground field:3,3
+  b ground field:3,0
+  c ground floor:8,7
+  d stamp nature:0,0 2x2 solid
+  e tile elem:0,2 solid
+  f stamp house:0,0 4x3 solid
+  g stamp house:26,0 3x3 solid walk=1,2
+  h tile wall:0,0 solid
+  i tile wall:1,0 solid
+  j tile wall:4,0 solid
+  k tile wall:0,1 solid
+  l tile wall:4,1 solid
+  m tile wall:0,4 solid
+  n tile wall:1,4 solid
+  o tile wall:4,4 solid
+  p stamp elem:10,7 2x2 solid
+  q stamp elem:0,7 1x2 solid
+  r ground floor:8,7
+  s ground floor:8,1
+  t tile nature:3,11
+  u tile nature:1,10 solid
+  v tile nature:1,11
+  w tile nature:6,11
+  x tile elem:1,2 solid
+  y tile nature:0,11
+  z stamp elem:6,3 1x2 solid
+  A stamp water:0,6 3x3 solid
+  B tile nature:3,10
+  C tile nature:5,10
+
+ground
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa____________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa____________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa____________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa____________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa____________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa____________________
+aaaaasaaaaasaaaaasaaaaaaaaaaaaaa____________________
+aaaaasaaaaasaaaaasaaaaaaaaaaaaaa______ccccccccc_____
+aaassssssssssssssssssssssssssssa______ccccccccc_____
+aaaaaaaaaaaaaaarrrrrrrrrrrrrrrrr______ccccccccc_____
+aaaaaaaaaaaaaaarrrrrrrrrrrrrrrrr______ccccccccc_____
+aaaaaasaaaaaaasrrssssssssssssssa______ccccccccc_____
+aaaaaaaaaaaaaasrrsaaaaasaaaaaaaa______ccccccccc_____
+aaaaaaaaaaaaaasrrsaaaaasaaaaaaaa______ccccccccc_____
+aaaaaaaaaaaaaasrrsaaaaasaaaaaaaa______ccccccccc_____
+aaaaaaaaaaaaaasrrsaaaaasaaaaaaaa____________________
+aaaaaaaaaaaaaasrrsaaaaabaaaaaaaa____________________
+aaaaaaaaaaaaaasrrsaaaaaaaaaaaaaa____________________
+aaaaaaaaaaaaaasrrsaaaaaaaaaaaaaa____________________
+aaaaaaaaaaaaaasrrsaaaaaaaaaaaaaa____________________
+aaaaaaaaaaaaaaarraaaaaaaaaaaaaaa____________________
+aaaaaaaaaaaaaaarraaaaaaaaaaaaaaa____________________
+
+things
+d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.....................
+....................................................
+d...uuuu..uuuuC.uuuu......C...d.....................
+....f...utf...uyf...v.d.B...d.......................
+d..t....u.....uv.........A....d.....................
+........u.....u.....................................
+d...t..tB.v.tvB.w..w...d......d.....................
+...........e......ey.......v..........hiiiiiiij.....
+d.....................................kp....p.l.....
+...y..B.....B.........................k.......l.....
+d.....................................k.......l.....
+...tt........v.........d..z...........kq.....ql.....
+d..uuu.uuu..z......d.......d..d.......k.......l.....
+...u.y...u............g...............k.......l.....
+d..u.x.y.u.w................B.d.......mnnn.nnno.....
+...uuuuuuu.v......Cz.........B......................
+d..uuuCuuu..z.................d.....................
+...u..t..uy........d.tB.............................
+d..utt.x.u...C................d.....................
+...uuuuuuu.C..............w.........................
+d.d.d.d.d.d.d.....d.d.d.d.d.d.d.....................
+....................................................
+
+objects
+  signs    dashboard      11,7 factId=marrfa.dashboard speaker="Dashboard"
+  signs    sync           18,7 factId=marrfa.dashboard speaker="Live Sync"
+  npcs     manager        8,8 sprite=manager face=right factId=marrfa.dashboard speaker="Property Manager"
+  warps    door-gym       23,15 to=marrfa spawn=gym-in
+  warps    gym-door       23,16 kind=door face=down
+  warps    route-junglee-a 15,21 to=junglee spawn=marrfa-road
+  warps    route-junglee-b 16,21 to=junglee spawn=marrfa-road
+  warps    route-testmu-a 31,9 to=testmu spawn=marrfa-road
+  warps    route-testmu-b 31,10 to=testmu spawn=marrfa-road
+  warps    junglee-road   15,20 kind=spawn face=up
+  warps    testmu-road    30,9 kind=spawn face=left
+  warps    default        15,12 kind=spawn face=up
+  npcs     backend-leader 42,10 sprite=backend face=down factId=skill.backend speaker="Backend Leader"
+  warps    gym-exit       42,14 to=marrfa spawn=gym-door
+  warps    gym-in         42,13 kind=door face=up
+
+regions
+  town 0,0,32,22
+  gym 38,7,9,8 indoor

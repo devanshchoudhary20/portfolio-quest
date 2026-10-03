@@ -20,7 +20,7 @@ export function StartMenu() {
   const items: MenuItem[] = [
     { label: 'Save', onSelect: save },
     { label: 'Options', onSelect: () => actions.openPanel('options') },
-    { label: 'Recruiter Mode', hint: 'Plain resume, one page.', onSelect: () => location.assign('/resume/') },
+    { label: 'Recruiter Mode', hint: 'Plain resume, one page.', onSelect: () => actions.openPanel('recruiter') },
     { label: 'Close', onSelect: actions.closePanel },
   ];
   return <Menu className="pq-start" label="Start menu" items={items} onCancel={actions.closePanel} />;
