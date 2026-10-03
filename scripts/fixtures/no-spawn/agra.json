@@ -1,0 +1,45 @@
+{
+  "layers": [
+    {
+      "name": "warps",
+      "type": "objectgroup",
+      "objects": [
+        {
+          "name": "to-gear-no-spawn",
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "warp"
+            },
+            {
+              "name": "to",
+              "type": "string",
+              "value": "gear"
+            }
+          ]
+        },
+        {
+          "name": "to-gear-unnamed",
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "warp"
+            },
+            {
+              "name": "to",
+              "type": "string",
+              "value": "gear"
+            },
+            {
+              "name": "spawn",
+              "type": "string",
+              "value": "door"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

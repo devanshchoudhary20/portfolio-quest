@@ -1,0 +1,31 @@
+{
+  "layers": [
+    {
+      "name": "decor",
+      "type": "group",
+      "layers": [
+        {
+          "name": "npcs",
+          "type": "objectgroup",
+          "objects": [
+            {
+              "name": "hidden",
+              "properties": [
+                {
+                  "name": "kind",
+                  "type": "string",
+                  "value": "npc"
+                },
+                {
+                  "name": "factId",
+                  "type": "string",
+                  "value": "bogus.in.group"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

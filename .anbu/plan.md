@@ -21,7 +21,7 @@ Status: approved by the user 2026-10-03, with changes: the title screen is plain
 | Tiled | 1.11+, JSON export | Maps. Tilesets embedded so one fetch per town |
 
 ### grid-engine decision
-grid-engine 2.52.1 on Phaser 4.2.1 via npm override, behind a 6-method adapter `GridMover` (`addChar, move, moveTo, facing, tileInFront, onArrived`). Phase 0 spike proves it: Tiled map with `ge_collide`, 4-dir walk, NPC facing, `moveTo` across 20 tiles, in Chrome, Firefox, iOS Safari. Spike result (2026-10-03): GO. The override installs with zero warnings, one deduped phaser@4.2.1, and no `globalThis.Phaser` global needed. All movement tests passed in chromium, firefox, webkit desktop and webkit iPhone emulation. If anything fails beyond a one-line fix, drop grid-engine and implement `GridMover` directly (BFS + tween). Nothing outside `src/game/movement/` changes.
+grid-engine 2.52.1 on Phaser 4.2.1 via npm override, behind a 6-method adapter `GridMover` (`addChar, move, moveTo, facing, tileInFront, onArrived`). Phase 0 spike proves it: Tiled map with `ge_collide`, 4-dir walk, NPC facing, `moveTo` across 20 tiles, in Chrome, Firefox, iOS Safari. Spike result (2026-10-03): GO. The user confirmed it works on a real iPhone (Safari, tap-to-walk) through a temporary tunnel. The override installs with zero warnings, one deduped phaser@4.2.1, and no `globalThis.Phaser` global needed. All movement tests passed in chromium, firefox, webkit desktop and webkit iPhone emulation. If anything fails beyond a one-line fix, drop grid-engine and implement `GridMover` directly (BFS + tween). Nothing outside `src/game/movement/` changes.
 
 ### Spike lessons
 - Audio: create the audio context lazily after the first user gesture (iOS requires it; headless WebKit throws without an audio device). Until then `audio: { noAudio: true }`.
@@ -73,7 +73,7 @@ export interface SkillGroup { id: SkillGroupId; label: string; items: string[]; 
 export interface Project { id: FactId; name: string; url: string; stack: string[]; summary: string }
 ```
 
-Tiled contract: objects in layers `npcs`, `signs`, `items`, `warps`, `encounters` carry `kind` (`npc|sign|item|warp|grass|door`) and, when content-bearing, `factId`. Warps carry `to: TownId`, `spawn`. Encounter zones carry `pool` (comma list of FactIds).
+Tiled contract: objects in layers `npcs`, `signs`, `items`, `warps`, `encounters` carry `kind` (`npc|sign|item|warp|grass|door|spawn`) and, when content-bearing, `factId`. Warps carry `to: TownId`, `spawn`. Encounter zones carry `pool` (comma list of FactIds). A spawn is a named object in the `warps` layer whose `name` equals the warp's `spawn`: a `door` when you arrive through one, or kind `spawn` for a plain arrival point (bedroom start, fly landing). Unnamed objects never count as spawns. A warp to a known town whose map doesn't exist yet only warns, so towns can land one at a time. Content-only towns (no map) such as `patch-center` are allowed.
 
 `scripts/check-content.ts` (prebuild + CI) fails the build when: a `factId` is unknown; a warp `to` or its `spawn` doesn't exist; a fact is referenced by zero maps (warn in dev, fail in CI from phase 3); the phone number pattern appears in `src/content`, any map, or `dist`; an asset folder lacks a LICENSE; a banned word (nintendo, pokemon, pikachu, game freak) appears in `src`, `public`, or `dist`.
 
@@ -101,7 +101,7 @@ Autosave on warp, flag change, dex open (debounced 500 ms).
 - `/` game. `index.html` holds crawlable text before JS: h1, summary, current role, links to `/resume` and `/resume.pdf`, visible skip link. Canvas `aria-hidden`. OG/Twitter tags, JSON-LD `Person`.
 - `/resume/` prerendered via `renderToStaticMarkup`. Runtime JS is a ~20-line theme toggle. Contains the Netlify contact form (registers it at build).
 - `/resume.pdf` static copy.
-- Deep links: `?warp=<TownId>[&spawn=]`, validated, bad values fall back to Title. `?mode=recruiter` opens Recruiter Mode. Old anchors (`/#experience`) redirect to `/resume/#experience`.
+- Deep links: `?warp=<TownId>[&spawn=]`, validated, bad values fall back to Title. `?mode=recruiter` opens Recruiter Mode. Old anchors (`/#experience`) redirect to `/resume/#experience` via a tiny inline script in `index.html`, because URL fragments never reach Netlify's redirect rules.
 - Hashed assets immutable; HTML and map JSON `no-cache`.
 
 ## 6. Mobile, accessibility, performance

@@ -1,0 +1,25 @@
+{
+  "layers": [
+    {
+      "name": "NPCs",
+      "type": "objectgroup",
+      "objects": [
+        {
+          "name": "loud",
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "npc"
+            },
+            {
+              "name": "factId",
+              "type": "string",
+              "value": "agra.summary"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

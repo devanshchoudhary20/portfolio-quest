@@ -1,0 +1,18 @@
+{
+  "layers": [
+    {
+      "name": "npcs",
+      "type": "objectgroup",
+      "objects": [
+        { "name": "ghost", "properties": [{ "name": "kind", "value": "npc" }, { "name": "factId", "value": "bogus.fact" }] }
+      ]
+    },
+    {
+      "name": "warps",
+      "type": "objectgroup",
+      "objects": [
+        { "name": "to-nowhere", "properties": [{ "name": "kind", "value": "warp" }, { "name": "to", "value": "atlantis" }, { "name": "spawn", "value": "door" }] }
+      ]
+    }
+  ]
+}

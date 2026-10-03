@@ -1,0 +1,34 @@
+{
+  "name": "portfolio-quest",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "prebuild": "tsx scripts/check-content.ts",
+    "build": "tsc --noEmit && vite build && tsx scripts/prerender-resume.tsx",
+    "postbuild": "tsx scripts/check-content.ts --dist",
+    "check:content": "tsx scripts/check-content.ts",
+    "test": "npm run check:fixtures && vitest run",
+    "lint": "eslint .",
+    "check:fixtures": "tsx scripts/check-fixtures.ts"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^26.6.4",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "eslint": "^10.12.0",
+    "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.15",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.71.0",
+    "vite": "^8.3.2",
+    "vitest": "^4.1.11"
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}

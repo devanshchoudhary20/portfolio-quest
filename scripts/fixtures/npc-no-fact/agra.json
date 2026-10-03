@@ -1,0 +1,20 @@
+{
+  "layers": [
+    {
+      "name": "npcs",
+      "type": "objectgroup",
+      "objects": [
+        {
+          "name": "mute",
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "npc"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

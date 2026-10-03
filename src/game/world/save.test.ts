@@ -1,0 +1,35 @@
+import { describe, expect, it } from 'vitest';
+import { loadSave } from './save';
+
+const valid = {
+  v: 1,
+  town: 'agra',
+  pos: { x: 4, y: 7 },
+  facing: 'down',
+  flags: ['shoes'],
+  seen: ['agra.summary', 'removed.fact'],
+  mode: 'recruiter',
+  textSpeed: 2,
+  savedAt: '2026-10-03T10:00:00.000Z',
+};
+
+describe('loadSave', () => {
+  it('loads a valid v1 save and drops facts that no longer exist', () => {
+    expect(loadSave(valid)).toMatchObject({ v: 1, town: 'agra', seen: ['agra.summary'] });
+  });
+
+  it('returns null for garbage', () => {
+    for (const raw of [null, undefined, 42, 'x', [], {}, { v: 1 }, { ...valid, town: 'nowhere' }, { ...valid, textSpeed: 9 }, { ...valid, town: 'patch-center' }]) {
+      expect(loadSave(raw)).toBeNull();
+    }
+  });
+
+  it('keeps the save when savedAt is unreadable', () => {
+    expect(loadSave({ ...valid, savedAt: 'last tuesday' })?.savedAt).toBeNull();
+    expect(loadSave({ ...valid, savedAt: undefined })?.savedAt).toBeNull();
+  });
+
+  it('returns null for unknown versions', () => {
+    for (const v of [0, 2, 99, '1']) expect(loadSave({ ...valid, v })).toBeNull();
+  });
+});

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Devansh Choudhary, Frontend Engineer | Portfolio Quest</title>
+    <meta name="description" content="Devansh Choudhary is a frontend engineer (React, TypeScript) at TestMu AI, formerly LambdaTest. Walk his career as a game, or read the plain resume." />
+    <link rel="canonical" href="https://www.devanshchoudhary.com/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Devansh Choudhary, Frontend Engineer" />
+    <meta property="og:description" content="A frontend engineer's career as a small top-down game, plus a plain one-page resume." />
+    <meta property="og:url" content="https://www.devanshchoudhary.com/" />
+    <meta name="twitter:card" content="summary" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Devansh Choudhary",
+        "jobTitle": "Frontend Engineer",
+        "worksFor": { "@type": "Organization", "name": "TestMu AI (formerly LambdaTest)" },
+        "url": "https://www.devanshchoudhary.com/",
+        "sameAs": ["https://github.com/devanshchoudhary20", "https://www.linkedin.com/in/devansh-choudhary-2381041b1/"]
+      }
+    </script>
+    <style>
+      body { margin: 0; background: #1b1f2e; color: #f7f5ea; font: 18px/1.6 system-ui, sans-serif; }
+      main { max-width: 720px; margin: 0 auto; padding: 72px 24px 48px; }
+      a { color: #f7f5ea; }
+      .skip { position: fixed; top: 12px; right: 12px; padding: 8px 16px; border-radius: 999px; background: #f7f5ea; color: #1b1f2e; text-decoration: none; font-size: 16px; }
+      .skip:focus-visible { outline: 2px solid #c8493f; outline-offset: 2px; }
+    </style>
+  </head>
+  <body>
+    <a class="skip" href="/resume/">Skip to resume</a>
+    <main id="seo">
+      <h1>Devansh Choudhary, Frontend Engineer</h1>
+      <p>Frontend engineer (React, TypeScript) at LambdaTest, on KaneAI's AI test-authoring editor. I build the stateful core of an editor whose content an LLM keeps rewriting, and work across the Go and Python services behind it.</p>
+      <p>Current role: Member of Technical Staff, Frontend at TestMu AI (formerly LambdaTest). Nov 2025 to Present.</p>
+      <p><a href="/resume/">Read the resume</a> or <a href="/resume.pdf">download the PDF</a>.</p>
+    </main>
+    <div id="game" aria-hidden="true"></div>
+    <div id="ui"></div>
+    <script>
+      // old single-page anchors (/#experience) now live on /resume/
+      (function () {
+        var old = { about: 'summary', experience: 'experience', projects: 'project', skills: 'skills', education: 'education', contact: 'contact' };
+        var key = location.hash.slice(1);
+        var id = Object.hasOwn(old, key) ? old[key] : '';
+        if (id) location.replace('/resume/#' + id);
+      })();
+    </script>
+  </body>
+</html>

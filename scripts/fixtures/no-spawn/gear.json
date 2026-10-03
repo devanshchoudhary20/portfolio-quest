@@ -1,0 +1,20 @@
+{
+  "layers": [
+    {
+      "name": "warps",
+      "type": "objectgroup",
+      "objects": [
+        {
+          "name": "",
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "door"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
