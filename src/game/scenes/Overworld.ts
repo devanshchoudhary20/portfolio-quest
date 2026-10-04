@@ -1,6 +1,10 @@
 import Phaser from 'phaser';
 import { factId } from '../../content';
-import { isUiOpen, store } from '../../state/store';
+import type { SpeciesId } from '../../content';
+import { startBattle } from '../battle/controller';
+import { WILD_BY_TOWN } from '../battle/data';
+import { shouldEncounter } from '../battle/encounter';
+import { isUiOpen, store, wildBugsOn } from '../../state/store';
 import type { WorldRequest } from '../../state/store';
 import { GridMover, OPPOSITE } from '../movement/GridMover';
 import { DayTint } from './DayTint';
@@ -13,7 +17,7 @@ import { isOpen } from '../world/conditions';
 import { FLAGS } from '../world/flags';
 import { interactWith, lockedLine } from '../world/interact';
 import { PLANTED_LINE, survivedLine } from '../world/lines';
-import { objectAt, readObjects } from '../world/objects';
+import { objectAt, readObjects, zoneAt } from '../world/objects';
 import type { WorldObject } from '../world/objects';
 import { parseRegions } from '../world/regions';
 import type { Region } from '../world/regions';
@@ -131,6 +135,7 @@ export class Overworld extends Phaser.Scene {
     this.cleanups.push(
       this.mover.onArrived((id, tile) => this.onArrived(id, tile)),
       this.watchStepBack(),
+      this.watchBattle(),
       this.travel.watchNav(),
       store.subscribe((state, prev) => {
         if (state.flags !== prev.flags) gates.sync(state.flags);
@@ -234,6 +239,7 @@ export class Overworld extends Phaser.Scene {
     const { actions } = store.getState();
     const town = this.request.town;
     actions.setPlayer(town, tile, this.mover.facing(PLAYER));
+    actions.tickStep();
     actions.requestSave();
     this.clampCamera(tile);
     this.maze?.enter(tile);
@@ -241,6 +247,33 @@ export class Overworld extends Phaser.Scene {
     const warp = objectAt(this.objects, tile, ['warp']);
     if (warp && isOpen(warp.props, store.getState().flags) && !this.busy) this.warp(warp);
     else if (warp) this.lockedDoor(warp);
+    else this.rollGrass(tile);
+  }
+
+  // tall grass: about one step in ten starts a fight, never within 15 steps of the last one
+  private rollGrass(tile: Tile) {
+    const zone = zoneAt(this.objects, tile);
+    const state = store.getState();
+    if (!zone || this.busy || isUiOpen(state) || !wildBugsOn(state)) return;
+    if (shouldEncounter(state.steps, Math.random())) this.startWild(zone);
+  }
+
+  private startWild(zone: WorldObject, species?: SpeciesId, hp: { playerHp?: number; enemyHp?: number } = {}) {
+    const town = this.request.town;
+    const roster = WILD_BY_TOWN[town] ?? [];
+    const pick = species ?? roster[Math.floor(Math.random() * roster.length)];
+    if (!pick) return;
+    this.navigator.cancel();
+    this.tapping = false;
+    this.mover.stop(PLAYER);
+    const pool = (zone.props.pool ?? '').split(',').map((id) => id.trim()).filter(Boolean).map(factId);
+    startBattle({ kind: 'wild', species: pick, pool, town, ...hp });
+  }
+
+  // test API only: a wild fight from this town's first grass zone
+  forceWild(species: SpeciesId, hp: { playerHp?: number; enemyHp?: number }) {
+    const zone = this.objects.find((o) => o.kind === 'grass');
+    if (zone) this.startWild(zone, species, hp);
   }
 
   private interact() {
@@ -323,6 +356,14 @@ export class Overworld extends Phaser.Scene {
   // test API only: what the maze floor is doing
   mazeInfo() {
     return this.maze?.info() ?? null;
+  }
+
+  // a gym leader's fact ends with their fight
+  private watchBattle() {
+    return store.subscribe((state, prev) => {
+      const closed = prev.dialog?.after === 'battle' && !state.dialog;
+      if (closed && prev.dialog?.battle) startBattle(prev.dialog.battle);
+    });
   }
 
   // the dialog says what should happen once it closes; the scene does it

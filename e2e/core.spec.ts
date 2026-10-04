@@ -19,6 +19,7 @@ test('title to bedroom PC, Mom, outside, and Continue after reload', async ({ pa
   await page.getByRole('button', { name: 'Next' }).click();
   await page.getByRole('menuitem', { name: 'Recruiter' }).click();
   await page.getByRole('menuitem', { name: 'Play anyway' }).click();
+  await page.getByRole('button', { name: 'Next' }).click();
   await page.waitForFunction(() => window.__pq!.state().phase === 'play' && window.__pq!.state().pos.x > 0);
 
   const start = await state(page);

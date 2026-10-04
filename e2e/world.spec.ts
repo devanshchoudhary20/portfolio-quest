@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { factById, facts, factId } from '../src/content';
-import { TOWNS, closeDialog, interact, startAt, state, walk, waitAt, warpTo } from './helpers';
+import { TOWNS, closeDialog, interact, runFromBattle, startAt, state, walk, waitAt, warpTo } from './helpers';
 import { factObjects, readTown, roadDirection, standingSpot } from './world';
 
 test('a deep link lands on each built town default spawn, and a bad one falls back to the Title', async ({ page }) => {
@@ -76,6 +76,7 @@ test('every fact-bearing object in every town shows its fact, and all facts get 
       expect((await state(page)).seen).toContain(id);
       shown.add(id);
       await closeDialog(page);
+      await runFromBattle(page);
       // the robot asks where to go once its line is done
       if ((await state(page)).panel === 'ask') await page.keyboard.press('Escape');
       await expect.poll(async () => (await state(page)).panel).toBe('none');

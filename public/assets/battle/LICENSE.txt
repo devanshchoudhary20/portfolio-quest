@@ -1,0 +1,14 @@
+Portfolio Quest battle art
+
+The nine non-champion trainers (core, design, monorepo, cross, backend, dsa, machine-coding,
+system-design, behavioral) are original full-body drawings. Their hair, colours and outfit cues
+are taken from the matching Ninja Adventure Asset Pack characters by Pixel-Boy (CC0 1.0,
+https://pixel-boy.itch.io/ninja-adventure-asset-pack). Credit is not required by CC0 and is
+given anyway.
+
+Creatures, battle backgrounds and the champion placement (devansh.png, from the project's own
+avatar sprite) are original work, drawn by script (.anbu/design/battle/). They contain no
+marks of any game publisher, or of React, Node.js or Anthropic.
+
+Everything in this folder is released under CC0 1.0 Universal
+(https://creativecommons.org/publicdomain/zero/1.0/).

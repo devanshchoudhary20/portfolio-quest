@@ -1,28 +1,32 @@
 import { useState } from 'react';
 import type { Mode } from '../game/world/save';
-import { Typed } from './Dialog';
+import { RECRUITER_STARTER, STARTER_PICK } from '../game/world/lines';
 import { Menu } from './Menu';
 import type { MenuItem } from './Menu';
-import { PORTRAIT_SRC } from './portraits';
+import { ProfessorBox } from './ProfessorBox';
+import { StarterPick } from './StarterPick';
 import { actions } from './useGame';
 
-type Step = 'welcome' | 'ask' | 'offer';
+type Step = 'welcome' | 'ask' | 'offer' | 'auto' | 'pick';
 
-const SPEAKER = 'Professor Stack';
-const LINES: Record<Step, string> = {
+const LINES: Record<Exclude<Step, 'pick'>, string> = {
   welcome: 'Welcome to Kernel Region. I am Professor Stack.',
   ask: 'Before we start: are you a recruiter, an engineer, or just curious?',
   offer: 'Then you want the short version. Open it now?',
+  auto: RECRUITER_STARTER,
 };
 
-// the starter pick joins this flow in Phase 4; until then every answer walks out to Agra
+// a recruiter plays on with React and no pick; everyone else chooses a starter
 export function ProfessorIntro() {
   const [step, setStep] = useState<Step>('welcome');
 
   const choose = (mode: Mode) => {
     actions.setMode(mode);
-    if (mode === 'recruiter') setStep('offer');
-    else actions.beginPlay();
+    setStep(mode === 'recruiter' ? 'offer' : 'pick');
+  };
+  const playAnyway = () => {
+    actions.chooseStarter('react');
+    setStep('auto');
   };
 
   const menus: Record<Step, MenuItem[]> = {
@@ -34,25 +38,18 @@ export function ProfessorIntro() {
     ],
     offer: [
       { label: 'Open Recruiter Mode', onSelect: () => location.assign('/resume/') },
-      { label: 'Play anyway', onSelect: actions.beginPlay },
+      { label: 'Play anyway', onSelect: playAnyway },
     ],
+    auto: [],
+    pick: [],
   };
   const items = menus[step];
+  const next = step === 'welcome' ? () => setStep('ask') : step === 'auto' ? actions.beginPlay : undefined;
 
+  if (step === 'pick') return <StarterPick prompt={STARTER_PICK} />;
   return (
     <div className="pq-intro">
-      <div className="pq-dialog" role="dialog" aria-label={SPEAKER}>
-        <div className="pq-tab">{SPEAKER}</div>
-        <div className="pq-box">
-          <img className="pq-portrait" src={PORTRAIT_SRC.professor} alt="" />
-          <Typed line={LINES[step]} count={LINES[step].length} />
-          {step === 'welcome' ? (
-            <button type="button" className="pq-next" aria-label="Next" onClick={() => setStep('ask')} autoFocus>
-              <span className="pq-arrow" aria-hidden="true" />
-            </button>
-          ) : null}
-        </div>
-      </div>
+      <ProfessorBox line={LINES[step]} onNext={next} />
       {items.length > 0 ? <Menu key={step} className="pq-choice" label="Answer" items={items} /> : null}
     </div>
   );

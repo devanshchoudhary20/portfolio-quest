@@ -4,9 +4,7 @@ import type { WorldRequest } from '../../state/store';
 import { destinationById } from '../world/destinations';
 import { notOpenYet } from '../world/lines';
 import { isBuiltTown } from '../world/towns';
-
-// a cached or quick load never flashes the travel card
-const SLOW_LOAD_MS = 300;
+import { trackSlowLoad } from './slowLoad';
 
 interface Hooks {
   // fade out, then run; the scene is busy until it restarts
@@ -20,8 +18,7 @@ interface Hooks {
 export class Travel {
   failed = false;
   private progress = 0;
-  private cardShown = false;
-  private timer: ReturnType<typeof setTimeout> | undefined;
+  private stopTimer: (() => void) | undefined;
 
   constructor(
     private readonly scene: Phaser.Scene,
@@ -36,21 +33,20 @@ export class Travel {
 
   // the card shows only when the load is slow, with live progress
   trackLoad() {
-    this.scene.load.on('loaderror', () => {
-      this.failed = true;
-    });
-    this.scene.load.on('progress', (value: number) => {
-      this.progress = value;
-      if (this.cardShown) this.card();
-    });
-    this.timer = setTimeout(() => {
-      this.cardShown = true;
-      this.card();
-    }, SLOW_LOAD_MS);
+    this.stopTimer = trackSlowLoad(
+      this.scene,
+      (progress) => {
+        this.progress = progress;
+        this.card();
+      },
+      () => {
+        this.failed = true;
+      },
+    );
   }
 
   loaded() {
-    clearTimeout(this.timer);
+    this.stopTimer?.();
   }
 
   closedRoad(to: string, after?: 'stepBack') {

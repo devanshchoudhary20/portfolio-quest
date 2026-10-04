@@ -23,7 +23,7 @@ export function TravelCard({ travel }: { travel: Travel }) {
   }
   return (
     <div className="pq-travel" data-testid="travel-card" role="status">
-      <p>{`Traveling to ${name}...`}</p>
+      <p>{travel.label ?? `Traveling to ${name}...`}</p>
       <div className="pq-bar" role="progressbar" aria-label="Loading" aria-valuemin={0} aria-valuemax={100} aria-valuenow={percent}>
         <i style={{ '--p': `${percent}%` } as CSSProperties} />
       </div>

@@ -10,12 +10,13 @@ export type Dir = 'up' | 'down' | 'left' | 'right';
 export interface Tile { x: number; y: number }
 
 interface RawProp { name: string; value: unknown }
-interface RawObject { name?: string; x?: number; y?: number; properties?: RawProp[] }
+interface RawObject { name?: string; x?: number; y?: number; width?: number; height?: number; properties?: RawProp[] }
 interface RawLayer { name: string; type: string; data?: number[]; objects?: RawObject[]; layers?: RawLayer[] }
 interface RawTileset { firstgid: number; tiles?: { id: number; properties?: RawProp[] }[] }
 interface RawMap { width?: number; height?: number; layers?: RawLayer[]; tilesets?: RawTileset[] }
 
-export interface MapObject { name: string; layer: string; tile: Tile; props: Record<string, string> }
+// w and h are in tiles; only a grass zone spans more than one
+export interface MapObject { name: string; layer: string; tile: Tile; w: number; h: number; props: Record<string, string> }
 
 export interface TownMap {
   name: string;
@@ -55,6 +56,8 @@ export function readMap(file: string): TownMap {
       name: o.name ?? '',
       layer: l.name,
       tile: { x: Math.floor((o.x ?? 0) / TILE), y: Math.floor((o.y ?? 0) / TILE) },
+      w: Math.max(1, Math.round((o.width ?? 0) / TILE)),
+      h: Math.max(1, Math.round((o.height ?? 0) / TILE)),
       props: Object.fromEntries((o.properties ?? []).map((p) => [p.name, String(p.value)])),
     })),
   );

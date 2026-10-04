@@ -10,7 +10,7 @@ import { planStops } from './route';
 function load(town: string) {
   const file = `public/maps/${town}.json`;
   const map = readMap(file);
-  const objects: WorldObject[] = map.objects.map((o) => ({ name: o.name, kind: (o.props.kind ?? 'sign') as WorldObject['kind'], x: o.tile.x, y: o.tile.y, props: o.props }));
+  const objects: WorldObject[] = map.objects.map((o) => ({ name: o.name, kind: (o.props.kind ?? 'sign') as WorldObject['kind'], x: o.tile.x, y: o.tile.y, w: o.w, h: o.h, props: o.props }));
   const raw = JSON.parse(readFileSync(file, 'utf8')) as { properties: unknown };
   return { objects, regions: parseRegions(raw.properties), at: (name: string) => map.spawn(name) };
 }

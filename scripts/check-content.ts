@@ -1,13 +1,16 @@
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { basename, extname, join, relative, resolve } from 'node:path';
-import { education, facts, flagId, isFactId, isMapTownId, isTownId, jobs, profile, project, skillGroups, summaryFactId } from '../src/content';
+import { education, facts, flagId, isFactId, isMapTownId, isTownId, jobs, profile, project, skillGroups, summaryFactId, WILD_SPECIES } from '../src/content';
+import { BG_IDS, MOVES, SPECIES, TRAINERS, TRAINER_SPRITES, WILD_BY_TOWN } from '../src/game/battle/data';
+import { backArt, bgArt, frontArt, trainerArt } from '../src/game/battle/art';
 import { NPC_SPRITES } from '../src/game/world/npcSprites';
 import { SEEN_TEN, SEEN_TEN_COUNT, flagList, isOpen } from '../src/game/world/conditions';
 import { DESTINATIONS } from '../src/game/world/destinations';
-import { ITEM_LINES, ROLE_LINES } from '../src/game/world/lines';
+import { FLAVOR_LINES, ITEM_LINES, ROLE_LINES, STARTER_LINES } from '../src/game/world/lines';
 import { DEFAULT_SPAWN } from '../src/game/world/towns';
 import { isGate, isWarp, key, neighbors, readMap, reachableTiles, warpIsActive } from './tiledMap';
 import type { MapObject, TownMap } from './tiledMap';
+import type { FactId } from '../src/content';
 
 const ROOT = resolve(import.meta.dirname, '..');
 const args = process.argv.slice(2);
@@ -34,7 +37,7 @@ const FACT_LAYERS = new Set(['npcs', 'signs', 'items']);
 const FACT_KINDS = new Set(['npc', 'sign', 'item']);
 // maps hold no free text: any property key outside its kind's list is an error
 const KEYS_BY_KIND: Record<string, string[]> = {
-  npc: ['kind', 'factId', 'sprite', 'face', 'speaker', 'portrait', 'flag', 'cycle', 'fills', 'guide'],
+  npc: ['kind', 'factId', 'sprite', 'face', 'speaker', 'portrait', 'flag', 'cycle', 'fills', 'guide', 'battle'],
   sign: ['kind', 'factId', 'speaker'],
   item: ['kind', 'factId', 'speaker', 'portrait', 'flag'],
   warp: ['kind', 'to', 'spawn', 'needs', 'unless'],
@@ -119,6 +122,8 @@ function checkContent() {
 
 interface Reach {
   talkable: Set<MapObject>;
+  // grass zones with at least one tile the player can walk to
+  grass: Set<MapObject>;
   errors: string[];
 }
 
@@ -133,7 +138,8 @@ function computeReach(map: TownMap, seenTen: boolean): Reach {
   const town = map.name;
   const errs: string[] = [];
   const talkable = new Set<MapObject>();
-  if (!map.hasGround) return { talkable, errors: [`${town}: map has no ground layer`] };
+  const grass = new Set<MapObject>();
+  if (!map.hasGround) return { talkable, grass, errors: [`${town}: map has no ground layer`] };
   const starts = [DEFAULT_SPAWN, EXTRA_START[town]].flatMap((name) => (name === undefined ? [] : [name]));
   const spawnObjects = map.objects.filter((o) => o.layer === 'warps' && !isWarp(o));
   for (const o of spawnObjects) {
@@ -161,6 +167,11 @@ function computeReach(map: TownMap, seenTen: boolean): Reach {
     for (const obj of talkable) for (const flag of grantedFlags(obj, flags)) flags.add(flag);
     grew = flags.size > before;
   }
+  for (const zone of map.objects.filter((o) => o.layer === 'encounters')) {
+    const tiles = Array.from({ length: zone.w * zone.h }, (_, i) => ({ x: zone.tile.x + (i % zone.w), y: zone.tile.y + Math.floor(i / zone.w) }));
+    if (tiles.some((tile) => reached.has(key(tile)))) grass.add(zone);
+    else errs.push(`${town}/encounters/${zone.name || '?'}: no tile of the grass zone is reachable`);
+  }
   const held = [...flags];
   const groups = map.objects.map((o) => flagList(o.props.cycle)).filter((group) => group.length > 0);
   const cycleFlags = new Set<string>(groups.flat());
@@ -187,7 +198,7 @@ function computeReach(map: TownMap, seenTen: boolean): Reach {
       if (needs.filter((flag) => group.includes(flag)).length > 1) errs.push(`${where}: needs two flags of one exclusive cycle (${group.join(', ')})`);
     }
   }
-  return { talkable, errors: errs };
+  return { talkable, grass, errors: errs };
 }
 
 function checkMaps() {
@@ -200,6 +211,8 @@ function checkMaps() {
   const spawns = new Map<string, Set<string>>();
   const before = errors.length;
   const talkable = new Set<MapObject>();
+  const grass = new Set<MapObject>();
+  const poolFacts: [string, FactId[]][] = [];
 
   for (const [town, map] of maps) {
     for (const layer of map.objectLayers) {
@@ -219,6 +232,7 @@ function checkMaps() {
   }
   for (const reach of results.values()) {
     for (const obj of reach.talkable) talkable.add(obj);
+    for (const zone of reach.grass) grass.add(zone);
     errors.push(...reach.errors);
   }
   const reachErrors = errors.length - before;
@@ -237,10 +251,17 @@ function checkMaps() {
         if (!p.factId) errors.push(`${where}: missing factId`);
       }
       if (p.factId && !isFactId(p.factId)) errors.push(`${where}: unknown factId ${p.factId}`);
-      // only facts a player can reach count as shown; encounter pools join once encounters ship
+      // only an npc, sign or item beside a walkable tile counts a fact as shown: recruiters play with wild bugs off, so a pool alone would hide it
       if (p.factId && talkable.has(obj) && isFactId(p.factId)) covered.add(p.factId);
-      for (const id of p.pool ? p.pool.split(',').map((s) => s.trim()).filter(Boolean) : []) {
-        if (!isFactId(id)) errors.push(`${where}: unknown factId ${id} in pool`);
+      const pool = p.pool ? p.pool.split(',').map((s) => s.trim()).filter(Boolean) : [];
+      if (kind === 'grass' && pool.length === 0) errors.push(`${where}: grass zone has an empty pool`);
+      for (const id of pool) if (!isFactId(id)) errors.push(`${where}: unknown factId ${id} in pool`);
+      if (kind === 'grass' && grass.has(obj)) poolFacts.push([where, pool.filter(isFactId)]);
+      if (kind === 'grass' && !WILD_BY_TOWN[town]) errors.push(`${where}: no wild bugs are listed for ${town} in src/game/battle/data.ts`);
+      if (kind === 'npc' && p.battle) {
+        const trainer = TRAINERS.find((t) => t.id === p.battle);
+        if (!trainer) errors.push(`${where}: unknown trainer "${p.battle}"`);
+        else if (trainer.factId !== p.factId) errors.push(`${where}: trainer ${trainer.id} says ${trainer.factId}, the npc says ${p.factId ?? '(none)'}`);
       }
       if (kind === 'npc' && !(NPC_SPRITES as readonly string[]).includes(p.sprite ?? '')) errors.push(`${where}: unknown sprite "${p.sprite ?? ''}"`);
       if (kind === 'warp') {
@@ -261,9 +282,53 @@ function checkMaps() {
     else if (dest.at && !names.has(dest.at)) errors.push(`destination ${dest.id}: no object "${dest.at}" in ${dest.town}`);
   }
 
+  for (const [where, pool] of poolFacts) {
+    for (const id of pool) if (!covered.has(id)) errors.push(`${where}: ${id} is only in a grass pool, and a reachable npc, sign or item must carry it too`);
+  }
+  const leaders = new Set([...talkable].filter((o) => o.layer === 'npcs' && o.props.battle).map((o) => o.props.battle));
+  for (const trainer of TRAINERS) if (!leaders.has(trainer.id)) errors.push(`trainer ${trainer.id}: no reachable npc with battle=${trainer.id} on any map`);
   const uncovered = facts.filter((fact) => !covered.has(fact.id)).map((fact) => fact.id);
   if (uncovered.length) errors.push(`${uncovered.length} facts not on any reachable npc, sign or item: ${uncovered.join(', ')}`);
   if (reachErrors === 0) console.log(`check-content: ${facts.length} facts, ${maps.size} maps, all objects reachable`);
+}
+
+const duplicates = (ids: readonly string[]) => ids.filter((id, i) => ids.indexOf(id) !== i);
+
+function checkBattle() {
+  for (const id of duplicates(MOVES.map((m) => m.id))) errors.push(`duplicate move id ${id}`);
+  for (const id of duplicates(SPECIES.map((s) => s.id))) errors.push(`duplicate species id ${id}`);
+  for (const id of duplicates(TRAINERS.map((t) => t.id))) errors.push(`duplicate trainer id ${id}`);
+  const speciesIds = new Set<string>(SPECIES.map((s) => s.id));
+  const moveIds = new Set<string>(MOVES.map((m) => m.id));
+  const hasFile = (url: string) => existsSync(join(ROOT, 'public', url));
+  for (const move of MOVES) {
+    if (move.factId !== undefined && !isFactId(move.factId)) errors.push(`move ${move.id}: unknown factId ${move.factId}`);
+    if (move.factId === undefined && !FLAVOR_LINES.has(move.id)) errors.push(`move ${move.id}: no factId and no line in src/game/world/lines.ts`);
+    if (move.factId !== undefined && FLAVOR_LINES.has(move.id)) errors.push(`move ${move.id}: has both a factId and a flavor line`);
+    if (blank(move.name) || move.power <= 0) errors.push(`move ${move.id}: needs a name and a power above 0`);
+  }
+  for (const id of FLAVOR_LINES.keys()) if (!moveIds.has(id)) errors.push(`lines.ts has a flavor line for unknown move ${id}`);
+  for (const species of SPECIES) {
+    for (const id of species.moves) if (!moveIds.has(id)) errors.push(`species ${species.id}: unknown move ${id}`);
+    const starter = species.id in STARTER_LINES;
+    const moves = MOVES.filter((m) => species.moves.includes(m.id));
+    if (starter && (species.moves.length !== 4 || moves.some((m) => m.factId === undefined))) errors.push(`starter ${species.id}: needs four moves that each carry a resume fact`);
+    if (!starter && moves.some((m) => m.factId !== undefined)) errors.push(`bug ${species.id}: its moves use lines.ts, not resume facts`);
+    for (const art of [frontArt(species.id), backArt(species.id)]) if (!hasFile(art.url)) errors.push(`species ${species.id}: missing sprite ${art.url}`);
+  }
+  for (const id of Object.keys(STARTER_LINES)) if (!speciesIds.has(id)) errors.push(`STARTER_LINES has unknown species ${id}`);
+  const wild = SPECIES.filter((s) => !(s.id in STARTER_LINES)).map((s) => s.id);
+  if ([...wild].sort().join() !== [...WILD_SPECIES].sort().join()) errors.push('WILD_SPECIES in src/content/ids.ts must list exactly the bugs in src/game/battle/data.ts');
+  for (const [town, roster] of Object.entries(WILD_BY_TOWN)) for (const id of roster) if (!speciesIds.has(id)) errors.push(`wild bugs of ${town}: unknown species ${id}`);
+  for (const trainer of TRAINERS) {
+    if (!isFactId(trainer.factId)) errors.push(`trainer ${trainer.id}: unknown factId ${trainer.factId}`);
+    if (!ITEM_LINES.has(trainer.badge)) errors.push(`trainer ${trainer.id}: badge ${trainer.badge} has no line in src/game/world/lines.ts`);
+    if (trainer.party.length === 0) errors.push(`trainer ${trainer.id}: empty party`);
+    for (const id of trainer.party) if (!speciesIds.has(id)) errors.push(`trainer ${trainer.id}: unknown species ${id}`);
+    if (!(TRAINER_SPRITES as readonly string[]).includes(trainer.id)) errors.push(`trainer ${trainer.id}: no sprite id`);
+  }
+  for (const id of TRAINER_SPRITES) if (!hasFile(trainerArt(id).url)) errors.push(`trainer sprite ${id}: missing ${trainerArt(id).url}`);
+  for (const id of BG_IDS) if (!hasFile(bgArt(id).url)) errors.push(`battle background ${id}: missing ${bgArt(id).url}`);
 }
 
 function checkLicenses() {
@@ -282,6 +347,7 @@ if (distMode) {
 } else {
   checkContent();
   checkMaps();
+  checkBattle();
   const scanned = [...walk(join(ROOT, 'src'), TEXT_EXTS), ...walk(join(ROOT, 'public'), TEXT_EXTS)];
   if (mapsValue) scanned.push(...walk(mapsDir, ['.json']));
   scanText([...new Set(scanned)]);

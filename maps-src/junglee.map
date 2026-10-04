@@ -173,9 +173,10 @@ objects
   warps    gear-road      1,16 kind=spawn face=right
   warps    marrfa-road    56,1 kind=spawn face=down
   warps    default        6,17 kind=spawn face=right
-  npcs     monorepo-leader 81,13 sprite=monorepo face=down factId=skill.monorepo speaker="Tooling Leader"
+  npcs     monorepo-leader 81,13 sprite=monorepo face=down factId=skill.monorepo speaker="Tooling Leader" battle=monorepo
   warps    gym-exit       81,19 to=junglee spawn=gym-door
   warps    gym-in         81,18 kind=door face=up
+  encounters grass-junglee-a 60,14 6x5 pool=junglee-a.ab,junglee-b.2fa,junglee-b.blog
 
 regions
   town 0,0,70,34

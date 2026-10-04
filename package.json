@@ -13,6 +13,7 @@
     "lint": "eslint .",
     "check:fixtures": "tsx scripts/check-fixtures.ts",
     "smoke": "playwright test",
+    "art:placeholders": "tsx scripts/make-battle-placeholders.ts",
     "map": "tsx scripts/build-map.ts",
     "map:all": "for f in maps-src/*.map; do tsx scripts/build-map.ts $f || exit 1; done"
   },

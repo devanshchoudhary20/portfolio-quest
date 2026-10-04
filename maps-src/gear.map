@@ -157,12 +157,14 @@ objects
   npcs     librarian      55,11 sprite=librarian face=down factId=gear.leetcode speaker="Librarian"
   warps    library-exit   55,16 to=gear spawn=library-door
   warps    library-in     55,15 kind=door face=up
-  npcs     core-leader    77,10 sprite=core face=down factId=skill.core speaker="Core Leader"
+  npcs     core-leader    77,10 sprite=core face=down factId=skill.core speaker="Core Leader" battle=core
   warps    gym-exit       77,16 to=gear spawn=gym-door
   warps    gym-in         77,15 kind=door face=up
   items    pc-box         98,9 factId=patch-center.koalalab speaker="PC"
   warps    patch-exit     98,15 to=gear spawn=patch-door
   warps    patch-in       98,14 kind=door face=up
+  encounters grass-gear-a 6,19 8x3 pool=gear.btech,gear.leetcode,skill.core
+  encounters grass-gear-b 24,19 6x3 pool=gear.btech,gear.leetcode,skill.core
 
 regions
   town 0,0,44,24

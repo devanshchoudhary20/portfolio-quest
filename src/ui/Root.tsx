@@ -1,6 +1,8 @@
 import type { CSSProperties } from 'react';
 import { isCoarsePointer, landscapeScale } from '../game/viewport';
+import { battleLine } from '../game/battle/session';
 import { AskPanel } from './AskPanel';
+import { Battle } from './Battle';
 import { Dialog } from './Dialog';
 import { Hud } from './Hud';
 import { ProfessorIntro } from './ProfessorIntro';
@@ -18,6 +20,8 @@ export function Root() {
   const panel = useGame((s) => s.panel);
   const stage = useGame((s) => s.stage);
   const travel = useGame((s) => s.travel);
+  const battling = useGame((s) => s.battle !== null);
+  const battleText = useGame((s) => (s.battle ? battleLine(s.battle) : ''));
   const style = {
     left: stage.left,
     top: stage.top,
@@ -26,7 +30,7 @@ export function Root() {
     '--px': `${stage.px}px`,
   } as CSSProperties;
   const introStyle = { '--px': `${landscapeScale(innerWidth, innerHeight)}px` } as CSSProperties;
-  const announced = dialog?.lines[dialog.index] ?? '';
+  const announced = dialog?.lines[dialog.index] ?? battleText;
 
   if (phase === 'title') return null;
   if (phase === 'intro') {
@@ -39,7 +43,7 @@ export function Root() {
   return (
     <>
       <div className="pq-stage" style={style}>
-        <Hud />
+        {battling ? <Battle /> : <Hud />}
         {panel === 'menu' ? <StartMenu /> : null}
         {panel === 'options' ? <OptionsPanel /> : null}
         {panel === 'recruiter' ? <RecruiterMode /> : null}
@@ -50,7 +54,7 @@ export function Root() {
           {announced}
         </p>
       </div>
-      {COARSE ? <Touch /> : null}
+      {COARSE && !battling ? <Touch /> : null}
     </>
   );
 }

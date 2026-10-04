@@ -1,16 +1,14 @@
-import { useEffect, useRef } from 'react';
 import type { CSSProperties } from 'react';
 import type { DialogState } from '../state/store';
 import { PORTRAIT_SRC } from './portraits';
-import { INSTANT } from '../state/prefs';
-import { actions, useGame } from './useGame';
-import { useTypewriter } from './useTypewriter';
+import { actions } from './useGame';
+import { useTypedLine } from './useTypedLine';
 
 // one span per character; the typewriter only changes a CSS count, and the live region in Root announces the whole line once
-export function Typed({ line, count }: { line: string; count: number }) {
+export function Typed({ line, count, testId = 'dialog-text' }: { line: string; count: number; testId?: string }) {
   const chars = [...line];
   return (
-    <p className="pq-text" data-testid="dialog-text" style={{ '--n': count } as CSSProperties}>
+    <p className="pq-text" data-testid={testId} style={{ '--n': count } as CSSProperties}>
       {chars.map((char, i) => (
         <span key={i} aria-hidden="true" style={{ '--i': i } as CSSProperties}>
           {char}
@@ -22,21 +20,9 @@ export function Typed({ line, count }: { line: string; count: number }) {
 
 // keyed by line in the parent, so each line types from zero
 function Line({ dialog }: { dialog: DialogState }) {
-  const textSpeed = useGame((s) => s.textSpeed);
-  const reducedMotion = useGame((s) => s.reducedMotion);
-  const finishTick = useGame((s) => s.finishTick);
-  const mountedTick = useRef(finishTick);
   const line = dialog.lines[dialog.index] ?? '';
-  const { count, done, finish } = useTypewriter(line, textSpeed, reducedMotion || textSpeed === INSTANT);
+  const { count, done } = useTypedLine(line);
   const portrait = dialog.portrait ? PORTRAIT_SRC[dialog.portrait] : null;
-
-  useEffect(() => {
-    actions.setTyping(!done);
-  }, [done]);
-
-  useEffect(() => {
-    if (finishTick !== mountedTick.current) finish();
-  }, [finishTick]);
 
   return (
     <>

@@ -1,7 +1,11 @@
 import type Phaser from 'phaser';
-import { townId } from '../content';
+import { speciesId, townId } from '../content';
 import type { TownKey } from '../content';
 import { store } from '../state/store';
+import { closeBattle } from './battle/controller';
+import { enemyOf } from './battle/engine';
+import { battleLine } from './battle/session';
+import type { Battle } from './scenes/Battle';
 import type { Overworld } from './scenes/Overworld';
 import type { Dir } from './world/save';
 
@@ -20,11 +24,23 @@ function snapshot() {
     pos: s.pos,
     facing: s.facing,
     mode: s.mode,
+    starter: s.starter ?? null,
+    caught: s.caught,
     flags: s.flags,
     seen: s.seen,
     loops: s.loops,
     held: s.held,
     panel: s.panel,
+    battle: s.battle && {
+      phase: s.battle.state.phase,
+      turn: s.battle.state.turn,
+      enemy: enemyOf(s.battle.state).species,
+      enemyHp: enemyOf(s.battle.state).hp,
+      playerHp: s.battle.state.player.hp,
+      shown: s.battle.shown,
+      line: battleLine(s.battle),
+      pending: s.battle.index < s.battle.lines.length,
+    },
     dialog: s.dialog ? { speaker: s.dialog.speaker, text: s.dialog.lines[s.dialog.index] ?? '' } : null,
   };
 }
@@ -63,6 +79,24 @@ export function installTestApi(game: Phaser.Game) {
     maze() {
       return (game.scene.getScene('Overworld') as Overworld).mazeInfo();
     },
+    encounter(species: string, hp: { playerHp?: number; enemyHp?: number } = {}) {
+      (game.scene.getScene('Overworld') as Overworld).forceWild(speciesId(species), hp);
+    },
+    // a battle part on screen: its rectangle in CSS pixels, and a switch to hide it
+    battlePart(part: 'bg' | 'enemy' | 'player', visible?: boolean) {
+      const scene = game.scene.getScene('Battle') as Battle;
+      const found = scene.testPart(part);
+      if (!found) return null;
+      if (visible !== undefined) found.setVisible(visible);
+      const camera = scene.cameras.main;
+      const rect = game.canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      const toClient = (x: number, y: number) => ({ x: rect.left + ((x - camera.worldView.x) * camera.zoom) / dpr, y: rect.top + ((y - camera.worldView.y) * camera.zoom) / dpr });
+      const from = toClient(found.x, found.y);
+      const to = toClient(found.x + found.width, found.y + found.height);
+      return { x: from.x, y: from.y, width: to.x - from.x, height: to.y - from.y, alpha: found.alpha };
+    },
+    closeBattle: () => closeBattle(),
     warp(town: string, spawn?: string) {
       const { phase, actions } = store.getState();
       const world = { town: townId(town as TownKey), ...(spawn ? { spawn } : {}) };
@@ -79,6 +113,9 @@ declare global {
       interact: () => void;
       walk: (dir: Dir, tiles?: number) => Promise<ReturnType<typeof snapshot>>;
       warp: (town: string, spawn?: string) => void;
+      closeBattle: () => void;
+      encounter: (species: string, hp?: { playerHp?: number; enemyHp?: number }) => void;
+      battlePart: (part: 'bg' | 'enemy' | 'player', visible?: boolean) => { x: number; y: number; width: number; height: number; alpha: number } | null;
       maze: () => ReturnType<Overworld['mazeInfo']>;
       stand: (x: number, y: number, facing: Dir) => void;
       tileToClient: (x: number, y: number) => { x: number; y: number };

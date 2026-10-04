@@ -26,6 +26,14 @@ export const closeDialog = (page: Page) =>
     return (await state(page)).dialog;
   }, { message: 'dialog closes', intervals: [120] }).toBeNull();
 
+// a gym leader's fact ends in a fight; Esc runs from the move grid and Z reads the lines, until the map is back
+export const runFromBattle = (page: Page) =>
+  expect.poll(async () => {
+    const { battle } = await state(page);
+    if (battle) await page.keyboard.press(battle.pending ? 'z' : 'Escape', { delay: 70 });
+    return battle;
+  }, { message: 'battle ends', intervals: [120], timeout: 45_000 }).toBeNull();
+
 export const TOWNS: readonly string[] = BUILT_TOWNS;
 export const warpTo = (page: Page, town: string, spawn?: string) => page.evaluate(([t, sp]) => window.__pq!.warp(t!, sp), [town, spawn]);
 export const waitAt = (page: Page, town: string, tile: { x: number; y: number }, timeout = 5000) =>

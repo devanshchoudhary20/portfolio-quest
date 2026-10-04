@@ -1,7 +1,8 @@
-import { factId, flagId } from '../../content';
+import { factId, flagId, trainerId } from '../../content';
 import type { FlagId } from '../../content';
 import type { Portrait } from '../../state/store';
 import { store } from '../../state/store';
+import { trainerOf } from '../battle/data';
 import { flagList } from './conditions';
 import { ITEM_LINES, LOCK_LINES, RECOVERY_LINE, ROLE_LINES } from './lines';
 import type { WorldObject } from './objects';
@@ -41,7 +42,12 @@ export function interactWith(obj: WorldObject) {
   const portrait = PORTRAITS.find((p) => p === obj.props.portrait) ?? null;
   const grant = pickGrant(obj.props, flags);
   const extra = grant?.line === undefined ? [] : [grant.line];
-  actions.openFact(factId(obj.props.factId), { speaker, portrait }, extra, obj.props.guide === undefined ? undefined : 'ask');
+  // a gym leader who has not been beaten says their fact, then the fight starts
+  const trainer = obj.props.battle === undefined ? undefined : trainerOf(trainerId(obj.props.battle));
+  const fights = trainer !== undefined && !flags.includes(trainer.badge);
+  const after = obj.props.guide !== undefined ? 'ask' : fights ? 'battle' : undefined;
+  const request = fights ? ({ kind: 'trainer', trainer: trainer.id } as const) : undefined;
+  actions.openFact(trainer?.factId ?? factId(obj.props.factId), { speaker, portrait }, extra, after, request);
   if (!grant) return;
   grant.replaces.forEach(actions.removeFlag);
   actions.addFlag(grant.flag);

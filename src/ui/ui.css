@@ -219,3 +219,15 @@ body:has(.pq-recruiter) .skip { display: none; }
 .pq-ask p { margin: calc(var(--px) * 2) 0 0; color: var(--ink); }
 .pq-ask-actions { display: flex; gap: calc(var(--px) * 2); margin-top: calc(var(--px) * 3); }
 .pq-ask-actions button { min-height: 48px; padding: 0 calc(var(--px) * 5); border: 2px solid var(--ink); border-radius: 4px; background: var(--panel-2); color: var(--ink); font: inherit; cursor: pointer; }
+
+.pq-starters { position: fixed; inset: 0; }
+.pq-starter-row { position: fixed; left: 0; right: 0; top: 22%; display: flex; justify-content: center; gap: calc(var(--px) * 22); pointer-events: none; }
+.pq-starter { position: relative; display: flex; flex-direction: column; align-items: center; gap: calc(var(--px) * 1); padding: 0; border: 0; background: none; color: var(--ink); font-size: max(18px, calc(var(--px) * 7)); pointer-events: auto; cursor: pointer; }
+.pq-starter img, .pq-orb { width: calc(var(--px) * 64); height: calc(var(--px) * 64); image-rendering: pixelated; }
+.pq-orb { border-radius: 50%; background: #3cc6e8; scale: 0.7; }
+.pq-starter[data-type="grass"] .pq-orb { background: #5cb85a; }
+.pq-starter[data-type="fire"] .pq-orb { background: #e8793a; }
+.pq-starter b { padding: 0 calc(var(--px) * 3); border: 2px solid var(--ink); border-radius: 8px; background: var(--panel); font-weight: 400; }
+.pq-starter small { padding: 0 calc(var(--px) * 2); border-radius: 4px; background: var(--panel); font-size: max(14px, calc(var(--px) * 5)); color: var(--muted); }
+.pq-starter:focus-visible { outline: 2px solid var(--cursor); outline-offset: 4px; }
+.pq-pointer { position: absolute; top: calc(var(--px) * -4); border-top: 10px solid var(--cursor); border-left: 8px solid transparent; border-right: 8px solid transparent; }

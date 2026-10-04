@@ -7,8 +7,10 @@ const ROOT = resolve(import.meta.dirname, '..');
 const T = 16;
 const COLUMNS = 16;
 const HEADERS = new Set(['map', 'pack', 'sheets', 'legend', 'ground', 'things', 'objects', 'regions']);
-const OBJECT_LAYERS = ['npcs', 'signs', 'items', 'warps', 'gates'] as const;
-const KIND_OF_LAYER: Record<string, string> = { npcs: 'npc', signs: 'sign', items: 'item', warps: 'warp', gates: 'gate' };
+const OBJECT_LAYERS = ['npcs', 'signs', 'items', 'warps', 'gates', 'encounters'] as const;
+const KIND_OF_LAYER: Record<string, string> = { npcs: 'npc', signs: 'sign', items: 'item', warps: 'warp', gates: 'gate', encounters: 'grass' };
+// tall grass is painted over every tile of an encounters zone, alternating two tufts of the nature sheet
+const GRASS_TILES: TileRef[] = [{ sheet: 'nature', col: 4, row: 10 }, { sheet: 'nature', col: 5, row: 10 }];
 
 const args = process.argv.slice(2);
 const flag = (name: string) => (args.includes(name) ? args[args.indexOf(name) + 1] : undefined);
@@ -131,6 +133,23 @@ thingRows.forEach((row, y) =>
   }),
 );
 
+const OBJECT_LINE = /^\s*(\w+)\s+(\S+)\s+(\d+),(\d+)(?:\s+(\d+)x(\d+))?(.*)$/;
+
+// tall grass: every tile of an encounters zone gets a grass tuft in the things layer, and none may sit on a solid tile
+for (const line of sections.get('objects') ?? []) {
+  const m = OBJECT_LINE.exec(line);
+  if (!m || m[1] !== 'encounters') continue;
+  const [, , zoneName = '', zx = '0', zy = '0', zw = '1', zh = '1'] = m;
+  for (let dy = 0; dy < Number(zh); dy++) {
+    for (let dx = 0; dx < Number(zw); dx++) {
+      const x = Number(zx) + dx;
+      const y = Number(zy) + dy;
+      if (x >= W || y >= H || solid[y * W + x] || ground[y * W + x] === 0) fail(`encounters ${zoneName}: tile ${x},${y} is solid or off the ground`);
+      things[y * W + x] = idOf(GRASS_TILES[(x + y) % GRASS_TILES.length]!);
+    }
+  }
+}
+
 const markerId = packed.length + 1;
 const rowsCount = Math.ceil((packed.length + 1) / COLUMNS);
 const png = new PNG({ width: COLUMNS * T, height: rowsCount * T });
@@ -171,17 +190,26 @@ const objectLayers = OBJECT_LAYERS.map((layerName, i) => ({
   objects: [] as unknown[],
 }));
 
+const occupied = new Map<string, string>();
+const zoneTiles: [string, string][] = [];
 for (const line of sections.get('objects') ?? []) {
-  const m = /^\s*(\w+)\s+(\S+)\s+(\d+),(\d+)(.*)$/.exec(line);
+  const m = OBJECT_LINE.exec(line);
   if (!m) fail(`objects: cannot read "${line.trim()}"`);
-  const [, layerName = '', objName = '', ox = '0', oy = '0', rest = ''] = m!;
+  const [, layerName = '', objName = '', ox = '0', oy = '0', zw, zh, rest = ''] = m!;
   const layer = objectLayers.find((l) => l.name === layerName);
   if (!layer) fail(`objects: unknown layer "${layerName}"`);
+  if ((zw !== undefined) !== (layerName === 'encounters')) fail(`objects: only encounters take a size, and they need one: "${line.trim()}"`);
   const props: Record<string, string> = { kind: KIND_OF_LAYER[layerName] ?? '' };
   for (const kv of rest.matchAll(/(\w+)=("[^"]*"|\S+)/g)) props[kv[1]!] = kv[2]!.replace(/^"|"$/g, '');
   const properties: Prop[] = Object.entries(props).map(([k, v]) => ({ name: k, type: 'string', value: v }));
-  layer!.objects.push({ id: nextObjectId++, name: objName, type: props.kind, x: Number(ox) * T, y: Number(oy) * T, width: T, height: T, rotation: 0, visible: true, properties });
+  const w = Number(zw ?? 1);
+  const h = Number(zh ?? 1);
+  if (layerName === 'encounters') for (let dy = 0; dy < h; dy++) for (let dx = 0; dx < w; dx++) zoneTiles.push([`${Number(ox) + dx},${Number(oy) + dy}`, objName]);
+  else occupied.set(`${ox},${oy}`, objName);
+  layer!.objects.push({ id: nextObjectId++, name: objName, type: props.kind, x: Number(ox) * T, y: Number(oy) * T, width: w * T, height: h * T, rotation: 0, visible: true, properties });
 }
+// grass never covers an npc, sign, item, warp, spawn or gate, so no required tile is ever a fight
+for (const [tile, zone] of zoneTiles) if (occupied.has(tile)) fail(`encounters ${zone}: tile ${tile} is taken by ${occupied.get(tile)}`);
 
 // camera regions, "name x,y,w,h [indoor] [maze]" in tiles: the camera clamps to the region the player stands in, so a small room is centered; indoor regions skip the day/night tint; a maze region gets runtime walls
 const regions = (sections.get('regions') ?? []).map((line) => {
@@ -259,6 +287,6 @@ if (preview) {
     for (let py = 4; py < T * Z - 4; py++) for (let px = 4; px < T * Z - 4; px++) out.data.set([...rgb, 255], ((y * T * Z + py) * out.width + x * T * Z + px) * 4);
   };
   const colors: Record<string, number[]> = { npcs: [255, 0, 255], signs: [255, 255, 0], items: [0, 255, 255], warps: [255, 0, 0], gates: [255, 140, 0] };
-  for (const l of objectLayers) for (const o of l.objects as { x: number; y: number }[]) dot(o.x / T, o.y / T, colors[l.name]!);
+  for (const l of objectLayers) for (const o of l.objects as { x: number; y: number }[]) if (colors[l.name]) dot(o.x / T, o.y / T, colors[l.name]!);
   writeFileSync(resolve(preview), PNG.sync.write(out));
 }

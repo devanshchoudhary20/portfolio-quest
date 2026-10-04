@@ -107,7 +107,7 @@ objects
   warps    junglee-road   15,20 kind=spawn face=up
   warps    testmu-road    30,9 kind=spawn face=left
   warps    default        15,12 kind=spawn face=up
-  npcs     backend-leader 42,10 sprite=backend face=down factId=skill.backend speaker="Backend Leader"
+  npcs     backend-leader 42,10 sprite=backend face=down factId=skill.backend speaker="Backend Leader" battle=backend
   warps    gym-exit       42,14 to=marrfa spawn=gym-door
   warps    gym-in         42,13 kind=door face=up
   warps    door-owner     5,5 to=marrfa spawn=owner-in needs=role.owner
@@ -125,6 +125,7 @@ objects
   warps    tenant-exit     89,12 to=marrfa spawn=tenant-door
   warps    tenant-in     89,11 kind=door face=up
   signs    tenant-screen     89,9 factId=marrfa.dashboard speaker="Dashboard"
+  encounters grass-marrfa-a 21,17 8x3 pool=marrfa.dashboard,skill.backend
 
 regions
   town 0,0,32,22

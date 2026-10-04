@@ -1,10 +1,12 @@
 import { createStore } from 'zustand/vanilla';
 import { factById } from '../content';
-import type { DestId, FactId, FlagId, TownId } from '../content';
+import type { DestId, FactId, FlagId, SpeciesId, TownId } from '../content';
+import type { BattleRequest, BattleUi } from '../game/battle/session';
 import { SEEN_TEN, SEEN_TEN_COUNT } from '../game/world/conditions';
+import { factText } from '../game/world/factText';
 import type { Dir, Mode, SaveV1, Starter } from '../game/world/save';
 import { START } from '../game/world/towns';
-import { readTextSpeed } from './prefs';
+import { readTextSpeed, readWildBugs } from './prefs';
 import type { TextSpeed } from './prefs';
 
 export type Phase = 'title' | 'intro' | 'play';
@@ -21,7 +23,9 @@ export interface DialogState {
   lines: string[];
   index: number;
   // what the Overworld does once the player closes this dialog
-  after?: 'stepBack' | 'ask';
+  after?: 'stepBack' | 'ask' | 'battle';
+  // the fight a gym leader's talk leads into
+  battle?: BattleRequest;
 }
 
 export interface WorldRequest {
@@ -40,6 +44,8 @@ export interface Travel {
   canGoBack: boolean;
   // set by the card's menu; the Overworld acts on it and clears the card
   choice: 'retry' | 'back' | null;
+  // names what is loading when it is not a town, such as the battle art
+  label?: string;
 }
 
 interface Speaker {
@@ -70,6 +76,14 @@ export interface State {
   flags: FlagId[];
   seen: FactId[];
   starter: Starter | undefined;
+  caught: SpeciesId[];
+  // the visitor's Wild bugs choice; null until they make one
+  wildBugsPref: boolean | null;
+  // steps since the last battle, so grass never fires twice in a row
+  steps: number;
+  battle: BattleUi | null;
+  // how often each fact was shown by an encounter this visit
+  shownCounts: Record<string, number>;
   dialog: DialogState | null;
   panel: Panel;
   held: Dir | null;
@@ -104,12 +118,22 @@ interface Actions {
   setTravel: (travel: Travel | null) => void;
   chooseTravel: (choice: 'retry' | 'back') => void;
   setTyping: (typing: boolean) => void;
+  setWildBugs: (on: boolean) => void;
+  chooseStarter: (starter: Starter) => void;
+  tickStep: () => void;
+  // the battle itself is played by src/game/battle/controller.ts; the store only holds what it shows
+  setBattle: (battle: BattleUi | null) => void;
+  setShown: (shown: BattleUi['shown']) => void;
+  addCaught: (species: SpeciesId) => void;
+  countShown: (fact: FactId) => void;
+  resetSteps: () => void;
   newGame: () => void;
   continueGame: () => void;
   warpGame: (warp: WorldRequest) => void;
   beginPlay: () => void;
   openDialog: (dialog: Omit<DialogState, 'index'>) => void;
-  openFact: (id: FactId, speaker: Speaker, extra?: string[], after?: DialogState['after']) => void;
+  openFact: (id: FactId, speaker: Speaker, extra?: string[], after?: DialogState['after'], battle?: BattleRequest) => void;
+  markSeen: (id: FactId) => void;
   advanceDialog: () => void;
   advanceOrFinish: () => void;
   closeDialog: () => void;
@@ -131,6 +155,10 @@ const FRESH = {
   flags: [] as FlagId[],
   seen: [] as FactId[],
   starter: undefined,
+  caught: [] as SpeciesId[],
+  steps: 0,
+  battle: null,
+  shownCounts: {} as Record<string, number>,
   dialog: null,
   panel: 'none' as Panel,
   held: null,
@@ -143,8 +171,12 @@ const FRESH = {
 const withDerived = (flags: FlagId[], seen: FactId[]) =>
   seen.length >= SEEN_TEN_COUNT && !flags.includes(SEEN_TEN) ? [...flags, SEEN_TEN] : flags;
 
-export const isUiOpen = (state: Pick<State, 'phase' | 'dialog' | 'panel'>) =>
-  state.phase !== 'play' || state.dialog !== null || state.panel !== 'none';
+export const isUiOpen = (state: Pick<State, 'phase' | 'dialog' | 'panel' | 'battle'>) =>
+  state.phase !== 'play' || state.dialog !== null || state.panel !== 'none' || state.battle !== null;
+
+// recruiters never pick a starter, and they start with wild bugs off unless they turned them on
+export const wildBugsOn = (state: Pick<State, 'wildBugsPref' | 'mode'>) => state.wildBugsPref ?? state.mode !== 'recruiter';
+
 
 export const store = createStore<State>()((set, get) => ({
   phase: 'title',
@@ -152,6 +184,7 @@ export const store = createStore<State>()((set, get) => ({
   mode: 'curious',
   textSpeed: readTextSpeed(),
   reducedMotion: false,
+  wildBugsPref: readWildBugs(),
   town: START.town,
   pos: { x: 0, y: 0 },
   facing: 'down',
@@ -178,6 +211,18 @@ export const store = createStore<State>()((set, get) => ({
     setTravel: (travel) => set({ travel }),
     chooseTravel: (choice) => set((s) => (s.travel ? { travel: { ...s.travel, choice } } : {})),
     setTyping: (typing) => set({ typing }),
+    setWildBugs: (wildBugsPref) => set({ wildBugsPref }),
+    chooseStarter: (starter) => set({ starter }),
+    tickStep: () => set((s) => ({ steps: s.steps + 1 })),
+    setBattle: (battle) => set(battle ? { battle, held: null, run: false } : { battle: null, held: null, run: false, typing: false }),
+    addCaught: (species) => {
+      if (get().caught.includes(species)) return;
+      set((s) => ({ caught: [...s.caught, species] }));
+      get().actions.requestSave();
+    },
+    countShown: (fact) => set((s) => ({ shownCounts: { ...s.shownCounts, [fact]: (s.shownCounts[fact] ?? 0) + 1 } })),
+    resetSteps: () => set({ steps: 0 }),
+    setShown: (shown) => set((s) => (s.battle ? { battle: { ...s.battle, shown } } : {})),
     newGame: () => set({ ...FRESH, landed: false, phase: 'intro', world: { town: START.town, spawn: START.spawn } }),
     continueGame: () => {
       const save = get().continueSave;
@@ -187,6 +232,7 @@ export const store = createStore<State>()((set, get) => ({
         flags: withDerived(save.flags, save.seen),
         seen: save.seen,
         starter: save.starter,
+        caught: save.caught,
         mode: save.mode,
         landed: false,
         phase: 'play',
@@ -199,16 +245,19 @@ export const store = createStore<State>()((set, get) => ({
       const lines = dialog.lines.filter((line) => line.trim() !== '');
       if (lines.length > 0) set({ dialog: { ...dialog, lines, index: 0 } });
     },
-    openFact: (id, speaker, extra = [], after) => {
-      const { mode, seen, actions } = get();
-      const fact = factById.get(id);
-      if (!fact) return;
-      if (!seen.includes(id)) {
-        const next = [...seen, id];
-        set((s) => ({ seen: next, flags: withDerived(s.flags, next) }));
-        actions.requestSave();
-      }
-      actions.openDialog({ ...speaker, lines: [mode === 'engineer' ? (fact.long ?? fact.short) : fact.short, ...extra], ...(after ? { after } : {}) });
+    markSeen: (id) => {
+      const { seen, actions } = get();
+      if (seen.includes(id) || !factById.has(id)) return;
+      const next = [...seen, id];
+      set((s) => ({ seen: next, flags: withDerived(s.flags, next) }));
+      actions.requestSave();
+    },
+    openFact: (id, speaker, extra = [], after, battle) => {
+      const { mode, actions } = get();
+      const text = factText(id, mode);
+      if (text === undefined) return;
+      actions.markSeen(id);
+      actions.openDialog({ ...speaker, lines: [text, ...extra], ...(after ? { after } : {}), ...(battle ? { battle } : {}) });
     },
     advanceDialog: () => {
       const dialog = get().dialog;
@@ -246,9 +295,9 @@ export const store = createStore<State>()((set, get) => ({
     setHeld: (held) => set({ held }),
     setRun: (run) => set({ run }),
     pressA: () => {
-      const { dialog, phase, panel, actions } = get();
+      const { dialog, phase, panel, battle, actions } = get();
       if (dialog) actions.advanceOrFinish();
-      else if (phase === 'play' && panel === 'none') set((s) => ({ aPulse: s.aPulse + 1 }));
+      else if (phase === 'play' && panel === 'none' && !battle) set((s) => ({ aPulse: s.aPulse + 1 }));
     },
     pressB: () => {
       const { dialog, panel, actions } = get();
@@ -256,8 +305,8 @@ export const store = createStore<State>()((set, get) => ({
       else if (panel !== 'none') actions.closePanel();
     },
     pressMenu: () => {
-      const { phase, dialog, panel, travel, actions } = get();
-      if (phase !== 'play' || dialog || travel) return;
+      const { phase, dialog, panel, travel, battle, actions } = get();
+      if (phase !== 'play' || dialog || travel || battle) return;
       if (panel === 'none') actions.openPanel('menu');
       else actions.closePanel();
     },
@@ -274,6 +323,7 @@ export function toSave(state: State): SaveV1 {
     flags: state.flags,
     seen: state.seen,
     ...(state.starter ? { starter: state.starter } : {}),
+    caught: state.caught,
     mode: state.mode,
     savedAt: new Date().toISOString(),
   };

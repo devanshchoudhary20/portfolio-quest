@@ -1,5 +1,5 @@
-import { flagId, isFactId, isMapTownId } from '../../content';
-import type { FactId, FlagId, TownId } from '../../content';
+import { flagId, isFactId, isMapTownId, isSpeciesId } from '../../content';
+import type { FactId, FlagId, SpeciesId, TownId } from '../../content';
 
 const DIRS = ['up', 'down', 'left', 'right'] as const;
 const MODES = ['recruiter', 'engineer', 'curious'] as const;
@@ -17,6 +17,8 @@ export interface SaveV1 {
   flags: FlagId[];
   seen: FactId[];
   starter?: Starter;
+  // wild bugs the player has beaten; an older save without the field reads as none
+  caught: SpeciesId[];
   mode: Mode;
   // null when the stored timestamp is unreadable: the UI shows "Last played: unknown"
   savedAt: string | null;
@@ -45,7 +47,7 @@ const strings = (value: unknown): string[] | null =>
   Array.isArray(value) && value.every((item) => typeof item === 'string') ? value : null;
 
 function parseV1(raw: Record<string, unknown>): SaveV1 | null {
-  const { town, pos, facing, flags, seen, starter, mode, savedAt } = raw;
+  const { town, pos, facing, flags, seen, starter, caught, mode, savedAt } = raw;
   const flagList = strings(flags);
   const seenList = strings(seen);
   if (!isMapTownId(town) || !isRecord(pos) || !isCoord(pos.x) || !isCoord(pos.y)) return null;
@@ -61,6 +63,7 @@ function parseV1(raw: Record<string, unknown>): SaveV1 | null {
     // facts removed from the resume since the save was written are dropped
     seen: seenList.filter(isFactId),
     ...(starter !== undefined ? { starter } : {}),
+    caught: [...new Set(strings(caught) ?? [])].filter(isSpeciesId),
     mode,
     savedAt: typeof savedAt === 'string' && !Number.isNaN(Date.parse(savedAt)) ? savedAt : null,
   };

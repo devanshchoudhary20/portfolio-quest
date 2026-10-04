@@ -1,4 +1,5 @@
 import { flagId } from '../../content';
+import type { SkillGroupId } from '../../content';
 
 // every flag the code itself reads or writes; maps name flags as plain strings and check-content ties each one to a line
 export const FLAGS = {
@@ -12,3 +13,6 @@ export const FLAGS = {
   cursor: flagId('cursor'),
   seenTen: flagId('seen.10'),
 } as const;
+
+// a gym leader beaten in battle hands over this flag; the group id is the skill group the gym reads
+export const badgeFlag = (group: SkillGroupId) => flagId(`badge.${group}`);

@@ -279,10 +279,10 @@ objects
   npcs     ghost-3        190,6 sprite=ghost face=down factId=testmu.bugs speaker="Ghost Bug"
   npcs     ghost-4        185,7 sprite=ghost face=down factId=testmu.bugs speaker="Ghost Bug"
   npcs     ghost-5        188,8 sprite=ghost face=down factId=testmu.bugs speaker="Ghost Bug"
-  npcs     design-leader  211,5 sprite=design face=down factId=skill.design-system speaker="Design Leader"
+  npcs     design-leader  211,5 sprite=design face=down factId=skill.design-system speaker="Design Leader" battle=design
   warps    design-exit    211,11 to=testmu spawn=design-door
   warps    design-in      211,10 kind=door face=up
-  npcs     cross-leader   235,5 sprite=cross face=down factId=skill.cross-stack speaker="Stack Leader"
+  npcs     cross-leader   235,5 sprite=cross face=down factId=skill.cross-stack speaker="Stack Leader" battle=cross
   warps    cross-exit     235,11 to=testmu spawn=cross-door
   warps    cross-in       235,10 kind=door face=up
 

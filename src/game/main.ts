@@ -3,6 +3,7 @@ import { mountUi } from '../ui/mount';
 import { store } from '../state/store';
 import { startKeyboard } from './input/keyboard';
 import { movementPlugin } from './movement/GridMover';
+import { Battle } from './scenes/Battle';
 import { Boot } from './scenes/Boot';
 import { Overworld } from './scenes/Overworld';
 import { Preload } from './scenes/Preload';
@@ -28,13 +29,23 @@ export function createGame() {
     audio: { noAudio: true },
     input: { keyboard: false },
     scale: { mode: Phaser.Scale.NONE, zoom: 1 / view.dpr },
-    scene: [Boot, Preload, Overworld],
+    scene: [Boot, Preload, Overworld, Battle],
     plugins: { scene: [movementPlugin] },
   });
 
   followViewport(game, parent);
   store.subscribe((state, prev) => {
     if (state.phase === 'play' && prev.phase !== 'play' && state.world) game.scene.start('Overworld', state.world);
+  });
+  // the map pauses under a battle and resumes on the same tile
+  store.subscribe((state, prev) => {
+    if (state.battle && !prev.battle) {
+      game.scene.pause('Overworld');
+      game.scene.run('Battle');
+    } else if (!state.battle && prev.battle) {
+      game.scene.stop('Battle');
+      game.scene.resume('Overworld');
+    }
   });
   if (import.meta.env.DEV || import.meta.env.MODE === 'test') installTestApi(game);
   return game;

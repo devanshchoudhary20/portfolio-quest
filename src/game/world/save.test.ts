@@ -32,6 +32,12 @@ describe('loadSave', () => {
     expect(loadSave({ ...valid, textSpeed: 3 })).not.toHaveProperty('textSpeed');
   });
 
+  it('reads caught bugs, drops unknown species and repeats, and defaults to none', () => {
+    expect(loadSave(valid)?.caught).toEqual([]);
+    expect(loadSave({ ...valid, caught: ['cors', 'cors', 'dragon', 7] })?.caught).toEqual([]);
+    expect(loadSave({ ...valid, caught: ['cors', 'cors', 'dragon'] })?.caught).toEqual(['cors']);
+  });
+
   it('returns null for unknown versions', () => {
     for (const v of [0, 2, 99, '1']) expect(loadSave({ ...valid, v })).toBeNull();
   });
