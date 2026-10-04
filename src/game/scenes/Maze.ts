@@ -1,13 +1,17 @@
 import type Phaser from 'phaser';
+import { factId } from '../../content';
 import type { GridMover, Tile } from '../movement/GridMover';
 import { cellKey, generateWalls, mulberry32 } from '../world/maze';
 import type { Cell } from '../world/maze';
 import type { WorldObject } from '../world/objects';
+import { FLAGS } from '../world/flags';
+import { PLANTED_LINE, survivedLine } from '../world/lines';
 import { inRegion } from '../world/regions';
 import type { Region } from '../world/regions';
 import { store } from '../../state/store';
 
 const TILE = 16;
+const CURSOR_FACT = factId('testmu.cursor');
 const REWRITE_MS = 3000;
 const SHIMMER_MS = 220;
 const WALL_FRAME = 0;
@@ -83,6 +87,16 @@ export class Maze {
     return true;
   }
 
+  // pressing A on open floor plants the flag once the Cursor is owned
+  plantFlag(front: Tile) {
+    if (!store.getState().flags.includes(FLAGS.cursor)) return;
+    if (this.plant(front)) store.getState().actions.openDialog({ speaker: '', portrait: null, lines: [PLANTED_LINE] });
+  }
+
+  reportFlag() {
+    store.getState().actions.openFact(CURSOR_FACT, { speaker: 'Flag', portrait: null }, [survivedLine(this.survived())]);
+  }
+
   // everything a wall must never cover: the player and the tile ahead, NPCs, warps, spawns, objects, the flag, and the open tiles beside an NPC or an object on solid terrain
   private keep(): Cell[] {
     const here = this.mover.position(this.player);
@@ -118,6 +132,7 @@ export class Maze {
       this.walls.set(id, sprite);
     }
     this.total += 1;
+    store.getState().actions.playCue('maze_rewrite');
   }
 
   private fadeOut(sprite: Phaser.GameObjects.Image, calm: boolean) {

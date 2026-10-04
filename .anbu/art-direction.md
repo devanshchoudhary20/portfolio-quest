@@ -34,6 +34,7 @@ Region name in game: **Kernel Region**. Game title on screen: **Portfolio Quest*
 | `muted` | #4A4F63 | #4A4F63 | Secondary text on panel (7.4:1) |
 | `line` | #2E8BA6 | #2E8BA6 | Inner border of every frame (decorative, 3.6:1 against panel, never text) |
 | `cursor` | #C8493F | #C8493F | Menu arrow, advance arrow (non-text, 4.3:1) |
+| `gold` | #D4A017 | #D4A017 | Trainer Card border once all badges are earned (decorative, never text). Defined in title.css `:root`, shared by the panels |
 | `grass` | #5DAA4E | tinted | World |
 | `path` | #D9C58A | tinted | World |
 | `water` | #4A90C8 | tinted | World |

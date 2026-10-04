@@ -59,6 +59,7 @@ export const timeLabel = (seconds: number) => {
   const whole = Number.isFinite(seconds) && seconds > 0 ? Math.floor(seconds) : 0;
   return `Time ${Math.floor(whole / 3600)}:${String(Math.floor((whole % 3600) / 60)).padStart(2, '0')}`;
 };
+export const soundLabel = (on: boolean) => `Sound: ${on ? 'On' : 'Off'}`;
 export const wildBugsLabel = (on: boolean) => `Wild bugs: ${on ? 'On' : 'Off'}`;
 
 // battle lines: names are game data, every other sentence is here or a resume fact

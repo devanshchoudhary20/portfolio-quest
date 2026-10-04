@@ -42,7 +42,7 @@ The "leave" moment with the most care is **Recruiter step 3**: the first screen 
 | Input | Keyboard: arrows or WASD move, Z or Enter = A (interact, confirm), X or Esc = B (cancel, run), Enter on map = Start menu. Touch: D-pad, A, B, tap-to-walk. Gamepad not in scope. |
 | Dialog | Text in DOM `<p aria-live="polite">`. Selectable. Text speed Slow / Normal / Fast / Instant, default Normal, Instant when `prefers-reduced-motion`. A press during typing completes the line. |
 | Motion | Reduced motion: no screen shake, no fade, no blinking arrow (static), no walk-in transitions on battle. |
-| Sound | Off until first interaction. Mute toggle in Options. |
+| Sound | Off by default for everyone. A Sound On/Off option sits in the title Options sheet and the in-game Options, stored in `pq.prefs.v1`. Nothing is created or fetched until Sound is On and the visitor has made a gesture. Turning it Off stops everything at once; hiding the tab pauses it. |
 | Save | `localStorage` key `pq.save.v1`. Autosave on map change. If storage is blocked, play continues in memory and Options shows "Progress will not be saved in this browser." |
 
 ### Fallbacks for every external value
@@ -85,7 +85,7 @@ Happy path
 | State | What the visitor sees |
 |---|---|
 | Empty (no save) | Continue is hidden, not greyed. Menu has three items. Cursor on New Game. |
-| Loading | The page is interactive before the engine loads. A strip under the logo reads "Loading game files", a bar and a percent (63% in the mockup). New Game and Continue are disabled (muted) until Phaser and the atlas are ready. Options and Recruiter Mode work at once and the cursor starts on Recruiter Mode. When ready the strip becomes "Press Start" and the cursor moves to Continue (save) or New Game. Under reduced motion there is no fade. |
+| Loading | The page is interactive before the engine loads. A strip under the logo reads "Loading game files", a bar and a percent (63% in the mockup). New Game and Continue are pressable at once. A press before Phaser and the atlas are ready queues one start: the pressed button is highlighted and shows "The world is loading... N%", and the game starts the moment the engine is ready. Esc or pressing the same button again cancels the queue; pressing the other button moves it. If the load fails, the queue is dropped, the strip shows the error and both buttons are disabled (muted). Options, Recruiter Mode and Skip to resume work at once and the cursor starts on Recruiter Mode. When ready the strip becomes "Press Start" and the cursor moves to Continue (save) or New Game. Under reduced motion there is no fade. |
 | Partial | Save exists but one field is unreadable: Continue shows and its subline reads "Last played: unknown". |
 | Error | Engine fails to load (script blocked or offline): the strip reads "The game could not load. Open the resume instead." with the Recruiter Mode row active. Corrupt save: Continue shows, pressing it opens dialog "Save data was unreadable. Starting a new game." then New Game. |
 | Success | Continue shows subline "Badges 3 / 5, 12:40" from the save (fallbacks `0 / 5`, `0:00`). |

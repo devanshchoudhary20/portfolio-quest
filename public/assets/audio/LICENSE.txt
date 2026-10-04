@@ -1,0 +1,38 @@
+Audio in this folder is derived from the Ninja Adventure Asset Pack by Pixel-boy and AAA
+(https://pixel-boy.itch.io/ninja-adventure-asset-pack), released under CC0 1.0 Universal
+(public domain dedication, see vendor/ninja-adventure/LICENSE.txt). Credit is not required but given.
+
+Derivations: mono downmix, 48 kHz resample, loudness or peak normalisation, trim, Opus (.ogg) and AAC (.m4a) encode.
+
+Output -> source file (vendor/ninja-adventure/Audio/)
+
+music/title.{ogg,m4a} <- Musics/38 - Intro.ogg
+music/agra.{ogg,m4a} <- Musics/33 - Calm Village.ogg
+music/gear.{ogg,m4a} <- Musics/4 - Village.ogg
+music/junglee.{ogg,m4a} <- Musics/11 - Clearing.ogg
+music/marrfa.{ogg,m4a} <- Musics/32 - Manor.ogg
+music/testmu.{ogg,m4a} <- Musics/20 - Good Time.ogg
+music/testmu_tower.{ogg,m4a} <- Musics/13 - Mystical.ogg
+music/gym.{ogg,m4a} <- Musics/23 - Road.ogg
+music/battle_wild.{ogg,m4a} <- Musics/17 - Fight.ogg
+music/battle_trainer.{ogg,m4a} <- Musics/34  - Fight.ogg
+music/elite.{ogg,m4a} <- Musics/24 - Final Area.ogg
+music/battle_champion.{ogg,m4a} <- Musics/3 - Revelation.ogg
+music/hall_of_fame.{ogg,m4a} <- Musics/8 - End Theme.ogg
+sfx/badge.{ogg,m4a} <- Jingles/LevelUp2.wav
+sfx/item_get.{ogg,m4a} <- Jingles/Success2.wav
+sfx/bug_caught.{ogg,m4a} <- Jingles/LevelUp3.wav
+sfx/victory.{ogg,m4a} <- Jingles/Success3.wav
+sfx/blackout.{ogg,m4a} <- Jingles/GameOver.wav
+sfx/menu_move.{ogg,m4a} <- Sounds/Menu/Move2.wav
+sfx/confirm.{ogg,m4a} <- Sounds/Menu/Accept4.wav
+sfx/cancel.{ogg,m4a} <- Sounds/Menu/Cancel.wav
+sfx/dialog_advance.{ogg,m4a} <- Sounds/Menu/Menu8.wav
+sfx/warp.{ogg,m4a} <- Sounds/Whoosh & Slash/Whoosh2.wav
+sfx/bump.{ogg,m4a} <- Sounds/Hit & Impact/Impact.wav
+sfx/hit.{ogg,m4a} <- Sounds/Hit & Impact/Hit5.wav
+sfx/hit_super.{ogg,m4a} <- Sounds/Hit & Impact/Hit2.wav
+sfx/faint.{ogg,m4a} <- Sounds/Magic & Skill/Magic4.wav
+sfx/gate_open.{ogg,m4a} <- Sounds/Magic & Skill/Magic5.wav
+sfx/maze_rewrite.{ogg,m4a} <- Sounds/Magic & Skill/Fx.wav
+sfx/message_sent.{ogg,m4a} <- Sounds/Whoosh & Slash/Launch.wav

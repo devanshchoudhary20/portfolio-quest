@@ -80,7 +80,10 @@ export function ContactPanel() {
     setSentTo(draft.email.trim());
     const result = await sendContact(draft, botField);
     setStatus(result);
-    if (result === 'sent') actions.clearContact();
+    if (result === 'sent') {
+      actions.clearContact();
+      actions.playCue('message_sent');
+    }
   };
 
   const trapBot = (event: ChangeEvent<HTMLInputElement>) => setBotField(event.target.value);

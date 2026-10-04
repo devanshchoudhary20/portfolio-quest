@@ -5,7 +5,8 @@ from gen import *
 gen.POOL += list("абвгдежзийклмнопрстуфхцчшщыэюя")
 gen.SHEETS += """
   dun     Backgrounds/Tilesets/TilesetDungeon.png
-  reld    Backgrounds/Tilesets/TilesetReliefDetail.png"""
+  reld    Backgrounds/Tilesets/TilesetReliefDetail.png
+  term    ../../.anbu/design/towns/art/terminals.png"""
 
 W, H = 151, 17
 m = M('elite', W, H, "Victory Road: a rocky cave at x 0-29, then the Elite Four rooms (x 40, 60, 80, 100: DSA archive, Machine Coding workshop, System Design server room, Behavioral meeting room), the Champion's room (x 120) and the Hall of Fame (x 140). Each room's forward gate needs the beaten flag of the trainer inside it.")
@@ -28,7 +29,7 @@ PEBBLE = ['x:nature:17,17', 'x:nature:18,17', 'x:nature:19,17']
 CRYSTAL = ['x:nature:0,14', 'x:nature:1,14', 'x:nature:2,14', 'x:nature:3,14']
 MOUTH = 's:reld:0,7:3x3'
 
-PC = 'x:elem:10,0'
+PC = ['x:term:%d,0' % c for c in range(3)]
 TABLE = 's:elem:2,10:3x1'
 STOOL = 'x:elem:11,0'
 CHAIR = 'x:elem:0,9'
@@ -179,11 +180,11 @@ lane_check(x0)
 # ---------- Machine Coding: the workshop. Benches of terminals, stools, pipes, status lights
 x0, y0 = room(1, 'machine-coding', DARK, WALL_GREEN)
 put_all(x0, y0, [
-    (1, 1, PC), (2, 1, PC), (3, 1, PC), (1, 2, TABLE), (2, 3, STOOL),
-    (7, 1, PC), (8, 1, PC), (9, 1, PC), (7, 2, TABLE), (8, 3, STOOL),
+    (1, 1, PC[2]), (2, 1, PC[0]), (3, 1, PC[1]), (1, 2, TABLE), (2, 3, STOOL),
+    (7, 1, PC[2]), (8, 1, PC[0]), (9, 1, PC[1]), (7, 2, TABLE), (8, 3, STOOL),
     (4, 1, LED[0]), (6, 1, LED[1]),
-    (1, 5, PC), (2, 5, PC), (3, 5, PC), (1, 6, TABLE), (2, 7, STOOL),
-    (7, 5, PC), (8, 5, PC), (9, 5, PC), (7, 6, TABLE), (8, 7, STOOL),
+    (1, 5, PC[0]), (2, 5, PC[1]), (3, 5, PC[2]), (1, 6, TABLE), (2, 7, STOOL),
+    (7, 5, PC[0]), (8, 5, PC[1]), (9, 5, PC[2]), (7, 6, TABLE), (8, 7, STOOL),
     (1, 8, PIPE_H[0]), (2, 8, PIPE_H[1]), (3, 8, PIPE_H[2]), (7, 8, PIPE_H[0]), (8, 8, PIPE_H[1]), (9, 8, PIPE_H[2]),
     (4, 8, CRATE), (6, 8, CRATE_L),
 ])

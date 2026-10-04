@@ -3,9 +3,9 @@ import { facts, skillGroups } from '../content';
 import { CATCHABLE, caughtCount } from '../game/battle/data';
 import { saveNow } from '../game/world/autosave';
 import { countBadges } from '../game/world/conditions';
-import { BAG_TITLE, BUGDEX_TITLE, CARD_TITLE, CLOSE, SAVED, SAVE_FAILED, SKILLDEX_TITLE, badgesLabel, bugsCaughtLabel, factsSeenLabel, timeLabel, wildBugsLabel } from '../game/world/lines';
+import { BAG_TITLE, BUGDEX_TITLE, CARD_TITLE, CLOSE, SAVED, SAVE_FAILED, SKILLDEX_TITLE, badgesLabel, bugsCaughtLabel, factsSeenLabel, soundLabel, timeLabel, wildBugsLabel } from '../game/world/lines';
 import { canStore } from '../game/world/save';
-import { TEXT_SPEED_LABELS, writeTextSpeed, writeWildBugs } from '../state/prefs';
+import { TEXT_SPEED_LABELS, writeSound, writeTextSpeed, writeWildBugs } from '../state/prefs';
 import { wildBugsOn } from '../state/store';
 import type { TextSpeed } from '../state/prefs';
 import { Menu } from './Menu';
@@ -46,7 +46,7 @@ export function StartMenu() {
     },
   }));
   return (
-    <div className="pq-start">
+    <div className="pq-start pq-sheet">
       <Menu label="Start menu" items={items} initialIndex={lastRow} onCancel={actions.closePanel} />
       <p className="pq-note" data-testid="stats">
         {badgesLabel(badges, skillGroups.length)}
@@ -61,6 +61,7 @@ export function StartMenu() {
 export function OptionsPanel() {
   const textSpeed = useGame((s) => s.textSpeed);
   const wildBugs = useGame(wildBugsOn);
+  const sound = useGame((s) => s.sound);
   const [storable] = useState(canStore);
   const cycle = () => {
     const next = NEXT_SPEED[textSpeed];
@@ -72,13 +73,18 @@ export function OptionsPanel() {
     actions.setWildBugs(!wildBugs);
     writeWildBugs(!wildBugs);
   };
+  const toggleSound = () => {
+    actions.setSound(!sound);
+    writeSound(!sound);
+  };
   const items: MenuItem[] = [
     { label: `Text speed: ${TEXT_SPEED_LABELS[textSpeed]}`, onSelect: cycle },
     { label: wildBugsLabel(wildBugs), onSelect: toggleWildBugs },
+    { label: soundLabel(sound), onSelect: toggleSound },
     { label: 'Back', onSelect: backToMenu },
   ];
   return (
-    <div className="pq-start">
+    <div className="pq-start pq-sheet">
       <Menu label="Options" items={items} onCancel={backToMenu} />
       {storable ? null : <p className="pq-note">Progress will not be saved in this browser.</p>}
     </div>

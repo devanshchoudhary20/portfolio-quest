@@ -1,4 +1,8 @@
+import gen
 from gen import *
+
+gen.SHEETS += "\n  kane    ../../.anbu/design/towns/art/kane-tower.png"
+d('sky', 'stamp', 'kane:0,0', (4, 8), True, '1,7')
 
 W, H = 242, 36
 m = M('testmu', W, H, 'TestMu City: the town at x 0-55 (formerly Lambda City), the KaneAI tower as stacked rooms at x 62-182 (lobby, four floors, basement), and the Design System and Cross-stack gym rooms at x 206 and 230. Rooms sit far apart so the camera never shows a neighbor.')
@@ -6,7 +10,8 @@ TW, TH = 56, 36
 COB = 'g:floor:6,13'; SW = 'g:floor:8,1'; DARK = 'g:floor:13,13'
 LAMP = 's:elem:6,3:1x2'
 m.gfill(0, 0, TW, TH, 'G')
-m.border('tree', gaps=[(0, 12, 2, 2), (28, 34, 2, 2)], bw=TW, bh=TH)
+m.border('tree', gaps=[(0, 12, 2, 2), (28, 34, 2, 2), (24, 0, 6, 2)], bw=TW, bh=TH)
+for sx, sy in [(24, 0), (24, 1), (29, 0), (29, 1)]: m.put(sx, sy, 'x:nature:1,10')
 # paved districts
 m.gfill(2, 2, 52, 9, COB); m.gfill(2, 14, 52, 10, COB); m.gfill(2, 26, 52, 1, COB)
 # streets: dark asphalt with cream sidewalks
@@ -21,9 +26,9 @@ for j in range(4):
 m.gfill(28, 11, 1, 1, SW) if False else None
 m.sign('rename', 3, 14, 'testmu.rename', speaker='"Welcome Sign"')
 # the KaneAI tower
-m.building('chalet', 25, 3, 1, 'door-tower', 'tower-door', 'lobby-in')
+m.building('sky', 25, 0, 1, 'door-tower', 'tower-door', 'lobby-in')
 m.ground[8][26] = reg('g:floor:16,0')
-m.put(24, 5, 's:house:27,20:1x2'); m.put(29, 5, 's:house:27,20:1x2')
+m.put(24, 6, LAMP); m.put(29, 6, LAMP)
 m.put(23, 8, LAMP); m.put(31, 8, LAMP)
 # north district: front row facing the main street, back row, a lane between
 TOWERX = 's:house:19,0:4x3'; LIBX = 's:house:23,0:3x3'

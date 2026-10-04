@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useCaptureKeys } from './useCaptureKeys';
+import { actions } from './useGame';
 
 export interface MenuItem {
   label: string;
@@ -22,6 +23,16 @@ export function Menu({ items, label, onCancel, className = '', initialIndex = 0 
   const [index, setIndex] = useState(initialIndex);
   const refs = useRef<(HTMLButtonElement | null)[]>([]);
 
+  const select = (at: number) => {
+    actions.playCue('confirm');
+    items[at]?.onSelect();
+  };
+
+  const hover = (at: number) => {
+    if (at !== index) actions.playCue('menu_move');
+    setIndex(at);
+  };
+
   useEffect(() => {
     const previous = document.activeElement as HTMLElement | null;
     return () => previous?.focus?.();
@@ -33,9 +44,14 @@ export function Menu({ items, label, onCancel, className = '', initialIndex = 0 
 
   useCaptureKeys((event) => {
     const step = event.key === 'ArrowDown' || event.key === 's' || (event.key === 'Tab' && !event.shiftKey) ? 1 : event.key === 'ArrowUp' || event.key === 'w' || (event.key === 'Tab' && event.shiftKey) ? -1 : 0;
-    if (step) setIndex((i) => (i + step + items.length) % items.length);
-    else if (ACCEPT.includes(event.key)) items[index]?.onSelect();
-    else if (CANCEL.includes(event.key) && onCancel) onCancel();
+    if (step) {
+      setIndex((i) => (i + step + items.length) % items.length);
+      actions.playCue('menu_move');
+    } else if (ACCEPT.includes(event.key)) select(index);
+    else if (CANCEL.includes(event.key) && onCancel) {
+      actions.playCue('cancel');
+      onCancel();
+    }
     else return false;
     return true;
   });
@@ -52,8 +68,8 @@ export function Menu({ items, label, onCancel, className = '', initialIndex = 0 
             type="button"
             tabIndex={i === index ? 0 : -1}
             className={i === index ? 'is-active' : ''}
-            onClick={item.onSelect}
-            onPointerEnter={() => setIndex(i)}
+            onClick={() => select(i)}
+            onPointerEnter={() => hover(i)}
           >
             {item.label}
             {item.hint ? <small>{item.hint}</small> : null}

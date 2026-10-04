@@ -3,7 +3,7 @@ import type { Page } from '@playwright/test';
 import { facts, factById, factId, profile, skillGroups } from '../src/content';
 import { CATCHABLE } from '../src/game/battle/data';
 import { TURN_CAP } from '../src/game/battle/engine';
-import { CHAMPION_DEFEATED, PDF_FAILED } from '../src/game/world/lines';
+import { CHAMPION_DEFEATED, DOWNLOADING, PDF_FAILED } from '../src/game/world/lines';
 import { resumePdfName } from '../src/resume/view';
 import { closeDialog, continueWith, drawnShare, fight, named, press, readDialog, savedWith, standAt, state, storedSave, talkTo, waitAt, walk } from './helpers';
 import { readTown } from './world';
@@ -238,6 +238,28 @@ test.describe('Resume Mart', () => {
     expect((await state(page)).flags).not.toContain('resume');
     expect(downloads).toBe(0);
     await expect(page.getByTestId('mart-bag')).toHaveText('Bag: 0 copies');
+  });
+
+  test('while the HEAD request is out, Yes reads Downloading... and both answers are disabled', async ({ page }) => {
+    let release = () => {};
+    const gate = new Promise<void>((resolve) => (release = resolve));
+    await page.route('**/resume.pdf', async (route) => {
+      if (route.request().method() === 'HEAD') await gate;
+      await route.continue();
+    });
+    await continueWith(page, savedWith('gear', gear.spawn('mart-in'), 'up', { starter: 'react' }));
+    await talkTo(page, gear, 'clerk');
+    const mart = page.getByRole('dialog', { name: 'Resume Mart' });
+    await mart.getByRole('button', { name: 'Download resume' }).click();
+    await mart.getByRole('button', { name: 'Yes' }).click();
+    const busy = mart.getByRole('button', { name: DOWNLOADING });
+    await expect(busy).toBeDisabled();
+    await expect(mart.getByRole('button', { name: 'No' })).toBeDisabled();
+    expect((await state(page)).flags).not.toContain('resume');
+    const [download] = await Promise.all([page.waitForEvent('download'), Promise.resolve(release())]);
+    expect(new URL(download.url()).pathname).toBe('/resume.pdf');
+    await expect(mart).toBeHidden();
+    expect((await state(page)).flags).toContain('resume');
   });
 
   test('the Bag is empty before the Mart', async ({ page }) => {

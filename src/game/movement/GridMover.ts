@@ -151,6 +151,11 @@ export class GridMover {
     this.turn(id, dir);
   }
 
+  // a wall, a gate, a wall of the maze or another character holds the tile the character faces
+  blockedAhead(id: string) {
+    return this.engine.isBlocked(this.engine.getFacingPosition(id));
+  }
+
   charAt(tile: Tile) {
     return this.engine.getCharactersAt(tile)[0];
   }

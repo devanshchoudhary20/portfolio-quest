@@ -26,7 +26,7 @@ export function PanelShell({ title, className = '', onClose, onKey, aside, backL
   }, [panel]);
 
   return (
-    <div ref={panel} className={`pq-panel ${className}`} role="dialog" aria-modal="true" aria-label={title}>
+    <div ref={panel} className={`pq-panel pq-sheet ${className}`} role="dialog" aria-modal="true" aria-label={title}>
       <header>
         <h2>{title}</h2>
         {aside}

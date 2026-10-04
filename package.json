@@ -39,6 +39,7 @@
     "@netlify/functions": "6.0.2",
     "grid-engine": "2.52.1",
     "phaser": "4.2.1",
+    "preact": "11.0.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "zustand": "^5.0.15"

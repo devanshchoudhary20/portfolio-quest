@@ -26,7 +26,7 @@ A Gen-3-style 2D top-down portfolio game for Devansh Choudhary (Phaser 4 + grid-
 - `npm run lint`: ESLint.
 - `npm run smoke`: headless Playwright smoke test against the dev server (needs Playwright browsers).
 - `npm run art:placeholders`: writes stand-in battle art, only for files that do not exist yet, so the designer's PNGs are never overwritten.
-- `npm run map -- maps-src/<town>.map`: turns a text map into `public/maps/<town>.json`. An `encounters <name> x,y WxH pool=<factIds>` line paints tall grass over that rectangle and adds a grass zone; a `battle=<trainerId>` property on an npc makes it a gym leader. Needs the Ninja Adventure pack (CC0, https://pixel-boy.itch.io/ninja-adventure-asset-pack) unzipped at `vendor/ninja-adventure/`, which is gitignored.
+- `npm run map -- maps-src/<town>.map`: turns a text map into `public/maps/<town>.json`. An `encounters <name> x,y WxH pool=<factIds>` line paints tall grass over that rectangle and adds a grass zone; a `battle=<trainerId>` property on an npc makes it a gym leader. Needs the Ninja Adventure pack (CC0, https://pixel-boy.itch.io/ninja-adventure-asset-pack) unzipped at `vendor/ninja-adventure/`, which is gitignored. The `maps-src/*.map` files are the source of truth. The Python generators in `.anbu/design/towns/gen/` are historical and out of date with the hand edits (robot, lever, `battle=`, `needs=`); never rerun them over a `.map`. Original art the lever packs (the KaneAI tower, terminals) lives in `.anbu/design/towns/art/`.
 
 ## Git
 Commit per chunk as `feat(<chunk>): <what a stranger can now do>`. Never commit, push, or deploy without the user's approval. The launch gate is the user's.

@@ -52,7 +52,7 @@ export function RecruiterMode() {
   ));
 
   return (
-    <div className="pq-recruiter" role="dialog" aria-modal="true" aria-label="Recruiter Mode">
+    <div className="pq-recruiter pq-sheet" role="dialog" aria-modal="true" aria-label="Recruiter Mode">
       <div className="pq-recruiter-scroll" ref={panel}>
         <h2>{profile.name}</h2>
         <p>{`${profile.title}. ${currentRoleLine}`}</p>

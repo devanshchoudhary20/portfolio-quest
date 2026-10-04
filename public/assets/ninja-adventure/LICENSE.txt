@@ -1,3 +1,5 @@
+Original Portfolio Quest art, drawn by script (.anbu/design/towns/gen/custom_art.py), released under the same CC0 1.0 terms below: the KaneAI skyscraper and the Machine Coding terminal tiles, packed into tiles-testmu.png and tiles-elite.png. They copy no pixels from the Ninja Adventure pack.
+
 CC0 1.0 Universal
 
 Statement of Purpose

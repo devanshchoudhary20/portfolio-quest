@@ -8,6 +8,7 @@ import { BADGES_THREE, BADGES_THREE_COUNT, SEEN_TEN, SEEN_TEN_COUNT, flagList, i
 import { DESTINATIONS } from '../src/game/world/destinations';
 import { CLERK, FLAVOR_LINES, ITEM_LINES, PLACE_LABELS, ROLE_LINES, STARTER_LINES } from '../src/game/world/lines';
 import { beatenFlag } from '../src/game/world/flags';
+import { TRACKS } from '../src/audio/manifest';
 import { DEFAULT_SPAWN } from '../src/game/world/towns';
 import type { Region } from '../src/game/world/regions';
 import { isGate, isWarp, key, neighbors, readMap, reachableTiles, warpIsActive } from './tiledMap';
@@ -29,6 +30,8 @@ const distValue = flagValue('--dist');
 const distMode = distValue !== undefined;
 const distDir = resolve(ROOT, distValue || 'dist');
 const mapsValue = flagValue('--maps');
+const audioValue = flagValue('--audio');
+const audioDir = resolve(ROOT, audioValue || 'public/assets/audio');
 const mapsDir = resolve(ROOT, mapsValue ?? 'public/maps');
 
 // up to 3 non-digits between digits catches "93 68 - 321-127" style formatting
@@ -367,6 +370,15 @@ function checkBattle() {
   for (const id of BG_IDS) if (!hasFile(bgArt(id).url)) errors.push(`battle background ${id}: missing ${bgArt(id).url}`);
 }
 
+// the player picks ogg or m4a by browser, so each track needs both
+function checkAudio() {
+  for (const [id, track] of Object.entries(TRACKS)) {
+    for (const ext of ['ogg', 'm4a']) {
+      if (!existsSync(join(audioDir, `${track.file}.${ext}`))) errors.push(`audio ${id}: missing ${track.file}.${ext} under ${rel(audioDir)}`);
+    }
+  }
+}
+
 function checkLicenses() {
   const assets = join(ROOT, 'public/assets');
   if (!existsSync(assets)) return;
@@ -384,6 +396,7 @@ if (distMode) {
   checkContent();
   checkMaps();
   checkBattle();
+  checkAudio();
   const scanned = [...walk(join(ROOT, 'src'), TEXT_EXTS), ...walk(join(ROOT, 'public'), TEXT_EXTS)];
   if (mapsValue) scanned.push(...walk(mapsDir, ['.json']));
   scanText([...new Set(scanned)]);

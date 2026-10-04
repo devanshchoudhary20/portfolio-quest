@@ -56,6 +56,7 @@ const cases: Case[] = [
   { name: 'a hall region the player cannot walk to', args: ['--maps', 'scripts/fixtures/hall-unreachable'], expect: 'agra/regions/hall: no tile of the hall region is reachable' },
   { name: 'a hall region open without the Champion win', args: ['--maps', 'scripts/fixtures/hall-open'], expect: 'agra/regions/hall: the hall region is reachable without beaten.devansh' },
   { name: 'a HUD label for a region no built map has', args: ['--maps', 'scripts/fixtures/hall-open'], expect: 'label elite.dsa: no region "dsa" in the elite map' },
+  { name: 'a manifest track missing its ogg and m4a files', args: ['--audio', generated('audio-a', { 'only.ogg': '' })], expect: 'audio title: missing music/title.ogg' },
   { name: '--maps without a value', args: ['--maps'], expect: '--maps requires a directory' },
   { name: 'phone with double spaces', args: ['--maps', generated('phone-a', { 'agra.json': note(spacedPhone) })], expect: 'phone number pattern' },
   { name: 'phone with dashes', args: ['--maps', generated('phone-b', { 'agra.json': note(dashedPhone) })], expect: 'phone number pattern' },

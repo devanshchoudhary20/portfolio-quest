@@ -1,23 +1,21 @@
 import Phaser from 'phaser';
-import { factId } from '../../content';
 import type { SpeciesId } from '../../content';
 import { startBattle } from '../battle/controller';
-import { WILD_BY_TOWN } from '../battle/data';
-import { shouldEncounter } from '../battle/encounter';
-import { isUiOpen, store, wildBugsOn } from '../../state/store';
+import { isUiOpen, store } from '../../state/store';
 import type { WorldRequest } from '../../state/store';
 import { GridMover, OPPOSITE } from '../movement/GridMover';
+import { Bump } from './Bump';
 import { DayTint } from './DayTint';
 import { Gates } from './Gates';
 import { Maze } from './Maze';
 import { Navigator } from './Navigator';
 import { Travel } from './Travel';
+import { Wild } from './Wild';
 import type { Tile } from '../movement/GridMover';
 import { isOpen } from '../world/conditions';
 import { FLAGS } from '../world/flags';
 import { interactWith, lockedLine } from '../world/interact';
-import { PLANTED_LINE, survivedLine } from '../world/lines';
-import { objectAt, readObjects, zoneAt } from '../world/objects';
+import { objectAt, readObjects } from '../world/objects';
 import type { WorldObject } from '../world/objects';
 import { castVote } from '../../net/tally';
 import { inRegion, parseRegions } from '../world/regions';
@@ -35,7 +33,6 @@ const PLAYER = 'player';
 // above the maze walls and the planted flag, which sit at depth 0
 const ACTOR_DEPTH = 1;
 const NPC_PREFIX = 'npc:';
-const CURSOR_FACT = factId('testmu.cursor');
 
 export class Overworld extends Phaser.Scene {
   private request!: WorldRequest;
@@ -43,6 +40,7 @@ export class Overworld extends Phaser.Scene {
   private objects: WorldObject[] = [];
   private busy = true;
   private lastPulse = 0;
+  private bump!: Bump;
   private speed = WALK_SPEED;
   private tint: DayTint | null = null;
   private indoor = false;
@@ -54,6 +52,7 @@ export class Overworld extends Phaser.Scene {
   private travel!: Travel;
   private maze: Maze | null = null;
   private navigator!: Navigator;
+  private wild!: Wild;
 
   constructor() {
     super('Overworld');
@@ -122,8 +121,13 @@ export class Overworld extends Phaser.Scene {
     const player = this.add.sprite(0, 0, PLAYER).setDepth(ACTOR_DEPTH);
     this.mover.addChar(PLAYER, player, start.tile, { speed: WALK_SPEED, facing: start.facing });
     this.addNpcs();
+    this.bump = new Bump(this.mover, PLAYER);
     const gates = new Gates(this.mover, things ?? null, this.objects, store.getState().flags);
 
+    this.wild = new Wild(town, this.mover, this.objects, PLAYER, () => this.busy, () => {
+      this.navigator.cancel();
+      this.tapping = false;
+    });
     this.regions = parseRegions(map.properties);
     this.navigator = new Navigator(this.mover, this.objects, this.regions, town, PLAYER, gates, (goal) => this.faceTile(goal));
     const mazeRegion = this.regions.find((r) => r.maze);
@@ -179,6 +183,7 @@ export class Overworld extends Phaser.Scene {
       this.mover.stop(PLAYER);
     }
     if (state.held && canQueue) this.mover.move(PLAYER, state.held);
+    if (state.held) this.bump.check(this.time.now);
     if (pulsed && !this.mover.isMoving(PLAYER)) this.interact();
   }
 
@@ -260,37 +265,22 @@ export class Overworld extends Phaser.Scene {
     this.clampCamera(tile);
     this.enterRegion(tile);
     this.maze?.enter(tile);
-    if (this.maze?.isFlag(tile)) this.reportFlag();
+    if (this.maze?.isFlag(tile)) this.maze.reportFlag();
     const warp = objectAt(this.objects, tile, ['warp']);
-    if (warp && isOpen(warp.props, store.getState().flags) && !this.busy) this.warp(warp);
-    else if (warp) this.lockedDoor(warp);
-    else this.rollGrass(tile);
-  }
-
-  // tall grass: about one step in ten starts a fight, never within 15 steps of the last one
-  private rollGrass(tile: Tile) {
-    const zone = zoneAt(this.objects, tile);
-    const state = store.getState();
-    if (!zone || this.busy || isUiOpen(state) || !wildBugsOn(state)) return;
-    if (shouldEncounter(state.steps, Math.random())) this.startWild(zone);
-  }
-
-  private startWild(zone: WorldObject, species?: SpeciesId, hp: { playerHp?: number; enemyHp?: number } = {}) {
-    const town = this.request.town;
-    const roster = WILD_BY_TOWN[town] ?? [];
-    const pick = species ?? roster[Math.floor(Math.random() * roster.length)];
-    if (!pick) return;
-    this.navigator.cancel();
-    this.tapping = false;
-    this.mover.stop(PLAYER);
-    const pool = (zone.props.pool ?? '').split(',').map((id) => id.trim()).filter(Boolean).map(factId);
-    startBattle({ kind: 'wild', species: pick, pool, town, ...hp });
+    if (!warp) this.wild.roll(tile);
+    else if (!isOpen(warp.props, store.getState().flags)) this.lockedDoor(warp);
+    // a panel left open by a tap walk must not be warped out from under
+    else if (!this.busy && !isUiOpen(store.getState())) this.warp(warp);
   }
 
   // test API only: a wild fight from this town's first grass zone
   forceWild(species: SpeciesId, hp: { playerHp?: number; enemyHp?: number }) {
-    const zone = this.objects.find((o) => o.kind === 'grass');
-    if (zone) this.startWild(zone, species, hp);
+    this.wild.force(species, hp);
+  }
+
+  // test API only: what the maze floor is doing
+  mazeInfo() {
+    return this.maze?.info() ?? null;
   }
 
   private interact() {
@@ -299,7 +289,7 @@ export class Overworld extends Phaser.Scene {
     const npc = charId?.startsWith(NPC_PREFIX) ? this.objects.find((o) => o.kind === 'npc' && `${NPC_PREFIX}${o.name}` === charId) : undefined;
     const target = npc ?? objectAt(this.objects, front, ['sign', 'item']);
     if (!target) {
-      this.plantFlag(front);
+      this.maze?.plantFlag(front);
       return;
     }
     if (npc && charId) this.mover.turn(charId, OPPOSITE[this.mover.facing(PLAYER)]);
@@ -314,6 +304,7 @@ export class Overworld extends Phaser.Scene {
       return;
     }
     this.busy = true;
+    store.getState().actions.playCue('warp');
     // a warp that fires only while a flag is missing is a while loop: the HUD counts the laps
     if (obj.props.unless !== undefined) store.getState().actions.bumpLoop();
     const from: WorldRequest = { town: this.request.town, pos: { x: obj.x, y: obj.y }, facing: this.mover.facing(PLAYER) };
@@ -359,21 +350,6 @@ export class Overworld extends Phaser.Scene {
     const at = this.objects.find((o) => o.name === name);
     if (at) this.navigator.begin({ x: at.x, y: at.y });
     return Boolean(at);
-  }
-
-  private plantFlag(front: Tile) {
-    if (!this.maze || !store.getState().flags.includes(FLAGS.cursor)) return;
-    if (this.maze.plant(front)) store.getState().actions.openDialog({ speaker: '', portrait: null, lines: [PLANTED_LINE] });
-  }
-
-  private reportFlag() {
-    const line = survivedLine(this.maze?.survived() ?? 0);
-    store.getState().actions.openFact(CURSOR_FACT, { speaker: 'Flag', portrait: null }, [line]);
-  }
-
-  // test API only: what the maze floor is doing
-  mazeInfo() {
-    return this.maze?.info() ?? null;
   }
 
   // a gym leader's fact ends with their fight

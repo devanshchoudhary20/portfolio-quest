@@ -1,5 +1,6 @@
 import type { FlagId } from '../../content';
 import type { GridMover, Tile } from '../movement/GridMover';
+import { store } from '../../state/store';
 import { isOpen } from '../world/conditions';
 import type { WorldObject } from '../world/objects';
 
@@ -37,7 +38,7 @@ export class Gates {
   sync(flags: readonly FlagId[]) {
     for (const gate of this.gates) {
       if (!isOpen(gate.props, flags)) continue;
-      this.closed.delete(gate.name);
+      if (this.closed.delete(gate.name)) store.getState().actions.playCue('gate_open');
       this.mover.remove(`gate:${gate.name}`);
       this.art?.removeTileAt(gate.x, gate.y);
     }

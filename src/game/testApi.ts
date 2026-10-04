@@ -1,5 +1,5 @@
 import type Phaser from 'phaser';
-import { speciesId, townId } from '../content';
+import { flagId, speciesId, townId } from '../content';
 import type { TownKey } from '../content';
 import { store } from '../state/store';
 import { closeBattle } from './battle/controller';
@@ -99,6 +99,10 @@ export function installTestApi(game: Phaser.Game) {
       return { x: from.x, y: from.y, width: to.x - from.x, height: to.y - from.y, alpha: found.alpha };
     },
     closeBattle: () => closeBattle(),
+    grant: (flag: string) => store.getState().actions.addFlag(flagId(flag)),
+    // tweens in flight plus camera fades running, across the active scenes: zero means nothing on the canvas is moving by itself
+    motion: () =>
+      game.scene.getScenes(true).reduce((sum, scene) => sum + scene.tweens.getTweens().length + (scene.cameras.main.fadeEffect.isRunning ? 1 : 0), 0),
     warp(town: string, spawn?: string) {
       const { phase, actions } = store.getState();
       const world = { town: townId(town as TownKey), ...(spawn ? { spawn } : {}) };
@@ -116,6 +120,8 @@ declare global {
       walk: (dir: Dir, tiles?: number) => Promise<ReturnType<typeof snapshot>>;
       warp: (town: string, spawn?: string) => void;
       closeBattle: () => void;
+      grant: (flag: string) => void;
+      motion: () => number;
       encounter: (species: string, hp?: { playerHp?: number; enemyHp?: number }) => void;
       battlePart: (part: 'bg' | 'enemy' | 'player' | 'trainer', visible?: boolean) => { x: number; y: number; width: number; height: number; alpha: number } | null;
       maze: () => ReturnType<Overworld['mazeInfo']>;

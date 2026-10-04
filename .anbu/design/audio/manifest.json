@@ -1,0 +1,331 @@
+{
+ "note": "volume is a 0-1 suggestion for gain on top of the encoded file. Music is -20 LUFS, SFX/jingles peak -3 dBFS. Paths relative to public/assets/audio/. Music loads lazily per key.",
+ "tracks": {
+  "title": {
+   "type": "music",
+   "files": {
+    "ogg": "music/title.ogg",
+    "m4a": "music/title.m4a"
+   },
+   "bytes": 782213,
+   "duration": 78.545,
+   "volume": 0.5,
+   "loopStart": 0,
+   "loopEnd": 78.545
+  },
+  "agra": {
+   "type": "music",
+   "files": {
+    "ogg": "music/agra.ogg",
+    "m4a": "music/agra.m4a"
+   },
+   "bytes": 825874,
+   "duration": 72.0,
+   "volume": 0.5,
+   "loopStart": 0,
+   "loopEnd": 72.0
+  },
+  "gear": {
+   "type": "music",
+   "files": {
+    "ogg": "music/gear.ogg",
+    "m4a": "music/gear.m4a"
+   },
+   "bytes": 568020,
+   "duration": 51.692,
+   "volume": 0.5,
+   "loopStart": 0,
+   "loopEnd": 51.692
+  },
+  "junglee": {
+   "type": "music",
+   "files": {
+    "ogg": "music/junglee.ogg",
+    "m4a": "music/junglee.m4a"
+   },
+   "bytes": 779130,
+   "duration": 69.144,
+   "volume": 0.5,
+   "loopStart": 0,
+   "loopEnd": 69.144
+  },
+  "marrfa": {
+   "type": "music",
+   "files": {
+    "ogg": "music/marrfa.ogg",
+    "m4a": "music/marrfa.m4a"
+   },
+   "bytes": 588305,
+   "duration": 53.333,
+   "volume": 0.5,
+   "loopStart": 0,
+   "loopEnd": 53.333
+  },
+  "testmu": {
+   "type": "music",
+   "files": {
+    "ogg": "music/testmu.ogg",
+    "m4a": "music/testmu.m4a"
+   },
+   "bytes": 698728,
+   "duration": 64.0,
+   "volume": 0.5,
+   "loopStart": 0,
+   "loopEnd": 64.0
+  },
+  "testmu_tower": {
+   "type": "music",
+   "files": {
+    "ogg": "music/testmu_tower.ogg",
+    "m4a": "music/testmu_tower.m4a"
+   },
+   "bytes": 694004,
+   "duration": 60.0,
+   "volume": 0.5,
+   "loopStart": 0,
+   "loopEnd": 60.0
+  },
+  "gym": {
+   "type": "music",
+   "files": {
+    "ogg": "music/gym.ogg",
+    "m4a": "music/gym.m4a"
+   },
+   "bytes": 507958,
+   "duration": 44.308,
+   "volume": 0.5,
+   "loopStart": 0,
+   "loopEnd": 44.308
+  },
+  "battle_wild": {
+   "type": "music",
+   "files": {
+    "ogg": "music/battle_wild.ogg",
+    "m4a": "music/battle_wild.m4a"
+   },
+   "bytes": 347094,
+   "duration": 32.0,
+   "volume": 0.55,
+   "loopStart": 0,
+   "loopEnd": 32.0
+  },
+  "battle_trainer": {
+   "type": "music",
+   "files": {
+    "ogg": "music/battle_trainer.ogg",
+    "m4a": "music/battle_trainer.m4a"
+   },
+   "bytes": 532731,
+   "duration": 48.0,
+   "volume": 0.5,
+   "loopStart": 0,
+   "loopEnd": 48.0
+  },
+  "elite": {
+   "type": "music",
+   "files": {
+    "ogg": "music/elite.ogg",
+    "m4a": "music/elite.m4a"
+   },
+   "bytes": 696206,
+   "duration": 63.429,
+   "volume": 0.55,
+   "loopStart": 0,
+   "loopEnd": 63.429
+  },
+  "battle_champion": {
+   "type": "music",
+   "files": {
+    "ogg": "music/battle_champion.ogg",
+    "m4a": "music/battle_champion.m4a"
+   },
+   "bytes": 616422,
+   "duration": 53.333,
+   "volume": 0.55,
+   "loopStart": 0,
+   "loopEnd": 53.333
+  },
+  "hall_of_fame": {
+   "type": "music",
+   "files": {
+    "ogg": "music/hall_of_fame.ogg",
+    "m4a": "music/hall_of_fame.m4a"
+   },
+   "bytes": 426011,
+   "duration": 38.4,
+   "volume": 0.5,
+   "loopStart": 0,
+   "loopEnd": 38.4
+  },
+  "badge": {
+   "type": "jingle",
+   "files": {
+    "ogg": "sfx/badge.ogg",
+    "m4a": "sfx/badge.m4a"
+   },
+   "bytes": 41015,
+   "duration": 2.0,
+   "volume": 0.9
+  },
+  "item_get": {
+   "type": "jingle",
+   "files": {
+    "ogg": "sfx/item_get.ogg",
+    "m4a": "sfx/item_get.m4a"
+   },
+   "bytes": 22865,
+   "duration": 1.185,
+   "volume": 0.8
+  },
+  "bug_caught": {
+   "type": "jingle",
+   "files": {
+    "ogg": "sfx/bug_caught.ogg",
+    "m4a": "sfx/bug_caught.m4a"
+   },
+   "bytes": 32735,
+   "duration": 1.5,
+   "volume": 0.85
+  },
+  "victory": {
+   "type": "jingle",
+   "files": {
+    "ogg": "sfx/victory.ogg",
+    "m4a": "sfx/victory.m4a"
+   },
+   "bytes": 38551,
+   "duration": 2.0,
+   "volume": 0.9
+  },
+  "blackout": {
+   "type": "jingle",
+   "files": {
+    "ogg": "sfx/blackout.ogg",
+    "m4a": "sfx/blackout.m4a"
+   },
+   "bytes": 34020,
+   "duration": 2.0,
+   "volume": 0.8
+  },
+  "menu_move": {
+   "type": "sfx",
+   "files": {
+    "ogg": "sfx/menu_move.ogg",
+    "m4a": "sfx/menu_move.m4a"
+   },
+   "bytes": 3791,
+   "duration": 0.103,
+   "volume": 0.5
+  },
+  "confirm": {
+   "type": "sfx",
+   "files": {
+    "ogg": "sfx/confirm.ogg",
+    "m4a": "sfx/confirm.m4a"
+   },
+   "bytes": 6137,
+   "duration": 0.245,
+   "volume": 0.6
+  },
+  "cancel": {
+   "type": "sfx",
+   "files": {
+    "ogg": "sfx/cancel.ogg",
+    "m4a": "sfx/cancel.m4a"
+   },
+   "bytes": 9807,
+   "duration": 0.473,
+   "volume": 0.6
+  },
+  "dialog_advance": {
+   "type": "sfx",
+   "files": {
+    "ogg": "sfx/dialog_advance.ogg",
+    "m4a": "sfx/dialog_advance.m4a"
+   },
+   "bytes": 5598,
+   "duration": 0.178,
+   "volume": 0.45
+  },
+  "warp": {
+   "type": "sfx",
+   "files": {
+    "ogg": "sfx/warp.ogg",
+    "m4a": "sfx/warp.m4a"
+   },
+   "bytes": 9016,
+   "duration": 0.443,
+   "volume": 0.6
+  },
+  "bump": {
+   "type": "sfx",
+   "files": {
+    "ogg": "sfx/bump.ogg",
+    "m4a": "sfx/bump.m4a"
+   },
+   "bytes": 6762,
+   "duration": 0.236,
+   "volume": 0.5
+  },
+  "hit": {
+   "type": "sfx",
+   "files": {
+    "ogg": "sfx/hit.ogg",
+    "m4a": "sfx/hit.m4a"
+   },
+   "bytes": 7232,
+   "duration": 0.329,
+   "volume": 0.7
+  },
+  "hit_super": {
+   "type": "sfx",
+   "files": {
+    "ogg": "sfx/hit_super.ogg",
+    "m4a": "sfx/hit_super.m4a"
+   },
+   "bytes": 13383,
+   "duration": 0.697,
+   "volume": 0.8
+  },
+  "faint": {
+   "type": "sfx",
+   "files": {
+    "ogg": "sfx/faint.ogg",
+    "m4a": "sfx/faint.m4a"
+   },
+   "bytes": 10835,
+   "duration": 0.551,
+   "volume": 0.7
+  },
+  "gate_open": {
+   "type": "sfx",
+   "files": {
+    "ogg": "sfx/gate_open.ogg",
+    "m4a": "sfx/gate_open.m4a"
+   },
+   "bytes": 12952,
+   "duration": 0.648,
+   "volume": 0.7
+  },
+  "maze_rewrite": {
+   "type": "sfx",
+   "files": {
+    "ogg": "sfx/maze_rewrite.ogg",
+    "m4a": "sfx/maze_rewrite.m4a"
+   },
+   "bytes": 13749,
+   "duration": 0.696,
+   "volume": 0.6
+  },
+  "message_sent": {
+   "type": "sfx",
+   "files": {
+    "ogg": "sfx/message_sent.ogg",
+    "m4a": "sfx/message_sent.m4a"
+   },
+   "bytes": 7861,
+   "duration": 0.381,
+   "volume": 0.6
+  }
+ }
+}

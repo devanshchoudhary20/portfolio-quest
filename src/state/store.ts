@@ -1,5 +1,6 @@
 import { createStore } from 'zustand/vanilla';
 import { factById } from '../content';
+import type { CueId } from '../audio/manifest';
 import type { DestId, FactId, FlagId, SpeciesId, TownId } from '../content';
 import type { BattleRequest, BattleUi } from '../game/battle/session';
 import { EMPTY_DRAFT } from '../net/draft';
@@ -8,7 +9,7 @@ import { BADGES_THREE, BADGES_THREE_COUNT, SEEN_TEN, SEEN_TEN_COUNT, countBadges
 import { factText } from '../game/world/factText';
 import type { Dir, Mode, SaveV1, Starter } from '../game/world/save';
 import { START } from '../game/world/towns';
-import { readTextSpeed, readWildBugs } from './prefs';
+import { readSound, readTextSpeed, readWildBugs } from './prefs';
 import type { TextSpeed } from './prefs';
 
 export type Phase = 'title' | 'intro' | 'play';
@@ -71,6 +72,12 @@ export interface State {
   load: { status: LoadStatus; progress: number };
   mode: Mode;
   textSpeed: TextSpeed;
+  // off by default; the audio module plays nothing and loads nothing until it is on
+  sound: boolean;
+  // true once the visitor has pressed, tapped or typed on the page; browsers allow audio only after that
+  gestured: boolean;
+  // the last one-shot sound a scene or panel asked for; the audio module plays each new object once
+  cue: { id: CueId } | null;
   reducedMotion: boolean;
   town: TownId;
   // the named region of the town the player stands in, for the HUD label
@@ -125,6 +132,9 @@ interface Actions {
   setContinueSave: (save: SaveV1 | null) => void;
   setPendingWarp: (warp: WorldRequest | null) => void;
   setTextSpeed: (speed: TextSpeed) => void;
+  setSound: (on: boolean) => void;
+  playCue: (id: CueId) => void;
+  markGesture: () => void;
   setMode: (mode: Mode) => void;
   setPlayer: (town: TownId, pos: { x: number; y: number }, facing: Dir) => void;
   setPlace: (place: string | null) => void;
@@ -212,6 +222,9 @@ export const store = createStore<State>()((set, get) => ({
   load: { status: 'idle', progress: 0 },
   mode: 'curious',
   textSpeed: readTextSpeed(),
+  sound: readSound(),
+  cue: null,
+  gestured: false,
   reducedMotion: false,
   wildBugsPref: readWildBugs(),
   contactBack: 'none',
@@ -239,6 +252,9 @@ export const store = createStore<State>()((set, get) => ({
     setContinueSave: (continueSave) => set({ continueSave }),
     setPendingWarp: (pendingWarp) => set({ pendingWarp }),
     setTextSpeed: (textSpeed) => set({ textSpeed }),
+    setSound: (sound) => set({ sound }),
+    playCue: (id) => set({ cue: { id } }),
+    markGesture: () => set({ gestured: true }),
     setMode: (mode) => set({ mode }),
     setPlayer: (town, pos, facing) => set({ town, pos, facing, landed: true }),
     setPlace: (place) => set({ place }),

@@ -5,11 +5,14 @@ const DEFAULT: TextSpeed = 2;
 
 export const INSTANT: TextSpeed = 4;
 
+export const SOUND_LABELS = { off: 'Off', on: 'On' } as const;
+
 export const TEXT_SPEED_LABELS: Record<TextSpeed, string> = { 1: 'Slow', 2: 'Normal', 3: 'Fast', 4: 'Instant' };
 
 interface Prefs {
   textSpeed?: unknown;
   wildBugs?: unknown;
+  sound?: unknown;
 }
 
 function readPrefs(): Prefs {
@@ -44,3 +47,8 @@ export function readWildBugs(): boolean | null {
 }
 
 export const writeWildBugs = (wildBugs: boolean) => writePref({ wildBugs });
+
+// off unless the visitor turned it on: nothing plays or loads before that choice
+export const readSound = () => readPrefs().sound === true;
+
+export const writeSound = (sound: boolean) => writePref({ sound });

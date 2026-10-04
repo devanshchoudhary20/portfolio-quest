@@ -106,6 +106,7 @@
 }
 .menu button[hidden] { display: none; }
 .menu small { display: block; font-size: max(16px, calc(var(--s) * 4.5px)); color: var(--muted); }
+.menu button.queued { background: var(--panel-2); }
 .menu button:disabled { color: var(--muted); cursor: default; }
 .menu button:focus-visible, .menu a:focus-visible, .menu button:hover:not(:disabled), .menu a:hover { background: var(--panel-2); outline: none; }
 .menu button:focus-visible::before, .menu a:focus-visible::before {

@@ -37,7 +37,7 @@ export function AskPanel() {
   };
 
   return (
-    <form ref={form} className="pq-ask" role="dialog" aria-modal="true" aria-label="KaneAI Robot" onSubmit={submit}>
+    <form ref={form} className="pq-ask pq-sheet" role="dialog" aria-modal="true" aria-label="KaneAI Robot" onSubmit={submit}>
       <label htmlFor="pq-ask-input">Tell me where to go</label>
       <input
         id="pq-ask-input"
