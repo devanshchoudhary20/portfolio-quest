@@ -3,7 +3,7 @@
 Personal weekend product built through `/mission`. Global `~/.claude/CLAUDE.md` applies. The company-specific parts (cerebrum, `/contract`, Jira) do not.
 
 ## What this is
-A Gen-3-style 2D top-down portfolio game for Devansh Choudhary (Phaser 4 + grid-engine + Tiled, React DOM overlays), plus a static prerendered `/resume/`. Phases 1 to 3 (skeleton, core loop, world), 4a (battles, starters, wild bugs, gym badges) and 4b (Elite Four, Champion, Hall of Fame, Skilldex, Bugdex, Trainer Card, Resume Mart, Bag) are built; the rest arrives in phases 5 and 6.
+A Gen-3-style 2D top-down portfolio game for Devansh Choudhary (Phaser 4 + grid-engine + Tiled, Preact-aliased React DOM overlays), plus a static prerendered `/resume/`. All phases (0 to 6) are built. **Live since 2026-10-04 at https://devanshchoudhary.com.**
 
 - Mission state lives in `.anbu/`. Read `.anbu/plan.md` (stack, layout, phases), `.anbu/screens.md` (every screen and state), `.anbu/art-direction.md` (tokens, fonts) before touching UI.
 - `spike/` is a throwaway Phase 0 proof. Read it, never import from it.
@@ -27,6 +27,11 @@ A Gen-3-style 2D top-down portfolio game for Devansh Choudhary (Phaser 4 + grid-
 - `npm run smoke`: headless Playwright smoke test against the dev server (needs Playwright browsers).
 - `npm run art:placeholders`: writes stand-in battle art, only for files that do not exist yet, so the designer's PNGs are never overwritten.
 - `npm run map -- maps-src/<town>.map`: turns a text map into `public/maps/<town>.json`. An `encounters <name> x,y WxH pool=<factIds>` line paints tall grass over that rectangle and adds a grass zone; a `battle=<trainerId>` property on an npc makes it a gym leader. Needs the Ninja Adventure pack (CC0, https://pixel-boy.itch.io/ninja-adventure-asset-pack) unzipped at `vendor/ninja-adventure/`, which is gitignored. The `maps-src/*.map` files are the source of truth. The Python generators in `.anbu/design/towns/gen/` are historical and out of date with the hand edits (robot, lever, `battle=`, `needs=`); never rerun them over a `.map`. Original art the lever packs (the KaneAI tower, terminals) lives in `.anbu/design/towns/art/`.
+
+## Deploy
+- Netlify site `portfolio-quest` (team MahDev) serves `devanshchoudhary.com` on Netlify DNS. Pushes to `master` on `github.com/devanshchoudhary20/portfolio-quest` build and deploy through the Netlify GitHub App (`netlify.toml`: `npm run build`, `dist`, Node 22, functions in `netlify/functions`). A failed build never replaces the live deploy.
+- Site settings that must stay as they are: force HTTPS on, `built_with_badge_enabled` off (new Netlify sites default it on and inject a badge over the game), form detection on, the form email notification, and the `TALLY_SALT` secret env var.
+- Rollback: move the custom domain back to the old `devanshfolio` site, or publish an earlier deploy from the Netlify deploys list.
 
 ## Git
 Commit per chunk as `feat(<chunk>): <what a stranger can now do>`. Never commit, push, or deploy without the user's approval. The launch gate is the user's.

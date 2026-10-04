@@ -175,3 +175,9 @@ Phase 5 proves the code locally: Vitest runs the tally handler against an in-mem
 10. Per-IP daily dedupe is the real guard: the same visitor counts once per UTC day. `rateLimit` is not enforced on the current plan (7 GETs in seconds all returned 200), so leave it in place but do not rely on it. Set `TALLY_SALT` as a secret env var on the production site at launch; without it POST returns 503.
 11. Remaining launch gate items stay in Phase 6 (Lighthouse, axe, DNS).
 - If production moves to a different Netlify site than `portfolio-quest-preview`, enable form detection there (new sites default to `ignore_html_forms: true`), add the email notification (New form submission, Any form, devanshchoudhary999@gmail.com), and set the `TALLY_SALT` secret.
+
+## Launch record (2026-10-04)
+- Live at https://devanshchoudhary.com on Netlify site `portfolio-quest`; old `devanshfolio` kept as rollback.
+- Verified live: HTTPS (Let's Encrypt, HSTS), http and www redirects, `/#experience` redirect, form submission and honeypot, tally on Blobs with per-IP daily dedupe, counter reset to 0.
+- Lighthouse on the live domain: home 98/100/100/100, `/resume/` 99/100/96/100 (performance/accessibility/best practices/SEO).
+- Fixed during launch: force HTTPS was off by default; Netlify's badge (`built_with_badge_enabled`) was on by default and covered the game corner.
