@@ -1,6 +1,6 @@
 import { factId, skillGroupId, townId } from './ids';
 import type { TownKey } from './ids';
-import { skillGroups } from './resume';
+import { LEETCODE_SOLVED, skillGroups } from './resume';
 import type { Fact } from './types';
 
 const f = (id: string, town: TownKey, short: string, long?: string, tags?: string[]): Fact => ({
@@ -23,7 +23,7 @@ export const facts: Fact[] = [
     'Frontend engineer (React, TypeScript) at LambdaTest, on KaneAI\'s AI test-authoring editor. I build the stateful core of an editor whose content an LLM keeps rewriting, and work across the Go and Python services behind it.',
   ),
   f('gear.btech', 'gear', 'B.Tech in Mechanical Engineering, Indian Institute of Technology Patna, 2019 to 2023.'),
-  f('gear.leetcode', 'gear', '400+ LeetCode problems solved.'),
+  f('gear.leetcode', 'gear', `${LEETCODE_SOLVED}+ LeetCode problems solved.`),
   f('junglee-a.ab', 'junglee', 'Product Analyst at Junglee Games, Jun 2023 to Jun 2024.', 'Ran A/B experiments on player-facing features.'),
   f(
     'junglee-b.2fa',

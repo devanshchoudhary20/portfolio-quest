@@ -1,58 +1,13 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
-import { PNG } from 'pngjs';
 import { factById, factId } from '../src/content';
 import { TURN_CAP } from '../src/game/battle/engine';
 import { RECRUITER_STARTER, TURN_CAP_LINE } from '../src/game/world/lines';
-import { continueWith, savedAt, standAt, startAt, state, talkTo, walk, warpTo } from './helpers';
+import { continueWith, drawnShare, fight, press, reachMoves, savedAt, standAt, startAt, state, storedSave, talkTo, walk, warpTo } from './helpers';
 import { readTown } from './world';
-
-type Battle = NonNullable<Awaited<ReturnType<typeof state>>['battle']>;
 
 // instant text: a fight is dozens of lines, and a typewriter on a busy machine turns each one into seconds
 test.beforeEach(({ page }) => page.addInitScript(() => localStorage.setItem('pq.prefs.v1', JSON.stringify({ textSpeed: 4 }))));
-
-// keys are held 70 ms so Phaser and React both see them
-const press = (page: Page, key: string) => page.keyboard.press(key, { delay: 70 });
-
-// plays a battle with the keyboard: Z on every queued line and on the first move; returns every line shown and the last snapshot
-async function fight(page: Page, stop: (battle: Battle) => boolean = () => false) {
-  const lines: string[] = [];
-  let last: Battle | null = null;
-  await expect
-    .poll(
-      async () => {
-        const { battle } = await state(page);
-        if (!battle) return 'closed';
-        last = battle;
-        if (lines.at(-1) !== battle.line) lines.push(battle.line);
-        if (stop(battle)) return 'stopped';
-        await press(page, 'z');
-        return 'playing';
-      },
-      { intervals: [100], timeout: 60_000 },
-    )
-    .not.toBe('playing')
-    .catch((error: Error) => {
-      throw new Error(`${error.message}\nlast battle: ${JSON.stringify(last)}\nlines: ${JSON.stringify(lines)}`);
-    });
-  return { lines, last: last as Battle | null };
-}
-
-// presses Z until the opening lines are spent and the move grid is up
-const reachMoves = (page: Page) =>
-  expect
-    .poll(
-      async () => {
-        const { battle } = await state(page);
-        if (battle?.pending) await press(page, 'z');
-        return battle?.pending;
-      },
-      { intervals: [100] },
-    )
-    .toBe(false);
-
-const storedSave = (page: Page) => page.evaluate(() => JSON.parse(localStorage.getItem('pq.save.v1') ?? 'null') as { starter?: string; caught: string[]; flags: string[] } | null);
 
 async function openBattle(page: Page, species: string, hp: { playerHp?: number; enemyHp?: number } = {}) {
   await startAt(page, '/?warp=gear');
@@ -180,28 +135,9 @@ test.describe('wild bugs', () => {
     await openBattle(page, 'null-pointer');
     await reachMoves(page);
 
-    const differs = async (part: 'bg' | 'enemy' | 'player') => {
-      const rect = await page.evaluate((p) => window.__pq!.battlePart(p), part);
-      expect(rect, part).not.toBeNull();
-      // the top of the part: the message box covers the foot of the player's sprite and the info boxes cover the sides of the background
-      const clip = part === 'bg'
-        ? { x: rect!.x + rect!.width * 0.4, y: rect!.y + rect!.height * 0.02, width: rect!.width * 0.2, height: rect!.height * 0.12 }
-        : { x: rect!.x, y: rect!.y, width: rect!.width, height: rect!.height * 0.6 };
-      const shoot = async () => PNG.sync.read(await page.screenshot({ clip }));
-      const on = await shoot();
-      await page.evaluate((p) => window.__pq!.battlePart(p, false), part);
-      const off = await shoot();
-      await page.evaluate((p) => window.__pq!.battlePart(p, true), part);
-      let changed = 0;
-      for (let i = 0; i < on.data.length; i += 4) {
-        if (Math.abs(on.data[i]! - off.data[i]!) + Math.abs(on.data[i + 1]! - off.data[i + 1]!) + Math.abs(on.data[i + 2]! - off.data[i + 2]!) > 40) changed++;
-      }
-      return changed / (on.data.length / 4);
-    };
-
     // a slide-in may still be moving, so each part polls until it has settled
     for (const part of ['bg', 'enemy', 'player'] as const) {
-      await expect.poll(() => differs(part), { message: `${part} is drawn`, intervals: [200] }).toBeGreaterThan(0.05);
+      await expect.poll(() => drawnShare(page, part), { message: `${part} is drawn`, intervals: [200] }).toBeGreaterThan(0.05);
     }
   });
 });

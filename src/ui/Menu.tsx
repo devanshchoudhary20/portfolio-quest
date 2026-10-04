@@ -12,13 +12,14 @@ interface Props {
   label: string;
   onCancel?: () => void;
   className?: string;
+  initialIndex?: number;
 }
 
 const ACCEPT = ['Enter', 'z', 'Z'];
 const CANCEL = ['Escape', 'x', 'X'];
 
-export function Menu({ items, label, onCancel, className = '' }: Props) {
-  const [index, setIndex] = useState(0);
+export function Menu({ items, label, onCancel, className = '', initialIndex = 0 }: Props) {
+  const [index, setIndex] = useState(initialIndex);
   const refs = useRef<(HTMLButtonElement | null)[]>([]);
 
   useEffect(() => {

@@ -1,14 +1,13 @@
 import type { CSSProperties } from 'react';
+import { FALLBACK_TOWN } from '../game/world/lines';
 import { townName } from '../game/world/towns';
 import type { Travel } from '../state/store';
 import { Menu } from './Menu';
 import type { MenuItem } from './Menu';
 import { actions } from './useGame';
 
-const FALLBACK_NAME = 'the next town';
-
 export function TravelCard({ travel }: { travel: Travel }) {
-  const name = townName(travel.town) ?? FALLBACK_NAME;
+  const name = townName(travel.town) ?? FALLBACK_TOWN;
   const percent = Math.round(Math.min(1, Math.max(0, travel.progress)) * 100);
   const items: MenuItem[] = [{ label: 'Retry', onSelect: () => actions.chooseTravel('retry') }];
   if (travel.canGoBack) items.push({ label: 'Back', onSelect: () => actions.chooseTravel('back') });

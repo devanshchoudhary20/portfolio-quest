@@ -3,7 +3,7 @@
 Personal weekend product built through `/mission`. Global `~/.claude/CLAUDE.md` applies. The company-specific parts (cerebrum, `/contract`, Jira) do not.
 
 ## What this is
-A Gen-3-style 2D top-down portfolio game for Devansh Choudhary (Phaser 4 + grid-engine + Tiled, React DOM overlays), plus a static prerendered `/resume/`. Phases 1 to 3 (skeleton, core loop, world) and 4a (battles, starters, wild bugs, gym badges) are built; the rest arrives in phases 4b to 6.
+A Gen-3-style 2D top-down portfolio game for Devansh Choudhary (Phaser 4 + grid-engine + Tiled, React DOM overlays), plus a static prerendered `/resume/`. Phases 1 to 3 (skeleton, core loop, world), 4a (battles, starters, wild bugs, gym badges) and 4b (Elite Four, Champion, Hall of Fame, Skilldex, Bugdex, Trainer Card, Resume Mart, Bag) are built; the rest arrives in phases 5 and 6.
 
 - Mission state lives in `.anbu/`. Read `.anbu/plan.md` (stack, layout, phases), `.anbu/screens.md` (every screen and state), `.anbu/art-direction.md` (tokens, fonts) before touching UI.
 - `spike/` is a throwaway Phase 0 proof. Read it, never import from it.

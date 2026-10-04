@@ -8,3 +8,4 @@ spike/
 test-results/
 playwright-report/
 vendor/
+__pycache__/

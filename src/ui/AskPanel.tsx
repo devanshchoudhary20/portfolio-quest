@@ -3,15 +3,8 @@ import type { ChangeEvent, FormEvent } from 'react';
 import { parseDestination } from '../game/world/ask';
 import { NOT_FOUND } from '../game/world/lines';
 import { actions } from './useGame';
+import { focusGame } from './focusGame';
 import { useFocusTrap } from './useFocusTrap';
-
-// the prompt closes back onto the game, not onto a node that is already gone
-const focusGame = () => {
-  const root = document.getElementById('game');
-  if (!root) return;
-  root.tabIndex = -1;
-  root.focus({ preventScroll: true });
-};
 
 // the KaneAI robot's prompt: free text in, a destination id out; the Overworld does the walking
 export function AskPanel() {

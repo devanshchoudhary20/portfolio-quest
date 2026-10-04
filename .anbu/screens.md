@@ -54,7 +54,7 @@ The "leave" moment with the most care is **Recruiter step 3**: the first screen 
 | `save.playSeconds` | storage | `0:00` |
 | `save.badges` | storage | `0` and five empty badge slots |
 | `save.skillsSeen` | storage | `0 / 32` and all entries show `???` |
-| `save.bugsSeen` | storage | `0 / 5` |
+| `save.caught` | storage | `0 / 6` (derived catchable total) |
 | `prefs.textSpeed` (`pq.prefs.v1`) | storage | `Normal` |
 | `save.textSize` | storage | `Normal` |
 | Corrupt save JSON | storage | Discard, start fresh, one dialog line: "Save data was unreadable. Starting a new game." |
@@ -153,7 +153,7 @@ Happy path
 
 | State | What the visitor sees |
 |---|---|
-| Empty | New game: Skilldex row subline "0 / 32 seen", Bugdex "0 / 5". |
+| Empty | New game: Skilldex row subline "0 / 32 seen", Bugdex "Bugs caught 0 / 6" (the total is the derived set of catchable bugs, never hardcoded). |
 | Loading | Menu opens instantly from memory. Rows with data show `--` until the save read finishes (under 50 ms). |
 | Partial | Save missing: footer shows "Badges 0 / 5" and "Time 0:00". |
 | Error | Save write fails: dialog "Could not save in this browser. Progress will not carry over." |

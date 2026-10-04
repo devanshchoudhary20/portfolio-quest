@@ -29,8 +29,13 @@ describe('pickGrant', () => {
 
 describe('lockedLine', () => {
   it('names the role a door needs and stays silent for other warps', () => {
-    expect(lockedLine({ needs: 'role.agent' })).toBe('This door needs the Agent role.');
-    expect(lockedLine({ unless: 'loop.break' })).toBeUndefined();
-    expect(lockedLine({ needs: 'seen.10' })).toBeUndefined();
+    expect(lockedLine({ needs: 'role.agent' }, [])).toBe('This door needs the Agent role.');
+    expect(lockedLine({ unless: 'loop.break' }, [])).toBeUndefined();
+    expect(lockedLine({ needs: 'seen.10' }, [])).toBeUndefined();
+  });
+
+  it('counts the badges held on the road to the Elite Four', () => {
+    expect(lockedLine({ needs: 'badges.3' }, flags('badge.core', 'badge.backend', 'shoes'))).toBe('Victory Road needs 3 badges. You have 2.');
+    expect(lockedLine({ needs: 'badges.3' }, [])).toBe('Victory Road needs 3 badges. You have 0.');
   });
 });

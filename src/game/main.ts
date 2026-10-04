@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { mountUi } from '../ui/mount';
+import { startPlayClock } from '../state/playClock';
 import { store } from '../state/store';
 import { startKeyboard } from './input/keyboard';
 import { movementPlugin } from './movement/GridMover';
@@ -15,6 +16,7 @@ export function createGame() {
   const parent = document.getElementById('game')!;
   startKeyboard();
   startAutosave();
+  startPlayClock();
   mountUi(document.getElementById('ui')!);
 
   const { view, devW, devH } = viewSize();

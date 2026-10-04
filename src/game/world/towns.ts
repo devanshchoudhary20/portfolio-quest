@@ -11,11 +11,14 @@ export const TOWN_NAMES: Record<TownKey, string> = {
   'patch-center': 'Patch Center',
 };
 
+// every TownId is a TownKey and TOWN_NAMES covers them all, so a town you hold always has a name
+export const placeName = (town: TownId) => TOWN_NAMES[town as TownKey];
+
 // a map id read from Tiled or a store field is a plain string until it passes this lookup
 export const townName = (town: string): string | undefined => (TOWN_NAMES as Record<string, string | undefined>)[town];
 
 // towns whose map ships in public/maps; a warp to any other town gets a "not open yet" line
-export const BUILT_TOWNS: readonly TownId[] = (['agra', 'gear', 'junglee', 'marrfa', 'testmu'] as const).map(townId);
+export const BUILT_TOWNS: readonly TownId[] = (['agra', 'gear', 'junglee', 'marrfa', 'testmu', 'elite'] as const).map(townId);
 
 export const START = { town: townId('agra'), spawn: 'bedroom' };
 

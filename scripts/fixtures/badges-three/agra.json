@@ -1,0 +1,167 @@
+{
+ "width": 9,
+ "height": 3,
+ "layers": [
+  {
+   "name": "ground",
+   "type": "tilelayer",
+   "data": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "name": "collide",
+   "type": "tilelayer",
+   "data": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "name": "npcs",
+   "type": "objectgroup",
+   "objects": []
+  },
+  {
+   "name": "items",
+   "type": "objectgroup",
+   "objects": [
+    {
+     "name": "key",
+     "x": 32,
+     "y": 16,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "item"
+      },
+      {
+       "name": "factId",
+       "type": "string",
+       "value": "agra.summary"
+      },
+      {
+       "name": "flag",
+       "type": "string",
+       "value": "key.a"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "gates",
+   "type": "objectgroup",
+   "objects": []
+  },
+  {
+   "name": "warps",
+   "type": "objectgroup",
+   "objects": [
+    {
+     "name": "default",
+     "x": 16,
+     "y": 16,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "spawn"
+      }
+     ]
+    },
+    {
+     "name": "bedroom",
+     "x": 0,
+     "y": 16,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "spawn"
+      }
+     ]
+    },
+    {
+     "name": "exit",
+     "x": 96,
+     "y": 16,
+     "properties": [
+      {
+       "name": "kind",
+       "type": "string",
+       "value": "warp"
+      },
+      {
+       "name": "to",
+       "type": "string",
+       "value": "agra"
+      },
+      {
+       "name": "spawn",
+       "type": "string",
+       "value": "default"
+      },
+      {
+       "name": "unless",
+       "type": "string",
+       "value": "badges.3"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

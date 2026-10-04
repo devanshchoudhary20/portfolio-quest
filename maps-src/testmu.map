@@ -234,8 +234,9 @@ objects
   signs    a11y-score     14,17 factId=testmu.a11y speaker="Accessibility Score"
   warps    route-marrfa-a 0,12 to=marrfa spawn=testmu-road
   warps    route-marrfa-b 0,13 to=marrfa spawn=testmu-road
-  warps    route-elite-a  28,35 to=elite spawn=testmu-road
-  warps    route-elite-b  29,35 to=elite spawn=testmu-road
+  warps    route-elite-a  28,35 to=elite spawn=testmu-road needs=badges.3
+  warps    route-elite-b  29,35 to=elite spawn=testmu-road needs=badges.3
+  warps    elite-road     28,34 kind=spawn face=up
   warps    marrfa-road    1,12 kind=spawn face=right
   warps    default        6,12 kind=spawn face=right
   warps    lobby-exit     67,10 to=testmu spawn=tower-door

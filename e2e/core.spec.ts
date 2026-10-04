@@ -209,7 +209,7 @@ test.describe('Recruiter Mode in game', () => {
       else await panel.getByRole('button', { name: 'Close' }).click();
       await expect(panel).toBeHidden();
       expect(await state(page)).toMatchObject({ town: before.town, pos: before.pos, panel: 'menu' });
-      await expect(page.getByRole('menuitem', { name: 'Save' })).toBeFocused();
+      await expect(page.getByRole('menuitem', { name: 'Recruiter Mode' })).toBeFocused();
     }
   });
 

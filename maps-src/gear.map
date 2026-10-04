@@ -1,5 +1,5 @@
-// Gear City: the town at x 0-43, then the library (x 50), the Core gym (x 72) and the Patch Center (x 94). Rooms sit far apart so the camera never shows a neighbor.
-map gear 108 24
+// Gear City: the town at x 0-43, then the library (x 50), the Core gym (x 72), the Patch Center (x 94) and the Resume Mart (x 112). Rooms sit far apart so the camera never shows a neighbor.
+map gear 123 24
 pack vendor/ninja-adventure
 
 sheets
@@ -86,56 +86,56 @@ legend
   * tile nature:3,10
 
 ground
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa________________________________________________________________
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa________________________________________________________________
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa________________________________________________________________
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa________________________________________________________________
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa________________________________________________________________
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa________________________________________________________________
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa________________________________________________________________
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa____________________________ccccccccccc_________________________
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa______bbbbbbbbbbb___________ccccccccccc___________bbbbbbbbb_____
-EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE______bbbbbbbbbbb___________ccccccccccc___________bbbbbbbbb_____
-DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD______bbbbbbbbbbb___________ccccccccccc___________bbbbbbbbb_____
-DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD______bbbbbbbbbbb___________ccccccccccc___________bbbbbbbbb_____
-EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE______bbbbbbbbbbb___________ccccccccccc___________bbbbbbbbb_____
-aaaaaaaaaaaaaaDDaaaaaDDaaaaaaaaVVVVVVVVVVaaa______bbbbbbbbbbb___________ccccccccccc___________bbbbbbbbb_____
-aaaaaaaaaaaaaaDDaaaaFGHIaaaaaaaVVVVVVVVVVaaa______bbbbbbbbbbb___________ccccccccccc___________bbbbbbbbb_____
-aaaaaaaaaaaaaaaaaaaaJKLMaaaaaaaVVVVVVVVVVaaa______bbbbbbbbbbb___________ccccccccccc___________bbbbbbbbb_____
-aaaaaaaaaaaaaaaaaaaaNOPQaaaaaaaVVVVVVVVVVaaa______bbbbbbbbbbb___________ccccccccccc_________________________
-aaaaaaaaaaaaaaaaaaaaRSTUaaaaaaaVVVVVVVVVVaaa________________________________________________________________
-aaaaDDDDDDDDDDDDDDDDDDDDDDDDDDVVVVVVVVVVVaaa________________________________________________________________
-aaaaDDDDDDDDDDDDDDDDDDDDDDDDDDVVVVVVVVVVVaaa________________________________________________________________
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaVVVVVVVVVVaaa________________________________________________________________
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaVVVVVVVVVVaaa________________________________________________________________
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa________________________________________________________________
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa_______________________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa_______________________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa_______________________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa_______________________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa_______________________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa_______________________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa_______________________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa____________________________ccccccccccc________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa______bbbbbbbbbbb___________ccccccccccc___________bbbbbbbbb_________bbbbbbbbbbb
+EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE______bbbbbbbbbbb___________ccccccccccc___________bbbbbbbbb_________bbbbbbbbbbb
+DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD______bbbbbbbbbbb___________ccccccccccc___________bbbbbbbbb_________bbbbbbbbbbb
+DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD______bbbbbbbbbbb___________ccccccccccc___________bbbbbbbbb_________bbbbbbbbbbb
+EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE______bbbbbbbbbbb___________ccccccccccc___________bbbbbbbbb_________bbbbbbbbbbb
+aaaaaaaaaaaaaaDDaaaaaDDaaaaaaaaVVVVVVVVVVaaa______bbbbbbbbbbb___________ccccccccccc___________bbbbbbbbb_________bbbbbbbbbbb
+aaaaaaaaaaaaaaDDaaaaFGHIaaaaaaaVVVVVVVVVVaaa______bbbbbbbbbbb___________ccccccccccc___________bbbbbbbbb_________bbbbbbbbbbb
+aaaaaaaaaaaaaaaaaaaaJKLMaaaaaaaVVVVVVVVVVaaa______bbbbbbbbbbb___________ccccccccccc___________bbbbbbbbb_________bbbbbbbbbbb
+aaaaaaaaaaaaaaaaaaaaNOPQaaaaaaaVVVVVVVVVVaaa______bbbbbbbbbbb___________ccccccccccc_____________________________bbbbbbbbbbb
+aaaaaaaaaaaaaaaaaaaaRSTUaaaaaaaVVVVVVVVVVaaa_______________________________________________________________________________
+aaaaDDDDDDDDDDDDDDDDDDDDDDDDDDVVVVVVVVVVVaaa_______________________________________________________________________________
+aaaaDDDDDDDDDDDDDDDDDDDDDDDDDDVVVVVVVVVVVaaa_______________________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaVVVVVVVVVVaaa_______________________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaVVVVVVVVVVaaa_______________________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa_______________________________________________________________________________
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa_______________________________________________________________________________
 
 things
-d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.................................................................
-............................................................................................................
-d.h....m...W.....j...$n.....o...i....m....d.................................................................
-............................................................................................................
-d...................................$.....d.................................................................
-..i.................*......%!..$.h.....*....................................................................
-d.....k...#....!.g.....h....#l........o...d.................................................................
-..............*!............!...#.......................................pqqqqqqqqqr.........................
-d.@..................%...........&........d.......pqqqqqqqqqr...........sz......z.t...........pqqqqqqqr.....
-...............f..................................sx.y.y.x..t...........s.........t...........sz..C.z.t.....
-..................................................s.........t...........s.........t...........s.......t.....
-..................................................s.........t...........s.........t...........s.......t.....
-d..f......................................d.......s.........t...........s.........t...........sA.....At.....
-..d...#%%X...............%..@!$.......2...........s.B....A..t...........sA.......At...........s.......t.....
-d...Z..............Y....Ye..d.*.0..1.....&d.......s.........t...........s.........t...........s.......t.....
-..&....%.......e.e................................s.........t...........s.........t...........uvvv.vvvw.....
-d.e................$......e..e.7..8.......d.......uvvvv.vvvvw...........uvvvv.vvvvw.........................
-....$..$.....@...........!........9.........................................................................
-d.d.............................3.........d.................................................................
-...................................4....5...................................................................
-d.......!..%.#&........................65*d.................................................................
-..$....@..*..!...%&%........%&...........@..................................................................
-d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.................................................................
-............................................................................................................
+d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d................................................................................
+...........................................................................................................................
+d.h....m...W.....j...$n.....o...i....m....d................................................................................
+...........................................................................................................................
+d...................................$.....d................................................................................
+..i.................*......%!..$.h.....*...................................................................................
+d.....k...#....!.g.....h....#l........o...d................................................................................
+..............*!............!...#.......................................pqqqqqqqqqr........................................
+d.@..................%...........&........d.......pqqqqqqqqqr...........sz......z.t...........pqqqqqqqr.........pqqqqqqqqqr
+...............f..................................sx.y.y.x..t...........s.........t...........sz..C.z.t.........sx.y.y.x..t
+..................................................s.........t...........s.........t...........s.......t.........s.........t
+..................................................s.........t...........s.........t...........s.......t.........s.........t
+d..f......................................d.......s.........t...........s.........t...........sA.....At.........s.B...B...t
+..d...#%%X...............%..@!$.......2...........s.B....A..t...........sA.......At...........s.......t.........s.........t
+d...Z..............Y....Ye..d.*.0..1.....&d.......s.........t...........s.........t...........s.......t.........s.........t
+..&....%.......e.e................................s.........t...........s.........t...........uvvv.vvvw.........s.........t
+d.e................$......e..e.7..8.......d.......uvvvv.vvvvw...........uvvvv.vvvvw.............................uvvvv.vvvvw
+....$..$.....@...........!........9........................................................................................
+d.d.............................3.........d................................................................................
+...................................4....5..................................................................................
+d.......!..%.#&........................65*d................................................................................
+..$....@..*..!...%&%........%&...........@.................................................................................
+d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d.d................................................................................
+...........................................................................................................................
 
 objects
   warps    door-library   7,8 to=gear spawn=library-in
@@ -163,6 +163,12 @@ objects
   items    pc-box         98,9 factId=patch-center.koalalab speaker="PC"
   warps    patch-exit     98,15 to=gear spawn=patch-door
   warps    patch-in       98,14 kind=door face=up
+  warps    door-mart      24,4 to=gear spawn=mart-in
+  warps    mart-door      24,5 kind=door face=down
+  npcs     clerk          117,12 sprite=manager face=down factId=junglee-b.award speaker="Clerk" shop=yes
+  items    resume         113,14 factId=agra.summary speaker="Resume" flag=resume
+  warps    mart-exit      117,16 to=gear spawn=mart-door
+  warps    mart-in        117,15 kind=door face=up
   encounters grass-gear-a 6,19 8x3 pool=gear.btech,gear.leetcode,skill.core
   encounters grass-gear-b 24,19 6x3 pool=gear.btech,gear.leetcode,skill.core
 
@@ -171,3 +177,4 @@ regions
   library 50,8,11,9 indoor
   gym 72,7,11,10 indoor
   patch 94,8,9,8 indoor
+  mart 112,8,11,9 indoor

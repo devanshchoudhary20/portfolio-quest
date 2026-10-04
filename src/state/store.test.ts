@@ -18,6 +18,24 @@ describe('store flags', () => {
     expect(store.getState().seen).toHaveLength(10);
   });
 
+  it('sets badges.3 on the third badge, whichever three', () => {
+    const { actions } = store.getState();
+    actions.addFlag(flagId('badge.core'));
+    actions.addFlag(flagId('badge.backend'));
+    expect(store.getState().flags).not.toContain(flagId('badges.3'));
+    actions.addFlag(flagId('badge.monorepo'));
+    expect(store.getState().flags).toContain(flagId('badges.3'));
+  });
+
+  it('counts play time one second per tick and starts a new game at 0', () => {
+    const { actions } = store.getState();
+    actions.tickPlay();
+    actions.tickPlay();
+    expect(store.getState().playSeconds).toBe(2);
+    actions.warpGame({ town: store.getState().town });
+    expect(store.getState().playSeconds).toBe(0);
+  });
+
   it('removeFlag drops one flag and ignores one that is not held', () => {
     const { actions } = store.getState();
     actions.addFlag(flagId('role.owner'));

@@ -2,7 +2,7 @@ import { createStore } from 'zustand/vanilla';
 import { factById } from '../content';
 import type { DestId, FactId, FlagId, SpeciesId, TownId } from '../content';
 import type { BattleRequest, BattleUi } from '../game/battle/session';
-import { SEEN_TEN, SEEN_TEN_COUNT } from '../game/world/conditions';
+import { BADGES_THREE, BADGES_THREE_COUNT, SEEN_TEN, SEEN_TEN_COUNT, countBadges } from '../game/world/conditions';
 import { factText } from '../game/world/factText';
 import type { Dir, Mode, SaveV1, Starter } from '../game/world/save';
 import { START } from '../game/world/towns';
@@ -11,7 +11,7 @@ import type { TextSpeed } from './prefs';
 
 export type Phase = 'title' | 'intro' | 'play';
 export type LoadStatus = 'idle' | 'loading' | 'ready' | 'error';
-export type Panel = 'none' | 'menu' | 'options' | 'recruiter' | 'ask';
+export type Panel = 'none' | 'menu' | 'options' | 'recruiter' | 'ask' | 'skilldex' | 'bugdex' | 'card' | 'bag' | 'mart' | 'hof';
 export type Portrait = 'devansh' | 'mom' | 'professor';
 
 // the title bar's first 40% is the game chunk itself, the shared atlas fills the rest
@@ -23,7 +23,7 @@ export interface DialogState {
   lines: string[];
   index: number;
   // what the Overworld does once the player closes this dialog
-  after?: 'stepBack' | 'ask' | 'battle';
+  after?: 'stepBack' | 'ask' | 'battle' | 'shop';
   // the fight a gym leader's talk leads into
   battle?: BattleRequest;
 }
@@ -71,6 +71,8 @@ export interface State {
   textSpeed: TextSpeed;
   reducedMotion: boolean;
   town: TownId;
+  // the named region of the town the player stands in, for the HUD label
+  place: string | null;
   pos: { x: number; y: number };
   facing: Dir;
   flags: FlagId[];
@@ -103,6 +105,10 @@ export interface State {
   travel: Travel | null;
   typing: boolean;
   finishTick: number;
+  // seconds played with the tab visible
+  playSeconds: number;
+  // bumped to ask the UI layer for the resume download; Phaser never touches the DOM
+  downloadTick: number;
   actions: Actions;
 }
 
@@ -114,6 +120,7 @@ interface Actions {
   setTextSpeed: (speed: TextSpeed) => void;
   setMode: (mode: Mode) => void;
   setPlayer: (town: TownId, pos: { x: number; y: number }, facing: Dir) => void;
+  setPlace: (place: string | null) => void;
   setStage: (stage: Stage) => void;
   setTravel: (travel: Travel | null) => void;
   chooseTravel: (choice: 'retry' | 'back') => void;
@@ -149,6 +156,8 @@ interface Actions {
   pressB: () => void;
   pressMenu: () => void;
   requestSave: () => void;
+  tickPlay: () => void;
+  requestDownload: () => void;
 }
 
 const FRESH = {
@@ -165,11 +174,17 @@ const FRESH = {
   run: false,
   loops: 0,
   nav: null as DestId | null,
+  playSeconds: 0,
 };
 
-// seen.10 is derived, never granted by an object
-const withDerived = (flags: FlagId[], seen: FactId[]) =>
-  seen.length >= SEEN_TEN_COUNT && !flags.includes(SEEN_TEN) ? [...flags, SEEN_TEN] : flags;
+// seen.10 and badges.3 are derived, never granted by an object
+const withDerived = (flags: FlagId[], seen: FactId[]) => {
+  const derived = [
+    ...(seen.length >= SEEN_TEN_COUNT ? [SEEN_TEN] : []),
+    ...(countBadges(flags) >= BADGES_THREE_COUNT ? [BADGES_THREE] : []),
+  ].filter((flag) => !flags.includes(flag));
+  return derived.length > 0 ? [...flags, ...derived] : flags;
+};
 
 export const isUiOpen = (state: Pick<State, 'phase' | 'dialog' | 'panel' | 'battle'>) =>
   state.phase !== 'play' || state.dialog !== null || state.panel !== 'none' || state.battle !== null;
@@ -186,6 +201,7 @@ export const store = createStore<State>()((set, get) => ({
   reducedMotion: false,
   wildBugsPref: readWildBugs(),
   town: START.town,
+  place: null,
   pos: { x: 0, y: 0 },
   facing: 'down',
   ...FRESH,
@@ -199,6 +215,7 @@ export const store = createStore<State>()((set, get) => ({
   travel: null,
   typing: false,
   finishTick: 0,
+  downloadTick: 0,
   actions: {
     setLoad: (status, progress) => set((s) => ({ load: { status, progress: progress ?? s.load.progress } })),
     setReducedMotion: (reducedMotion) => set({ reducedMotion }),
@@ -207,6 +224,7 @@ export const store = createStore<State>()((set, get) => ({
     setTextSpeed: (textSpeed) => set({ textSpeed }),
     setMode: (mode) => set({ mode }),
     setPlayer: (town, pos, facing) => set({ town, pos, facing, landed: true }),
+    setPlace: (place) => set({ place }),
     setStage: (stage) => set({ stage }),
     setTravel: (travel) => set({ travel }),
     chooseTravel: (choice) => set((s) => (s.travel ? { travel: { ...s.travel, choice } } : {})),
@@ -234,6 +252,7 @@ export const store = createStore<State>()((set, get) => ({
         starter: save.starter,
         caught: save.caught,
         mode: save.mode,
+        playSeconds: save.playSeconds,
         landed: false,
         phase: 'play',
         world: { town: save.town, pos: save.pos, facing: save.facing },
@@ -275,11 +294,12 @@ export const store = createStore<State>()((set, get) => ({
       const { dialog, actions } = get();
       set({ dialog: null, typing: false });
       if (dialog?.after === 'ask') actions.openPanel('ask');
+      else if (dialog?.after === 'shop') actions.openPanel('mart');
     },
     addFlag: (flag) => {
-      const { flags, actions } = get();
+      const { flags, seen, actions } = get();
       if (flags.includes(flag)) return;
-      set({ flags: [...flags, flag] });
+      set({ flags: withDerived([...flags, flag], seen) });
       actions.requestSave();
     },
     removeFlag: (flag) => {
@@ -311,6 +331,8 @@ export const store = createStore<State>()((set, get) => ({
       else actions.closePanel();
     },
     requestSave: () => set((s) => ({ saveTick: s.saveTick + 1 })),
+    tickPlay: () => set((s) => ({ playSeconds: s.playSeconds + 1 })),
+    requestDownload: () => set((s) => ({ downloadTick: s.downloadTick + 1 })),
   },
 }));
 
@@ -325,6 +347,7 @@ export function toSave(state: State): SaveV1 {
     ...(state.starter ? { starter: state.starter } : {}),
     caught: state.caught,
     mode: state.mode,
+    playSeconds: state.playSeconds,
     savedAt: new Date().toISOString(),
   };
 }

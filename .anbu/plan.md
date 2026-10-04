@@ -151,3 +151,11 @@ The Phase 0 spike keeps its own throwaway Playwright tests on chromium, firefox 
 8. Tiled authoring errors. Warp and spawn validation both ways.
 9. Phone number leak. Regex scan of content, maps, output.
 10. Scope creep. Phase gates; no `FactId`, no mechanic; polish only in Phase 6.
+
+## Phase 6 polish backlog (collected during phases 2 to 4)
+- Phone panels: on portrait phones, open panels (Hall of Fame, dex, Trainer Card, Mart, Recruiter) full-screen and hide the touch controls while open; today the Hall of Fame scrolls and "Keep exploring" sits below the fold, and stat labels wrap.
+- Game chunk is ~512 KB gzip against the 480 KB budget: swap React for Preact (preact/compat, about -55 KB) in the overlays, then re-measure.
+- Machine Coding room terminals read as boxes with paper (no monitor tile in the pack); consider one custom terminal tile.
+- KaneAI tower is barely taller than its neighbours; consider one custom skyscraper sprite.
+- `--gold` token is used in title.css but not listed in `.anbu/art-direction.md`.
+- Mart "Downloading..." transient state has no e2e.

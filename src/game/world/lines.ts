@@ -1,9 +1,11 @@
-import { moveId, skillGroups } from '../../content';
+import { LEETCODE_SOLVED, moveId, skillGroups, trainerId } from '../../content';
 import type { FlagId, MoveId } from '../../content';
-import { FLAGS, badgeFlag } from './flags';
+import { FLAGS, badgeFlag, beatenFlag } from './flags';
 import { townName } from './towns';
 
 // the only player-facing text that is not a fact: pickups, roles, locks, robot replies and HUD labels all live here
+
+export const CHAMPION_DEFEATED = 'Good battle. That was the whole loop. The Hall of Fame has my email.';
 
 // said once, after the fact line, when a talk or pickup hands over this flag
 export const ITEM_LINES: ReadonlyMap<FlagId, string> = new Map([
@@ -12,7 +14,10 @@ export const ITEM_LINES: ReadonlyMap<FlagId, string> = new Map([
   [FLAGS.keySecond, 'You got the second key! Both keys fit the 2FA gate.'],
   [FLAGS.loopBreak, 'You pulled the lever. The loop breaks.'],
   [FLAGS.cursor, 'You got a cursor! Face a floor tile and press A to plant your flag.'],
+  [FLAGS.resume, 'You got the Resume! Put it in your Bag.'],
   ...skillGroups.map((group): [FlagId, string] => [badgeFlag(group.id), `You earned the ${group.gymBadge}!`]),
+  // the Champion is the only trainer with a line for being beaten
+  [beatenFlag(trainerId('devansh')), CHAMPION_DEFEATED],
 ]);
 
 // the role a cycling NPC just handed out
@@ -45,6 +50,15 @@ export const loopLabel = (laps: number) => `Loop ${laps}`;
 export const notOpenYet = (town: string) => `${townName(town) ?? 'That town'} is not open yet.`;
 
 export const badgesLabel = (held: number, total: number) => `Badges ${held} / ${total}`;
+export const factsSeenLabel = (seen: number, total: number) => `Facts seen ${seen} / ${total}`;
+export const bugsCaughtLabel = (caught: number, total: number) => `Bugs caught ${caught} / ${total}`;
+export const victoryLocked = (held: number, need: number) => `Victory Road needs ${need} badges. You have ${held}.`;
+
+// play time as h:mm; a missing or broken count reads as none
+export const timeLabel = (seconds: number) => {
+  const whole = Number.isFinite(seconds) && seconds > 0 ? Math.floor(seconds) : 0;
+  return `Time ${Math.floor(whole / 3600)}:${String(Math.floor((whole % 3600) / 60)).padStart(2, '0')}`;
+};
 export const wildBugsLabel = (on: boolean) => `Wild bugs: ${on ? 'On' : 'Off'}`;
 
 // battle lines: names are game data, every other sentence is here or a resume fact
@@ -101,3 +115,79 @@ export const RECRUITER_STARTER = 'Recruiter Mode starts you with React, so there
 export const STARTER_PICK = 'Three partners are waiting on the table. Pick one.';
 export const YES = 'Yes';
 export const NO = 'No';
+
+// the Resume Mart: the clerk's lines, the one item, and the bag
+export const MART_WELCOME = "Welcome. Today's only item is free.";
+export const martDetail = (name: string, title: string) => `${name}, ${title}. One page.`;
+export const MART_ASK = 'Take it?';
+export const MART_AGAIN = 'You already have it. Take another?';
+export const MART_BYE = 'Come again.';
+export const MART_TITLE = 'Resume Mart';
+export const ITEM_NAME = 'Resume (PDF)';
+export const ITEM_PRICE = '0 coins';
+export const DOWNLOAD_RESUME = 'Download resume';
+export const DOWNLOADING = 'Downloading...';
+export const PDF_FAILED = 'The PDF did not load. Try again, or copy the text from /resume.';
+export const OPEN_FULL_PAGE = 'Open the full page';
+export const CLERK = 'Clerk';
+export const CLOSE = 'Close';
+export const bagLabel = (copies: number) => `Bag: ${copies} ${copies === 1 ? 'copy' : 'copies'}`;
+export const BAG_TITLE = 'Bag';
+export const BAG_EMPTY = 'Your bag is empty.';
+export const BAG_USE = 'Use';
+
+// the Hall of Fame and its contact call to action
+export const HOF_TITLE = 'Hall of Fame';
+export const HOF_ENTER = 'Your team is recorded here.';
+export const TEAM_LABEL = 'Your team';
+export const HOF_CTA = 'You have seen the work. Want to talk?';
+export const EMAIL_ME = 'Email me';
+export const LINKEDIN = 'LinkedIn';
+export const DOWNLOAD_PDF = 'Download PDF';
+export const KEEP_EXPLORING = 'Keep exploring';
+export const CONTACT_LABEL = 'Contact';
+export const FALLBACK_PARTNER = 'Your partner';
+
+// the Skilldex, Bugdex and Trainer Card
+export const SKILLDEX_TITLE = 'Skilldex';
+export const BUGDEX_TITLE = 'Bugdex';
+export const CARD_TITLE = 'Trainer Card';
+export const UNSEEN = '???';
+export const findIn = (place: string) => `Find this in: ${place}`;
+export const listedUnder = (group: string) => `Listed under ${group}`;
+export const gymHint = (group: string, place: string) => `Beat the ${group} gym in ${place}`;
+export const roamsIn = (place: string) => `Roams: ${place}`;
+export const BADGE_HELD = 'Badge earned';
+export const BADGE_MISSING = 'Badge not earned yet';
+export const FALLBACK_NAME = 'A wild bug';
+export const FALLBACK_TOWN = 'the next town';
+export const BACK = 'Back';
+export const MONEY_AMOUNT = `${LEETCODE_SOLVED} coins`;
+export const TRAINER_ID = 'PQ-00001';
+export const CARD_LABELS = { id: 'ID', money: 'Money', education: 'Education', now: 'Now' } as const;
+export const ALL_GYMS = 'All gyms cleared. The Elite Four are waiting.';
+
+// HUD place labels: a named region of a town replaces the town's own label, keyed "<town>.<region>" after the name in the map source; check-content fails a key no built map has
+const GYM_REGIONS: Readonly<Record<string, string>> = {
+  core: 'gym',
+  monorepo: 'gym',
+  backend: 'gym',
+  'design-system': 'design-gym',
+  'cross-stack': 'cross-gym',
+};
+export const PLACE_LABELS: ReadonlyMap<string, string> = new Map([
+  ['elite.dsa', 'DSA Room'],
+  ['elite.machine-coding', 'Machine Coding Room'],
+  ['elite.system-design', 'System Design Room'],
+  ['elite.behavioral', 'Behavioral Room'],
+  ['elite.devansh', "Champion's Room"],
+  ['elite.hall', HOF_TITLE],
+  ['gear.mart', MART_TITLE],
+  ['gear.patch', 'Patch Center'],
+  ...skillGroups.flatMap((group): [string, string][] => {
+    const region = GYM_REGIONS[group.id];
+    return region ? [[`${group.town}.${region}`, `${group.gymBadge.replace(/ Badge$/, '')} Gym`]] : [];
+  }),
+]);
+
+export const placeLabel = (town: string, region: string | null) => (region ? PLACE_LABELS.get(`${town}.${region}`) : undefined) ?? townName(town);

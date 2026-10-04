@@ -1,6 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { basename } from 'node:path';
 import { isOpen } from '../src/game/world/conditions';
+import { parseRegions } from '../src/game/world/regions';
+import type { Region } from '../src/game/world/regions';
 
 const TILE = 16;
 // Tiled packs flip flags into the top bits of a gid
@@ -13,7 +15,7 @@ interface RawProp { name: string; value: unknown }
 interface RawObject { name?: string; x?: number; y?: number; width?: number; height?: number; properties?: RawProp[] }
 interface RawLayer { name: string; type: string; data?: number[]; objects?: RawObject[]; layers?: RawLayer[] }
 interface RawTileset { firstgid: number; tiles?: { id: number; properties?: RawProp[] }[] }
-interface RawMap { width?: number; height?: number; layers?: RawLayer[]; tilesets?: RawTileset[] }
+interface RawMap { width?: number; height?: number; properties?: RawProp[]; layers?: RawLayer[]; tilesets?: RawTileset[] }
 
 // w and h are in tiles; only a grass zone spans more than one
 export interface MapObject { name: string; layer: string; tile: Tile; w: number; h: number; props: Record<string, string> }
@@ -25,6 +27,7 @@ export interface TownMap {
   hasGround: boolean;
   objectLayers: string[];
   objects: MapObject[];
+  regions: Region[];
   // tile terrain only: ground painted, collide empty, no ge_collide tile
   walkable: (tile: Tile) => boolean;
   spawn: (name: string) => Tile;
@@ -72,7 +75,7 @@ export function readMap(file: string): TownMap {
     if (!found) throw new Error(`${name} has no spawn ${spawnName}`);
     return found.tile;
   };
-  return { name, width, height, hasGround: ground.length > 0, objectLayers: objectLayers.map((l) => l.name), objects, walkable, spawn };
+  return { name, width, height, hasGround: ground.length > 0, objectLayers: objectLayers.map((l) => l.name), objects, regions: parseRegions(json.properties), walkable, spawn };
 }
 
 export const neighbors = (tile: Tile) => OFFSETS.map(([, dx, dy]) => ({ x: tile.x + dx, y: tile.y + dy }));

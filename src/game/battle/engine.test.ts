@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { factId, moveId, speciesId } from '../../content';
-import { MOVES, SPECIES, TRAINERS } from './data';
+import { CATCHABLE, MOVES, SPECIES, TRAINERS } from './data';
 import { ENCOUNTER_CHANCE, MIN_STEPS_BETWEEN, leastSeen, shouldEncounter } from './encounter';
 import { TURN_CAP, effectiveness, enemyOf, moveSlots, start, step } from './engine';
 import type { Action, BattleState } from './engine';
@@ -92,6 +92,36 @@ describe('turn cap', () => {
         }
       }
     }
+  });
+});
+
+describe('trainers', () => {
+  it('every trainer, Champion included, loses to every starter within the cap on any move order', () => {
+    for (const trainer of TRAINERS) {
+      for (const player of [REACT, NODE, CLAUDE]) {
+        for (let seed = 0; seed < 25; seed++) {
+          let state = start({ player, party: trainer.party, seed, enemyHp: trainer.partyHp })!;
+          while (state.phase === 'choose') state = hit(state, seed % 4);
+          expect(state.phase, `${trainer.id} vs ${player}`).toBe('won');
+          expect(state.turn).toBeLessThanOrEqual(TURN_CAP);
+        }
+      }
+    }
+  });
+
+  it('the Champion and the Elite Four field two bugs on the elite background and award no badge', () => {
+    const elite = TRAINERS.filter((t) => t.bg === 'elite');
+    expect(elite.map((t) => t.id)).toEqual(['dsa', 'machine-coding', 'system-design', 'behavioral', 'devansh']);
+    for (const trainer of elite) {
+      expect(trainer.party).toHaveLength(2);
+      expect(trainer.partyHp).toBe(20);
+      expect(trainer.award.kind).toBe('beaten');
+      expect(trainer.party.every((id) => !['react', 'node', 'claude'].includes(id))).toBe(true);
+    }
+  });
+
+  it('derives the catchable bugs from the wild rosters', () => {
+    expect(CATCHABLE).toHaveLength(6);
   });
 });
 

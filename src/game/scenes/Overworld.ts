@@ -19,7 +19,7 @@ import { interactWith, lockedLine } from '../world/interact';
 import { PLANTED_LINE, survivedLine } from '../world/lines';
 import { objectAt, readObjects, zoneAt } from '../world/objects';
 import type { WorldObject } from '../world/objects';
-import { parseRegions } from '../world/regions';
+import { inRegion, parseRegions } from '../world/regions';
 import type { Region } from '../world/regions';
 import type { Dir } from '../world/save';
 import { DEFAULT_SPAWN, isBuiltTown } from '../world/towns';
@@ -47,6 +47,7 @@ export class Overworld extends Phaser.Scene {
   private indoor = false;
   private cleanups: (() => void)[] = [];
   private regions: Region[] = [];
+  private lastRegion: Region | null = null;
   private tapping = false;
   private tile: Tile = { x: 0, y: 0 };
   private travel!: Travel;
@@ -63,6 +64,7 @@ export class Overworld extends Phaser.Scene {
     this.objects = [];
     this.tint = null;
     this.indoor = false;
+    this.lastRegion = null;
     this.cleanups = [];
     this.tapping = false;
     this.speed = WALK_SPEED;
@@ -129,6 +131,8 @@ export class Overworld extends Phaser.Scene {
     camera.startFollow(player, true);
     camera.setZoom(store.getState().stage.scale);
     this.clampCamera(start.tile);
+    // a save that loads inside the Hall of Fame room does not reopen its panel
+    this.enterRegion(start.tile, false);
     this.tint = new DayTint(this);
     this.input.on('pointerdown', this.onTap, this);
 
@@ -199,7 +203,7 @@ export class Overworld extends Phaser.Scene {
   // the camera stays inside the region the player is in; bounds are padded to the view size, which centers a smaller room
   private clampCamera(tile: Tile) {
     this.tile = tile;
-    const region = this.regions.find((r) => tile.x >= r.x && tile.x < r.x + r.w && tile.y >= r.y && tile.y < r.y + r.h);
+    const region = this.regions.find((r) => inRegion(r, tile));
     this.indoor = region?.indoor ?? false;
     if (!region) return;
     const camera = this.cameras.main;
@@ -208,6 +212,15 @@ export class Overworld extends Phaser.Scene {
     const centerX = (region.x + region.w / 2) * TILE;
     const centerY = (region.y + region.h / 2) * TILE;
     camera.setBounds(centerX - width / 2, centerY - height / 2, width, height);
+  }
+
+  // the HUD label follows the region; walking or warping into the Hall of Fame room opens its panel, once per entry
+  private enterRegion(tile: Tile, announce = true) {
+    const region = this.regions.find((r) => inRegion(r, tile)) ?? null;
+    const { actions } = store.getState();
+    if (announce && region?.hall && region !== this.lastRegion) actions.openPanel('hof');
+    this.lastRegion = region;
+    actions.setPlace(region?.name || null);
   }
 
   private onTap(pointer: Phaser.Input.Pointer) {
@@ -242,6 +255,7 @@ export class Overworld extends Phaser.Scene {
     actions.tickStep();
     actions.requestSave();
     this.clampCamera(tile);
+    this.enterRegion(tile);
     this.maze?.enter(tile);
     if (this.maze?.isFlag(tile)) this.reportFlag();
     const warp = objectAt(this.objects, tile, ['warp']);
@@ -317,6 +331,7 @@ export class Overworld extends Phaser.Scene {
   stand(tile: Tile, facing: Dir) {
     this.mover.place(PLAYER, tile, facing);
     this.clampCamera(tile);
+    this.enterRegion(tile);
     this.maze?.enter(tile);
     store.getState().actions.setPlayer(this.request.town, tile, facing);
   }
@@ -334,7 +349,7 @@ export class Overworld extends Phaser.Scene {
 
   // a door that needs a role names it instead of staying silent
   private lockedDoor(warp: WorldObject) {
-    store.getState().actions.openDialog({ speaker: '', portrait: null, lines: [lockedLine(warp.props) ?? ''] });
+    store.getState().actions.openDialog({ speaker: '', portrait: null, lines: [lockedLine(warp.props, store.getState().flags) ?? ''] });
   }
 
   private walkTo(name: string | undefined) {

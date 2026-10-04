@@ -1,6 +1,6 @@
 import { factId, moveId, skillGroupId, speciesId, trainerId } from '../../content';
 import type { FactId, FlagId, MoveId, SpeciesId, TrainerId } from '../../content';
-import { badgeFlag } from '../world/flags';
+import { badgeFlag, beatenFlag } from '../world/flags';
 
 export type BattleType = 'water' | 'grass' | 'fire' | 'bug' | 'ghost';
 export type BgId = 'grass' | 'jungle' | 'city' | 'gym' | 'elite';
@@ -21,14 +21,18 @@ export interface Species {
   moves: MoveId[];
 }
 
+// a gym leader hands over a badge; an Elite Four member or the Champion only marks themselves beaten
+export type Award = { kind: 'badge'; flag: FlagId } | { kind: 'beaten'; flag: FlagId };
+
 export interface Trainer {
   id: TrainerId;
   name: string;
   party: SpeciesId[];
   partyHp: number;
-  // the fact the leader says before the fight; the map's npc carries the same one
+  // the fact the trainer says before the fight; the map's npc carries the same one
   factId: FactId;
-  badge: FlagId;
+  award: Award;
+  bg: BgId;
 }
 
 const move = (id: string, name: string, power: number, fact?: string): Move => ({
@@ -93,22 +97,33 @@ export const SPECIES: readonly Species[] = [
   species('silent-data-loss', 'Silent Data Loss', 'ghost', WILD_HP, ['silent-drop', 'vanish']),
 ];
 
-const trainer = (id: string, name: string, party: string[], fact: string, group: string): Trainer => ({
+const trainer = (id: string, name: string, party: string[], fact: string, award: Award, bg: BgId): Trainer => ({
   id: trainerId(id),
   name,
   party: party.map(speciesId),
   partyHp: PARTY_HP,
   factId: factId(fact),
-  badge: badgeFlag(skillGroupId(group)),
+  award,
+  bg,
 });
 
-// gym leaders only; the Elite Four and the Champion arrive with the next chunk
+const gym = (id: string, name: string, party: string[], fact: string, group: string) =>
+  trainer(id, name, party, fact, { kind: 'badge', flag: badgeFlag(skillGroupId(group)) }, 'gym');
+const elite = (id: string, name: string, party: string[], fact: string) =>
+  trainer(id, name, party, fact, { kind: 'beaten', flag: beatenFlag(trainerId(id)) }, 'elite');
+
+// the Champion fields bugs only: a starter's moves would make Node and Claude Code players lose
 export const TRAINERS: readonly Trainer[] = [
-  trainer('core', 'Core Leader', ['hydration', 'null-pointer'], 'skill.core', 'core'),
-  trainer('design', 'Design Leader', ['cors', 'race-condition'], 'skill.design-system', 'design-system'),
-  trainer('monorepo', 'Tooling Leader', ['off-by-one', 'memory-leak'], 'skill.monorepo', 'monorepo'),
-  trainer('cross', 'Stack Leader', ['silent-data-loss', 'race-condition'], 'skill.cross-stack', 'cross-stack'),
-  trainer('backend', 'Backend Leader', ['cors'], 'skill.backend', 'backend'),
+  gym('core', 'Core Leader', ['hydration', 'null-pointer'], 'skill.core', 'core'),
+  gym('design', 'Design Leader', ['cors', 'race-condition'], 'skill.design-system', 'design-system'),
+  gym('monorepo', 'Tooling Leader', ['off-by-one', 'memory-leak'], 'skill.monorepo', 'monorepo'),
+  gym('cross', 'Stack Leader', ['silent-data-loss', 'race-condition'], 'skill.cross-stack', 'cross-stack'),
+  gym('backend', 'Backend Leader', ['cors'], 'skill.backend', 'backend'),
+  elite('dsa', 'DSA Elite', ['off-by-one', 'null-pointer'], 'gear.leetcode'),
+  elite('machine-coding', 'Machine Coding Elite', ['hydration', 'race-condition'], 'testmu.blocks'),
+  elite('system-design', 'System Design Elite', ['cors', 'memory-leak'], 'testmu.save'),
+  elite('behavioral', 'Behavioral Elite', ['memory-leak', 'silent-data-loss'], 'junglee-b.award'),
+  elite('devansh', 'Champion Devansh', ['silent-data-loss', 'null-pointer'], 'agra.summary'),
 ];
 
 // which bugs roam which town's tall grass
@@ -118,11 +133,15 @@ export const WILD_BY_TOWN: Readonly<Record<string, readonly SpeciesId[]>> = {
   marrfa: ['cors', 'hydration'].map(speciesId),
 };
 
+// the bugs a visitor can catch: every bug that roams some town's grass
+export const CATCHABLE: readonly SpeciesId[] = [...new Set(Object.values(WILD_BY_TOWN).flat())];
+
+export const caughtCount = (caught: readonly SpeciesId[]) => CATCHABLE.filter((id) => caught.includes(id)).length;
+
 export const WILD_BG: Readonly<Record<string, BgId>> = { gear: 'grass', junglee: 'jungle', marrfa: 'city' };
 
 // battle art files, one per id: creature fronts and backs, trainers, backgrounds
 export const BG_IDS: readonly BgId[] = ['grass', 'jungle', 'city', 'gym', 'elite'];
-// the Elite Four and the Champion only draw a sprite until their battles ship
 export const TRAINER_SPRITES = ['core', 'design', 'monorepo', 'cross', 'backend', 'dsa', 'machine-coding', 'system-design', 'behavioral', 'devansh'] as const;
 
 const speciesById = new Map(SPECIES.map((s) => [s.id, s]));

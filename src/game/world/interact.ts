@@ -3,8 +3,8 @@ import type { FlagId } from '../../content';
 import type { Portrait } from '../../state/store';
 import { store } from '../../state/store';
 import { trainerOf } from '../battle/data';
-import { flagList } from './conditions';
-import { ITEM_LINES, LOCK_LINES, RECOVERY_LINE, ROLE_LINES } from './lines';
+import { BADGES_THREE, BADGES_THREE_COUNT, countBadges, flagList } from './conditions';
+import { ITEM_LINES, LOCK_LINES, MART_WELCOME, RECOVERY_LINE, ROLE_LINES, victoryLocked } from './lines';
 import type { WorldObject } from './objects';
 
 const PORTRAITS: Portrait[] = ['devansh', 'mom', 'professor'];
@@ -41,11 +41,12 @@ export function interactWith(obj: WorldObject) {
   const speaker = obj.props.speaker ?? defaultSpeaker(obj);
   const portrait = PORTRAITS.find((p) => p === obj.props.portrait) ?? null;
   const grant = pickGrant(obj.props, flags);
-  const extra = grant?.line === undefined ? [] : [grant.line];
+  const shop = obj.props.shop !== undefined;
+  const extra = [...(shop ? [MART_WELCOME] : []), ...(grant?.line === undefined ? [] : [grant.line])];
   // a gym leader who has not been beaten says their fact, then the fight starts
   const trainer = obj.props.battle === undefined ? undefined : trainerOf(trainerId(obj.props.battle));
-  const fights = trainer !== undefined && !flags.includes(trainer.badge);
-  const after = obj.props.guide !== undefined ? 'ask' : fights ? 'battle' : undefined;
+  const fights = trainer !== undefined && !flags.includes(trainer.award.flag);
+  const after = obj.props.guide !== undefined ? 'ask' : shop ? 'shop' : fights ? 'battle' : undefined;
   const request = fights ? ({ kind: 'trainer', trainer: trainer.id } as const) : undefined;
   actions.openFact(trainer?.factId ?? factId(obj.props.factId), { speaker, portrait }, extra, after, request);
   if (!grant) return;
@@ -53,8 +54,9 @@ export function interactWith(obj: WorldObject) {
   actions.addFlag(grant.flag);
 }
 
-// what a locked door says: the line for the first flag it needs, if the table has one
-export const lockedLine = (props: Record<string, string | undefined>) => {
+// what a locked door says: the line for the first flag it needs, if the table has one; Victory Road also counts the badges held
+export const lockedLine = (props: Record<string, string | undefined>, flags: readonly FlagId[]) => {
   const flag = flagList(props.needs)[0];
+  if (flag === BADGES_THREE) return victoryLocked(countBadges(flags), BADGES_THREE_COUNT);
   return flag === undefined ? undefined : LOCK_LINES.get(flag);
 };

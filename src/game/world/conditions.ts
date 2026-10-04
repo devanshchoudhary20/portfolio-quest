@@ -6,6 +6,12 @@ import { FLAGS } from './flags';
 export const SEEN_TEN = FLAGS.seenTen;
 export const SEEN_TEN_COUNT = 10;
 
+// derived by the store once any three gym badges are held; the road to the Elite Four reads it
+export const BADGES_THREE = FLAGS.badgesThree;
+export const BADGES_THREE_COUNT = 3;
+
+export const countBadges = (flags: readonly string[]) => flags.filter((flag) => flag.startsWith('badge.')).length;
+
 // a map property holds a comma list of flags: needs="key.2fa.1,key.2fa.2"
 export const flagList = (csv: string | undefined): FlagId[] =>
   (csv ?? '')

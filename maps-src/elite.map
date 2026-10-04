@@ -1,0 +1,251 @@
+// Victory Road: a rocky cave at x 0-29, then the Elite Four rooms (x 40, 60, 80, 100: DSA archive, Machine Coding workshop, System Design server room, Behavioral meeting room), the Champion's room (x 120) and the Hall of Fame (x 140). Each room's forward gate needs the beaten flag of the trainer inside it.
+map elite 151 17
+pack vendor/ninja-adventure
+
+sheets
+  field   Backgrounds/Tilesets/TilesetField.png
+  house   Backgrounds/Tilesets/TilesetHouse.png
+  nature  Backgrounds/Tilesets/TilesetNature.png
+  elem    Backgrounds/Tilesets/TilesetElement.png
+  floor   Backgrounds/Tilesets/Interior/TilesetInteriorFloor.png
+  wall    Backgrounds/Tilesets/Interior/TilesetWallSimple.png
+  water   Backgrounds/Tilesets/TilesetWater.png
+  pipes   Backgrounds/Tilesets/Pipes.png
+  logic   Backgrounds/Tilesets/TilesetLogic.png
+  ofloor  Backgrounds/Tilesets/TilesetFloor.png
+  dun     Backgrounds/Tilesets/TilesetDungeon.png
+  reld    Backgrounds/Tilesets/TilesetReliefDetail.png
+
+legend
+  a tile wall:0,0 solid
+  b tile wall:1,0 solid
+  c tile wall:4,0 solid
+  d tile wall:0,1 solid
+  e tile wall:4,1 solid
+  f tile wall:0,4 solid
+  g tile wall:1,4 solid
+  h tile wall:4,4 solid
+  i tile wall:5,6 solid
+  j tile wall:6,6 solid
+  k tile wall:9,6 solid
+  l tile wall:5,7 solid
+  m tile wall:9,7 solid
+  n tile wall:5,10 solid
+  o tile wall:6,10 solid
+  p tile wall:9,10 solid
+  q ground ofloor:20,17
+  r ground ofloor:18,17
+  s ground ofloor:19,16
+  t ground ofloor:19,17
+  u stamp nature:15,14 2x2 solid
+  v stamp nature:15,16 2x2 solid
+  w stamp nature:16,8 2x2 solid
+  x stamp reld:0,7 3x3 solid
+  y tile nature:17,17 solid
+  z tile nature:18,17 solid
+  A tile dun:6,2 solid
+  B tile dun:7,2 solid
+  C stamp nature:16,5 4x3 solid
+  D stamp nature:17,14 4x3 solid
+  E stamp nature:21,14 2x3 solid
+  F tile nature:19,17 solid
+  G tile nature:1,14 solid
+  H tile nature:2,14 solid
+  I tile nature:0,14 solid
+  J tile nature:3,14 solid
+  K ground floor:8,7
+  L tile wall:0,6 solid
+  M tile wall:0,10 solid
+  N tile wall:1,6 solid
+  O tile wall:1,10 solid
+  P tile wall:4,6 solid
+  Q tile wall:4,10 solid
+  R tile wall:0,7 solid
+  S tile wall:4,7 solid
+  T stamp elem:8,7 2x2 solid
+  U stamp elem:3,7 2x2 solid
+  V stamp elem:10,7 2x2 solid
+  W stamp elem:6,3 1x2 solid
+  X stamp nature:0,0 2x2 solid
+  Y tile elem:0,0 solid
+  Z stamp elem:0,7 1x2 solid
+  0 ground logic:0,0
+  1 ground logic:6,0
+  2 ground logic:1,0
+  3 ground logic:2,0
+  4 tile logic:7,6
+  5 tile logic:7,7
+  6 tile logic:7,8
+  7 ground floor:13,13
+  8 tile elem:10,0 solid
+  9 stamp elem:2,10 3x1 solid
+  ! tile elem:11,0 solid
+  @ tile dun:3,3 solid
+  # tile dun:4,3 solid
+  $ tile pipes:6,0 solid
+  % tile pipes:7,0 solid
+  & tile pipes:8,0 solid
+  * tile elem:8,0 solid
+  + ground floor:12,7
+  - stamp elem:11,1 3x1 solid
+  ~ tile dun:4,1 solid
+  ^ tile dun:5,1 solid
+  ? ground logic:3,0
+  : tile logic:7,4
+  ; tile logic:7,2
+  < tile logic:7,3
+  > ground floor:8,1
+  | tile wall:5,0 solid
+  À tile wall:5,4 solid
+  Á tile wall:6,0 solid
+  Â tile wall:6,4 solid
+  Ã tile wall:9,0 solid
+  Ä tile wall:9,4 solid
+  Å tile wall:5,1 solid
+  Æ tile wall:9,1 solid
+  Ç ground floor:15,6
+  È ground floor:16,6
+  É ground floor:17,6
+  Ê ground floor:18,6
+  Ë ground floor:15,7
+  Ì ground floor:16,7
+  Í ground floor:17,7
+  Î ground floor:18,7
+  Ï ground floor:15,8
+  Ð ground floor:16,8
+  Ñ ground floor:17,8
+  Ò ground floor:18,8
+  Ó ground floor:15,9
+  Ô ground floor:16,9
+  Õ ground floor:17,9
+  Ö ground floor:18,9
+  Ø tile elem:8,10 solid
+  Ù tile elem:6,10 solid
+  Ú tile nature:0,10 solid
+  Û tile nature:1,10 solid
+  Ü tile nature:0,11
+  Ý tile nature:3,11
+  Þ ground floor:6,13
+  ß ground floor:15,0
+  α ground floor:16,0
+  β ground floor:17,0
+  γ ground floor:18,0
+  δ ground floor:15,1
+  ε ground floor:16,1
+  ζ ground floor:17,1
+  η ground floor:18,1
+  θ ground floor:15,2
+  ι ground floor:16,2
+  κ ground floor:17,2
+  λ ground floor:18,2
+  μ ground floor:15,3
+  ν ground floor:16,3
+  ξ ground floor:17,3
+  π ground floor:18,3
+  ρ stamp house:23,20 1x2 solid
+  σ stamp house:22,20 1x2 solid
+  τ tile dun:4,2 solid
+  υ stamp house:3,15 2x2 solid
+  φ stamp house:5,15 2x2 solid
+  χ stamp house:0,15 1x3 solid
+  ψ tile dun:2,2 solid
+  ω ground floor:6,7
+  а ground floor:6,8
+  б ground floor:0,0
+  в ground floor:1,0
+  г ground floor:2,0
+  д ground floor:0,1
+  е ground floor:1,1
+  ж ground floor:2,1
+  з ground floor:0,2
+  и ground floor:1,2
+  й ground floor:2,2
+  к tile dun:5,2 solid
+
+ground
+qrrrrsqsqrsqqrqqsqsqqqrqqqsqqq_________________________________________________________________________________________________________________________
+qqqqqstqqqqqtttqqrqqqqqqqqqqqr_________________________________________________________________________________________________________________________
+qqqqqqqqqqqtsqqqtqqqqqqqqqsrqq_________________________________________________________________________________________________________________________
+qqtqqqrqqqqqqqqqqqqsqrsqqqqsqt_________________________________________________________________________________________________________________________
+qqqtqqqsqqqqqrqqqqqqtqqqqqqqqq_________________________________________________________________________________________________________________________
+qsqqqqqsqqrqqqqqqqqsqqqrqqqtqq_________________________________________________________________________________________________________________________
+qrqqqqqqqsrqqrqqqqsqqrqqqqtrqq_________________________________________________________________________________________________________________________
+qqrqqqqqqqqqtqqqsqqqqqqqrsqqqq__________KKKKKKKKKKK_________77777777777_________+++++++++++_________>>>>>>>>>>>_________ÞÞÞÞÞÞÞÞÞÞÞ_________>>>>>>>>>>>
+qqqqqqqqqqqqqqqqqqsqqqqtqqrqqq__________KKKKKKKKKKK_________77777777777_________+++++++++++_________>>>>>>>>>>>_________ÞÞÞÞÞÞÞÞÞÞÞ_________>>ωωωωωωω>>
+tsqqqqtqqqqtrqqqqqqsqtqqsqqqqq__________KKKKKKKKKKK_________77777777777_________+++++++++++_________>>>>>>>>>>>_________ÞÞÞÞÞÞÞÞÞÞÞ_________>>ааааааа>>
+________________________________________KKKKKKKKKKK_________77777777777_________+++++++++++_________>>>>ÇÈÉÊ>>>_________ÞÞÞÞßαβγÞÞÞ_________>>>>бвг>>>>
+________________________________________KKKKKKKKKKK_________77777777777_________+++++++++++_________>>>>ËÌÍÎ>>>_________ÞÞÞÞδεζηÞÞÞ_________>>>>деж>>>>
+________________________________________KKKKKKKKKKK_________77777777777_________+++++++++++_________>>>>ÏÐÑÒ>>>_________ÞÞÞÞθικλÞÞÞ_________>>>>зий>>>>
+________________________________________KK0KKKKKKKK_________77777777777_________+++++++++++_________>>>>ÓÔÕÖ>>>_________ÞÞÞÞμνξπÞÞÞ_________>>>>>>>>>>>
+________________________________________K1K1KKKKKKK_________77777777777_________++011211?++_________>>>>>>>>>>>_________ÞÞÞÞÞÞÞÞÞÞÞ_________>>>>>>>>>>>
+________________________________________K2K3KKKKKKK_________77777777777_________+++++++++++_________>>>>>>>>>>>_________ÞÞÞÞÞÞÞÞÞÞÞ_________>>>>>>>>>>>
+________________________________________KKKKKKKKKKK_________77777777777_________+++++++++++_________>>>>>>>>>>>_________ÞÞÞÞÞÞÞÞÞÞÞ_________>>>>>>>>>>>
+
+things
+u.w.v.u.w.v.x...v.u.w.v.u.w.v..........................................................................................................................
+.......................................................................................................................................................
+w..u..yC...I....w.GE....u...v..........................................................................................................................
+..G........F...J.....y.I...A...........................................................................................................................
+.......................................................................................................................................................
+.............D...z.........Bw..........................................................................................................................
+u..v......v.y.........w..u.G...........................................................................................................................
+.....zH...........F..J......yz..........LNNNN.NNNNP.........ijjjj.jjjjk.........abbbb.bbbbc.........|ÁÁÁÁ.ÁÁÁÁÃ.........LNNNN.NNNNP.........abbbbbbbbbc
+v.w.u.v.w.u.v.w.u.v.w.u.v.w.u...........RT.U..U.T.S.........l888@.#888m.........d-..#.@-..e.........ÅZ.Ø...Ù.ZÆ.........Rρ.στ.Aσ.ρS.........d.τA-..Bк.e
+........................................R.........S.........l9.....9..m.........d.........e.........Å.........Æ.........R.........S.........d.........e
+........................................R..W...W..S.........l.!.....!.m.........d~~@...#~~e.........Å.........Æ.........Rυ......φ.S.........dχ.......χe
+........................................RV......T.S.........l.........m.........d^^.....^^e.........Å.!.....!.Æ.........R.........S.........d..W...W..e
+........................................R.........S.........l888...888m.........d^^.....^^e.........Å9.....9..Æ.........R.........S.........d.........e
+........................................R.4.....X.S.........l9.....9..m.........d-.....-..e.........Å.!.....!.Æ.........Rχ.......χS.........d.........e
+........................................R......Z..S.........l.!.....!.m.........dZ:..;..<Ze.........Å.........Æ.........R..ψ...ψ..S.........dZ.Ü...Ý.Ze
+........................................R5.6....YYS.........l$%&Y.*$%&m.........d.........e.........ÅÚ.Ü...Ý.ÛÆ.........R.........S.........d.........e
+........................................MOOOO.OOOOQ.........noooo.oooop.........fgggg.ggggh.........ÀÂÂÂÂ.ÂÂÂÂÄ.........MOOOO.OOOOQ.........fgggg.ggggh
+
+objects
+  warps    road-back-a    0,4 to=testmu spawn=elite-road
+  warps    road-back-b    0,5 to=testmu spawn=elite-road
+  warps    testmu-road    1,4 kind=spawn face=right
+  warps    default        3,4 kind=spawn face=right
+  warps    door-dsa       29,4 to=elite spawn=dsa-in
+  warps    dsa-door       28,4 kind=door face=left
+  warps    dsa-exit       45,16 to=elite spawn=dsa-door
+  warps    dsa-in         45,15 kind=door face=up
+  npcs     dsa            45,11 sprite=dsa face=down factId=gear.leetcode speaker="DSA Elite" battle=dsa
+  gates    dsa-gate       45,8 needs=beaten.dsa
+  warps    dsa-out        45,9 kind=spawn face=down
+  warps    dsa-next       45,7 to=elite spawn=machine-coding-in
+  warps    machine-coding-exit 65,16 to=elite spawn=dsa-out
+  warps    machine-coding-in 65,15 kind=door face=up
+  npcs     machine-coding 65,11 sprite=machine-coding face=down factId=testmu.blocks speaker="Machine Coding Elite" battle=machine-coding
+  gates    machine-coding-gate 65,8 needs=beaten.machine-coding
+  warps    machine-coding-out 65,9 kind=spawn face=down
+  warps    machine-coding-next 65,7 to=elite spawn=system-design-in
+  warps    system-design-exit 85,16 to=elite spawn=machine-coding-out
+  warps    system-design-in 85,15 kind=door face=up
+  npcs     system-design  85,11 sprite=system-design face=down factId=testmu.save speaker="System Design Elite" battle=system-design
+  gates    system-design-gate 85,8 needs=beaten.system-design
+  warps    system-design-out 85,9 kind=spawn face=down
+  warps    system-design-next 85,7 to=elite spawn=behavioral-in
+  warps    behavioral-exit 105,16 to=elite spawn=system-design-out
+  warps    behavioral-in  105,15 kind=door face=up
+  npcs     behavioral     105,11 sprite=behavioral face=down factId=junglee-b.award speaker="Behavioral Elite" battle=behavioral
+  gates    behavioral-gate 105,8 needs=beaten.behavioral
+  warps    behavioral-out 105,9 kind=spawn face=down
+  warps    behavioral-next 105,7 to=elite spawn=devansh-in
+  warps    devansh-exit   125,16 to=elite spawn=behavioral-out
+  warps    devansh-in     125,15 kind=door face=up
+  npcs     devansh        125,11 sprite=devansh face=down factId=agra.summary speaker="Champion Devansh" battle=devansh
+  gates    devansh-gate   125,8 needs=beaten.devansh
+  warps    devansh-out    125,9 kind=spawn face=down
+  warps    devansh-next   125,7 to=elite spawn=hall-in
+  warps    hall-exit      145,16 to=elite spawn=devansh-out
+  warps    hall-in        145,15 kind=door face=up
+  signs    hall-plaque    145,8 factId=agra.summary speaker="Hall of Fame"
+
+regions
+  road 0,0,30,10
+  dsa 40,7,11,10 indoor
+  machine-coding 60,7,11,10 indoor
+  system-design 80,7,11,10 indoor
+  behavioral 100,7,11,10 indoor
+  devansh 120,7,11,10 indoor
+  hall 140,7,11,10 indoor hall

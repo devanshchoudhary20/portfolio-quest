@@ -51,6 +51,9 @@ export const jobs: [Job, ...Job[]] = [
   },
 ];
 
+// the one LeetCode count: the fact text and the Trainer Card money label both build from it
+export const LEETCODE_SOLVED = 400;
+
 export const skillGroups: SkillGroup[] = [
   {
     id: skillGroupId('core'),

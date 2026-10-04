@@ -20,6 +20,8 @@ export interface SaveV1 {
   // wild bugs the player has beaten; an older save without the field reads as none
   caught: SpeciesId[];
   mode: Mode;
+  // seconds played with the tab visible; an older save without the field reads as 0
+  playSeconds: number;
   // null when the stored timestamp is unreadable: the UI shows "Last played: unknown"
   savedAt: string | null;
 }
@@ -47,7 +49,7 @@ const strings = (value: unknown): string[] | null =>
   Array.isArray(value) && value.every((item) => typeof item === 'string') ? value : null;
 
 function parseV1(raw: Record<string, unknown>): SaveV1 | null {
-  const { town, pos, facing, flags, seen, starter, caught, mode, savedAt } = raw;
+  const { town, pos, facing, flags, seen, starter, caught, mode, playSeconds, savedAt } = raw;
   const flagList = strings(flags);
   const seenList = strings(seen);
   if (!isMapTownId(town) || !isRecord(pos) || !isCoord(pos.x) || !isCoord(pos.y)) return null;
@@ -65,6 +67,7 @@ function parseV1(raw: Record<string, unknown>): SaveV1 | null {
     ...(starter !== undefined ? { starter } : {}),
     caught: [...new Set(strings(caught) ?? [])].filter(isSpeciesId),
     mode,
+    playSeconds: typeof playSeconds === 'number' && Number.isFinite(playSeconds) && playSeconds > 0 ? Math.floor(playSeconds) : 0,
     savedAt: typeof savedAt === 'string' && !Number.isNaN(Date.parse(savedAt)) ? savedAt : null,
   };
 }

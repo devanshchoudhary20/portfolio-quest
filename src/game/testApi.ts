@@ -4,7 +4,7 @@ import type { TownKey } from '../content';
 import { store } from '../state/store';
 import { closeBattle } from './battle/controller';
 import { enemyOf } from './battle/engine';
-import { battleLine } from './battle/session';
+import { battleLine, bgOf } from './battle/session';
 import type { Battle } from './scenes/Battle';
 import type { Overworld } from './scenes/Overworld';
 import type { Dir } from './world/save';
@@ -28,6 +28,7 @@ function snapshot() {
     caught: s.caught,
     flags: s.flags,
     seen: s.seen,
+    playSeconds: s.playSeconds,
     loops: s.loops,
     held: s.held,
     panel: s.panel,
@@ -35,6 +36,7 @@ function snapshot() {
       phase: s.battle.state.phase,
       turn: s.battle.state.turn,
       enemy: enemyOf(s.battle.state).species,
+      bg: bgOf(s.battle.request),
       enemyHp: enemyOf(s.battle.state).hp,
       playerHp: s.battle.state.player.hp,
       shown: s.battle.shown,
@@ -83,7 +85,7 @@ export function installTestApi(game: Phaser.Game) {
       (game.scene.getScene('Overworld') as Overworld).forceWild(speciesId(species), hp);
     },
     // a battle part on screen: its rectangle in CSS pixels, and a switch to hide it
-    battlePart(part: 'bg' | 'enemy' | 'player', visible?: boolean) {
+    battlePart(part: 'bg' | 'enemy' | 'player' | 'trainer', visible?: boolean) {
       const scene = game.scene.getScene('Battle') as Battle;
       const found = scene.testPart(part);
       if (!found) return null;
@@ -115,7 +117,7 @@ declare global {
       warp: (town: string, spawn?: string) => void;
       closeBattle: () => void;
       encounter: (species: string, hp?: { playerHp?: number; enemyHp?: number }) => void;
-      battlePart: (part: 'bg' | 'enemy' | 'player', visible?: boolean) => { x: number; y: number; width: number; height: number; alpha: number } | null;
+      battlePart: (part: 'bg' | 'enemy' | 'player' | 'trainer', visible?: boolean) => { x: number; y: number; width: number; height: number; alpha: number } | null;
       maze: () => ReturnType<Overworld['mazeInfo']>;
       stand: (x: number, y: number, facing: Dir) => void;
       tileToClient: (x: number, y: number) => { x: number; y: number };

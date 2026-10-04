@@ -159,8 +159,8 @@ export class Battle extends Phaser.Scene {
   }
 
   // test API only: a drawn part's bounds in native pixels, and a switch to hide it so a screenshot diff proves it was drawn
-  testPart(part: 'bg' | 'enemy' | 'player') {
-    const object = part === 'bg' ? this.backdrop : part === 'enemy' ? this.enemy : this.player;
+  testPart(part: 'bg' | 'enemy' | 'player' | 'trainer') {
+    const object = { bg: this.backdrop, enemy: this.enemy, player: this.player, trainer: this.trainer }[part];
     if (!object) return null;
     const box = object.getBounds();
     return { x: box.x, y: box.y, width: box.width, height: box.height, alpha: object.alpha, setVisible: (on: boolean) => object.setVisible(on) };

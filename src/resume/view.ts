@@ -47,6 +47,9 @@ const projectFact = requireFact(project.id);
 export const projectSummary = projectFact.long ?? projectFact.short;
 
 export const mailtoHref = `mailto:${profile.email}`;
+export const resumePdfHref = '/resume.pdf';
+export const resumePdfName = `${profile.name.replace(/\s+/g, '-')}-Resume.pdf`;
+export const linkedinHref = profile.linkedin;
 
 // the phone number is never a contact link
 export const contactLinks = [

@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { factById, facts, factId } from '../src/content';
 import { TOWNS, closeDialog, interact, runFromBattle, startAt, state, walk, waitAt, warpTo } from './helpers';
+import { FACE_BACK } from '../scripts/tiledMap';
 import { factObjects, readTown, roadDirection, standingSpot } from './world';
 
 test('a deep link lands on each built town default spawn, and a bad one falls back to the Title', async ({ page }) => {
@@ -8,7 +9,7 @@ test('a deep link lands on each built town default spawn, and a bad one falls ba
     await startAt(page, `/?warp=${town}`);
     await waitAt(page, town, readTown(town).spawn('default'));
   }
-  for (const bad of ['elite', 'patch-center', 'nowhere']) {
+  for (const bad of ['patch-center', 'nowhere']) {
     await page.goto(`/?warp=${bad}`);
     await expect(page.locator('#strip')).toHaveText(/Press Start/, { timeout: 30_000 });
     expect((await state(page)).phase).toBe('title');
@@ -30,7 +31,7 @@ test('each inter-town road can be walked both ways, and the last road is closed'
     await waitAt(page, a, fromA);
   }
 
-  // Victory Road opens in Phase 4: the road says so and walks the player back
+  // Victory Road needs three badges: with none, the road says how many are held
   const testmu = readTown('testmu');
   const road = testmu.objects.find((o) => o.props.to === 'elite')!;
   await warpTo(page, 'testmu');
@@ -38,8 +39,11 @@ test('each inter-town road can be walked both ways, and the last road is closed'
   const { tile: before, facing } = standingSpot(testmu, road);
   await page.evaluate(([x, y, f]) => window.__pq!.stand(x as number, y as number, f as 'up'), [before.x, before.y, facing]);
   await walk(page, facing);
-  await expect(page.getByTestId('dialog-text')).toHaveText('Victory Road is not open yet.');
+  await expect(page.getByTestId('dialog-text')).toHaveText('Victory Road needs 3 badges. You have 0.');
   await closeDialog(page);
+  // the player keeps standing on the shut road tile, and walks back off it
+  await expect.poll(async () => (await state(page)).pos).toEqual(road.tile);
+  await walk(page, FACE_BACK[facing]);
   await expect.poll(async () => (await state(page)).pos).toEqual(before);
 });
 
@@ -65,6 +69,8 @@ test('every fact-bearing object in every town shows its fact, and all facts get 
       const id = factId(object.props.factId!);
       const { tile, facing } = standingSpot(map, object);
       await page.evaluate(([x, y, f]) => window.__pq!.stand(x as number, y as number, f as 'up'), [tile.x, tile.y, facing]);
+      // entering the Hall of Fame room opens its panel over the map
+      if ((await state(page)).panel === 'hof') await page.keyboard.press('Escape');
       const text = factById.get(id)!.short;
       // a press on a closed dialog opens it; polling re-presses only while nothing is open
       await expect.poll(async () => {
@@ -77,8 +83,9 @@ test('every fact-bearing object in every town shows its fact, and all facts get 
       shown.add(id);
       await closeDialog(page);
       await runFromBattle(page);
-      // the robot asks where to go once its line is done
-      if ((await state(page)).panel === 'ask') await page.keyboard.press('Escape');
+      // the robot asks where to go and the clerk opens the Mart once their lines are done; Esc leaves, and the clerk says goodbye
+      if ((await state(page)).panel !== 'none') await page.keyboard.press('Escape');
+      await closeDialog(page);
       await expect.poll(async () => (await state(page)).panel).toBe('none');
     }
   }

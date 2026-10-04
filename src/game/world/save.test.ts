@@ -38,6 +38,12 @@ describe('loadSave', () => {
     expect(loadSave({ ...valid, caught: ['cors', 'cors', 'dragon'] })?.caught).toEqual(['cors']);
   });
 
+  it('reads play time in whole seconds and treats a missing or broken value as 0', () => {
+    expect(loadSave(valid)?.playSeconds).toBe(0);
+    expect(loadSave({ ...valid, playSeconds: 3725.9 })?.playSeconds).toBe(3725);
+    for (const playSeconds of [-5, Number.NaN, '12', null]) expect(loadSave({ ...valid, playSeconds })?.playSeconds).toBe(0);
+  });
+
   it('returns null for unknown versions', () => {
     for (const v of [0, 2, 99, '1']) expect(loadSave({ ...valid, v })).toBeNull();
   });

@@ -1,16 +1,14 @@
 import { useEffect, useRef } from 'react';
 import { education, jobs, profile, skillGroups } from '../content';
-import { contactLinks, currentRoleLine, educationLine, jobView, projectHeading, projectSummary, summaryText } from '../resume/view';
-import { actions } from './useGame';
+import { contactLinks, currentRoleLine, educationLine, jobView, projectHeading, projectSummary, resumePdfHref, resumePdfName, summaryText } from '../resume/view';
+import { CLOSE, DOWNLOAD_PDF, OPEN_FULL_PAGE } from '../game/world/lines';
+import { backToMenu } from './usePanel';
 import { useCaptureKeys } from './useCaptureKeys';
 import { useFocusTrap } from './useFocusTrap';
 
 const CLOSE_KEYS = ['x', 'X'];
 const SCROLL_STEP = 48;
 const jobViews = jobs.map(jobView);
-
-// back to the Start menu, the way Options does, so the menu re-focuses its cursor
-const backToMenu = () => actions.openPanel('menu');
 
 // the resume as plain content in a focus-trapped panel: the prerendered /resume/ page stays the static source, this reads the same src/content
 export function RecruiterMode() {
@@ -59,12 +57,12 @@ export function RecruiterMode() {
         <h2>{profile.name}</h2>
         <p>{`${profile.title}. ${currentRoleLine}`}</p>
         <nav className="pq-recruiter-actions" aria-label="Resume links">
-          <a href="/resume.pdf" download>
-            Download PDF
+          <a href={resumePdfHref} download={resumePdfName}>
+            {DOWNLOAD_PDF}
           </a>
-          <a href="/resume/">Open the full page</a>
+          <a href="/resume/">{OPEN_FULL_PAGE}</a>
           <button type="button" ref={closeButton} onClick={backToMenu}>
-            Close
+            {CLOSE}
           </button>
         </nav>
         <nav className="pq-recruiter-actions" aria-label="Contact">

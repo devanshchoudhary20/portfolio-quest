@@ -9,7 +9,7 @@ import type { BattleRequest } from './session';
 const DEFAULT_STARTER: Starter = 'react';
 
 const newSeed = () => Math.floor(Math.random() * 0x100000000);
-const starterSpecies = (starter: Starter | undefined) => speciesId(starter ?? DEFAULT_STARTER);
+export const starterSpecies = (starter: Starter | undefined) => speciesId(starter ?? DEFAULT_STARTER);
 
 // the one place a battle starts, so the grass, the gym leaders and the test API all begin it the same way
 export function startBattle(request: BattleRequest) {
@@ -55,7 +55,7 @@ export function battleAct(action: Action) {
     actions.countShown(outcome.fact);
   }
   if (outcome.caught) actions.addCaught(outcome.caught);
-  if (outcome.badge) actions.addFlag(outcome.badge);
+  if (outcome.award) actions.addFlag(outcome.award);
 }
 
 export function battleRetry() {

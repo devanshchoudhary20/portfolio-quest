@@ -121,3 +121,74 @@ export const plainFloor = (info: { walls: string[]; flag: { x: number; y: number
   const flag = info.flag ? `${info.flag.x},${info.flag.y}` : '';
   return parseTile(PLAIN_FLOOR.find((id) => !info.walls.includes(id) && id !== flag) ?? PLAIN_FLOOR[0]!);
 };
+
+export type Battle = NonNullable<Awaited<ReturnType<typeof state>>['battle']>;
+
+// keys are held 70 ms so Phaser and React both see them
+export const press = (page: Page, key: string) => page.keyboard.press(key, { delay: 70 });
+
+// plays a battle with the keyboard: Z on every queued line and on the first move; returns every line shown and the last snapshot
+export async function fight(page: Page, stop: (battle: Battle) => boolean = () => false) {
+  const lines: string[] = [];
+  let last: Battle | null = null;
+  await expect
+    .poll(
+      async () => {
+        const { battle } = await state(page);
+        if (!battle) return 'closed';
+        last = battle;
+        if (lines.at(-1) !== battle.line) lines.push(battle.line);
+        if (stop(battle)) return 'stopped';
+        await press(page, 'z');
+        return 'playing';
+      },
+      { intervals: [100], timeout: 60_000 },
+    )
+    .not.toBe('playing')
+    .catch((error: Error) => {
+      throw new Error(`${error.message}\nlast battle: ${JSON.stringify(last)}\nlines: ${JSON.stringify(lines)}`);
+    });
+  return { lines, last: last as Battle | null };
+}
+
+// presses Z until the opening lines are spent and the move grid is up
+export const reachMoves = (page: Page) =>
+  expect
+    .poll(
+      async () => {
+        const { battle } = await state(page);
+        if (battle?.pending) await press(page, 'z');
+        return battle?.pending;
+      },
+      { intervals: [100] },
+    )
+    .toBe(false);
+
+export const storedSave = (page: Page) =>
+  page.evaluate(() => JSON.parse(localStorage.getItem('pq.save.v1') ?? 'null') as { starter?: string; caught: string[]; flags: string[]; playSeconds?: number } | null);
+
+// a save that holds flags and a starter, at a tile of a town
+export const savedWith = (town: string, pos: { x: number; y: number }, facing: Facing, extra: object) => ({ ...savedAt(town, pos, facing), ...extra });
+
+export type BattlePart = 'bg' | 'enemy' | 'player' | 'trainer';
+
+// the share of a battle part's pixels that change when the part is hidden: proof the canvas really draws it
+export async function drawnShare(page: Page, part: BattlePart) {
+  const rect = await page.evaluate((p) => window.__pq!.battlePart(p), part);
+  // the scene may not have built the part yet; callers poll
+  if (!rect) return 0;
+  // the top of the part: the message box covers the foot of the player's sprite and the info boxes cover the sides of the background
+  const clip = part === 'bg'
+    ? { x: rect.x + rect.width * 0.4, y: rect.y + rect.height * 0.02, width: rect.width * 0.2, height: rect.height * 0.12 }
+    : { x: rect.x, y: rect.y, width: rect.width, height: rect.height * 0.6 };
+  const shoot = async () => PNG.sync.read(await page.screenshot({ clip }));
+  const on = await shoot();
+  await page.evaluate((p) => window.__pq!.battlePart(p, false), part);
+  const off = await shoot();
+  await page.evaluate((p) => window.__pq!.battlePart(p, true), part);
+  let changed = 0;
+  for (let i = 0; i < on.data.length; i += 4) {
+    if (Math.abs(on.data[i]! - off.data[i]!) + Math.abs(on.data[i + 1]! - off.data[i + 1]!) + Math.abs(on.data[i + 2]! - off.data[i + 2]!) > 40) changed++;
+  }
+  return changed / (on.data.length / 4);
+}

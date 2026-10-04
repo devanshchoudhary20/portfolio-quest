@@ -49,7 +49,7 @@ export interface BattleUi {
 export interface Outcome {
   fact?: FactId;
   caught?: SpeciesId;
-  badge?: FlagId;
+  award?: FlagId;
 }
 
 export interface Env {
@@ -66,7 +66,8 @@ interface Ctx {
 
 export const trainerFor = (request: BattleRequest): Trainer | undefined => (request.kind === 'trainer' ? trainerOf(request.trainer) : undefined);
 
-export const bgOf = (request: BattleRequest): BgId => (request.kind === 'trainer' ? 'gym' : (WILD_BG[request.town] ?? 'grass'));
+export const bgOf = (request: BattleRequest): BgId =>
+  request.kind === 'trainer' ? (trainerOf(request.trainer)?.bg ?? 'gym') : (WILD_BG[request.town] ?? 'grass');
 
 export const enemyIds = (request: BattleRequest): SpeciesId[] => {
   if (request.kind === 'wild') return [request.species];
@@ -121,11 +122,11 @@ function openingLines(state: BattleState, ctx: Ctx): string[] {
 
 const promptLine = (state: BattleState) => askMove(nameOf(state.player.species));
 
-// a win pays out: a wild bug shows the fact the player has seen least and is logged, a gym leader awards the badge
+// a win pays out: a wild bug shows the fact the player has seen least and is logged, a trainer says the line of their award if it has one
 function outroLines(state: BattleState, ctx: Ctx, pick: FactId | undefined): string[] {
   if (state.phase === 'lost') return [LOST_LINE];
   if (state.phase !== 'won') return [];
-  if (ctx.trainer) return compact([ITEM_LINES.get(ctx.trainer.badge)]);
+  if (ctx.trainer) return compact([ITEM_LINES.get(ctx.trainer.award.flag)]);
   const fact = pick ? factText(pick, ctx.mode) : undefined;
   return compact([fact, caughtLine(nameOf(state.party[0]?.species))]);
 }
@@ -154,7 +155,7 @@ export function actInBattle(ui: BattleUi, action: Action, env: Env): { ui: Battl
   const state = step(ui.state, action);
   const outcome: Outcome = {};
   if (state.phase === 'won') {
-    if (trainer) outcome.badge = trainer.badge;
+    if (trainer) outcome.award = trainer.award.flag;
     else if (ui.request.kind === 'wild') {
       const fact = leastSeen(ui.request.pool, env.seen, env.shownCounts);
       if (fact) outcome.fact = fact;

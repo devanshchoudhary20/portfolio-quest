@@ -1,14 +1,14 @@
 import { FLAGS } from '../game/world/flags';
-import { loopLabel } from '../game/world/lines';
-import { townName } from '../game/world/towns';
+import { loopLabel, placeLabel } from '../game/world/lines';
 import { useGame } from './useGame';
 
 export function Hud() {
   const town = useGame((s) => s.town);
+  const place = useGame((s) => s.place);
   const dialogOpen = useGame((s) => s.dialog !== null);
   const loops = useGame((s) => s.loops);
   const broken = useGame((s) => s.flags.includes(FLAGS.loopBreak));
-  const name = townName(town);
+  const name = placeLabel(town, place);
   const lapText = loops > 0 && !broken ? loopLabel(loops) : null;
   return (
     <>
