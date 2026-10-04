@@ -211,10 +211,10 @@ for (const line of sections.get('objects') ?? []) {
 // grass never covers an npc, sign, item, warp, spawn or gate, so no required tile is ever a fight
 for (const [tile, zone] of zoneTiles) if (occupied.has(tile)) fail(`encounters ${zone}: tile ${tile} is taken by ${occupied.get(tile)}`);
 
-// camera regions, "name x,y,w,h [indoor] [maze] [hall]" in tiles: the camera clamps to the region the player stands in, so a small room is centered; indoor regions skip the day/night tint; a maze region gets runtime walls; the hall region opens the Hall of Fame panel; the name rides along as name=<name> so the HUD can label the room
+// camera regions, "name x,y,w,h [indoor] [maze] [hall]" in tiles: the camera clamps to the region the player stands in, so a small room is centered; indoor regions skip the day/night tint; a maze region gets runtime walls; the hall region opens the Hall of Fame panel; a vote=a or vote=b region casts the A/B vote on entry; the name rides along as name=<name> so the HUD can label the room
 const regions = (sections.get('regions') ?? []).map((line) => {
   const [regionName = '', rect = '', ...kinds] = line.trim().split(/\s+/);
-  if (!/^[\w-]+$/.test(regionName) || !/^\d+,\d+,\d+,\d+$/.test(rect) || kinds.some((kind) => kind !== 'indoor' && kind !== 'maze' && kind !== 'hall')) fail(`regions: cannot read "${line.trim()}"`);
+  if (!/^[\w-]+$/.test(regionName) || !/^\d+,\d+,\d+,\d+$/.test(rect) || kinds.some((kind) => kind !== 'indoor' && kind !== 'maze' && kind !== 'hall' && kind !== 'vote=a' && kind !== 'vote=b')) fail(`regions: cannot read "${line.trim()}"`);
   return [rect, ...kinds, `name=${regionName}`].join(',');
 });
 

@@ -154,7 +154,7 @@ d.e.V.V.e.V.e.e.V....YV.d.e.V.V....Wd.e.e.e.e.e.e.d.e.e.d.e.V.e.V.V.d...........
 objects
   signs    path-a         8,13 factId=junglee-a.ab speaker="Path A"
   signs    path-b         8,20 factId=junglee-a.ab speaker="Path B"
-  npcs     analyst        4,15 sprite=analyst face=down factId=junglee-a.ab speaker="Analyst"
+  npcs     analyst        4,15 sprite=analyst face=down factId=junglee-a.ab speaker="Analyst" tally=yes
   signs    gate-2fa       33,15 factId=junglee-b.2fa speaker="2FA Gate"
   items    key-1          32,15 factId=junglee-b.2fa speaker="Key" flag=key.2fa.1
   items    key-2          32,18 factId=junglee-b.2fa speaker="Key" flag=key.2fa.2
@@ -181,3 +181,5 @@ objects
 regions
   town 0,0,70,34
   gym 76,10,11,10 indoor
+  path-a 9,10,2,3 vote=a
+  path-b 9,21,2,3 vote=b

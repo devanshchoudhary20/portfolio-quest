@@ -3,7 +3,7 @@ import { caughtCount, CATCHABLE, speciesOf } from '../game/battle/data';
 import { frontArt } from '../game/battle/art';
 import { starterSpecies } from '../game/battle/controller';
 import { countBadges } from '../game/world/conditions';
-import { CONTACT_LABEL, DOWNLOAD_PDF, EMAIL_ME, FALLBACK_PARTNER, HOF_CTA, HOF_ENTER, HOF_TITLE, KEEP_EXPLORING, LINKEDIN, TEAM_LABEL, badgesLabel, bugsCaughtLabel, factsSeenLabel } from '../game/world/lines';
+import { CONTACT_LABEL, DOWNLOAD_PDF, EMAIL_ME, FALLBACK_PARTNER, HOF_CTA, HOF_ENTER, HOF_TITLE, KEEP_EXPLORING, LINKEDIN, SEND_MESSAGE, TEAM_LABEL, badgesLabel, bugsCaughtLabel, factsSeenLabel } from '../game/world/lines';
 import { linkedinHref, mailtoHref, resumePdfHref, resumePdfName } from '../resume/view';
 import { focusGame } from './focusGame';
 import { PanelShell } from './PanelShell';
@@ -14,6 +14,8 @@ function keepExploring() {
   actions.closePanel();
   focusGame();
 }
+
+const openContact = () => actions.openContact('hof');
 
 // the climax screen: the visitor's team beside Devansh, the counts as three cards, and the three ways to reach him
 export function HallOfFame() {
@@ -58,6 +60,9 @@ export function HallOfFame() {
         <a href={resumePdfHref} download={resumePdfName}>
           {DOWNLOAD_PDF}
         </a>
+        <button type="button" onClick={openContact}>
+          {SEND_MESSAGE}
+        </button>
       </nav>
     </PanelShell>
   );

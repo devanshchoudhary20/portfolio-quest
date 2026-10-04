@@ -147,6 +147,37 @@ export const DOWNLOAD_PDF = 'Download PDF';
 export const KEEP_EXPLORING = 'Keep exploring';
 export const CONTACT_LABEL = 'Contact';
 export const FALLBACK_PARTNER = 'Your partner';
+export const SEND_MESSAGE = 'Send a message';
+
+// the Patch Center contact panel
+export const PATCH_TITLE = 'Patch Center';
+export const PATCH_INTRO = 'Send Devansh a message. Replies go to the email you enter.';
+export const PROJECT_BOX = 'Project box';
+export const FIELD_NAME = 'Your name';
+export const FIELD_EMAIL = 'Your email';
+export const FIELD_MESSAGE = 'Message';
+export const PLACEHOLDER_NAME = 'Ada Lovelace';
+export const PLACEHOLDER_EMAIL = 'ada@company.com';
+export const PLACEHOLDER_MESSAGE = 'What are you building?';
+export const SEND_LABEL = 'Send message';
+export const SENDING = 'Sending...';
+export const SEND_ANOTHER = 'Send another';
+export const OR_EMAIL = 'Or email';
+export const MESSAGE_MIN = 10;
+export const NAME_ERROR = 'Add your name so I know who to reply to.';
+export const EMAIL_ERROR = 'That email needs an @ and a domain, like name@company.com.';
+export const MESSAGE_ERROR = `Write a short message, at least ${MESSAGE_MIN} characters.`;
+export const SEND_FAILED = 'Message not sent. Your text is still here. Try again, or use the address below.';
+export const tooManyMessages = (email: string) => `Too many messages from this browser. Email ${email} instead.`;
+export const FALLBACK_REPLY = 'the address you gave';
+export const messageSent = (email: string) => `Message sent. I will reply to ${email}.`;
+
+// the live A/B split, said after the Analyst's fact; whole percents that add to 100
+export const abTally = (a: number, b: number) => {
+  const total = a + b;
+  const share = Math.round((a / total) * 100);
+  return `Visitors so far: path A ${share}%, path B ${100 - share}% (n = ${total}).`;
+};
 
 // the Skilldex, Bugdex and Trainer Card
 export const SKILLDEX_TITLE = 'Skilldex';

@@ -60,7 +60,7 @@ The "leave" moment with the most care is **Recruiter step 3**: the first screen 
 | Corrupt save JSON | storage | Discard, start fresh, one dialog line: "Save data was unreadable. Starting a new game." |
 | Clock (`new Date()`) | browser | NaN or throw: day |
 | Time zone unknown | browser | Use local hour; if it fails, day |
-| Path tally `{a, b}` | API | Number missing: `--`. Whole call failed: "Tally offline. Both paths work." |
+| Path tally `{a, b}` | API | Number missing: `--`. A failed, rate-limited or empty tally shows no line. |
 | Resume PDF URL | static asset | If 404: "The PDF did not load. Try again, or copy the text from /resume." |
 | Contact form `name`, `email`, `message` | user | Empty name: "Add your name so I know who to reply to." Invalid email: "That email needs an @ and a domain, like name@company.com." Empty message: "Write a short message, at least 10 characters." |
 | Contact submit result | API | See Patch Center |

@@ -14,6 +14,8 @@ export const FLAGS = {
   seenTen: flagId('seen.10'),
   badgesThree: flagId('badges.3'),
   resume: flagId('resume'),
+  // the visitor's path choice at the Junglee fork was sent to the tally
+  abVoted: flagId('ab.voted'),
 } as const;
 
 // a gym leader beaten in battle hands over this flag; the group id is the skill group the gym reads

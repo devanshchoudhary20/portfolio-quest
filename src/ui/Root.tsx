@@ -5,6 +5,7 @@ import { AskPanel } from './AskPanel';
 import { BagPanel } from './BagPanel';
 import { Battle } from './Battle';
 import { Bugdex } from './Bugdex';
+import { ContactPanel } from './ContactPanel';
 import { Dialog } from './Dialog';
 import { HallOfFame } from './HallOfFame';
 import { Hud } from './Hud';
@@ -38,7 +39,8 @@ export function Root() {
     '--px': `${stage.px}px`,
   } as CSSProperties;
   const introStyle = { '--px': `${landscapeScale(innerWidth, innerHeight)}px` } as CSSProperties;
-  const announced = dialog?.lines[dialog.index] ?? battleText;
+  const notice = useGame((s) => s.notice);
+  const announced = dialog?.lines[dialog.index] ?? (battleText || notice);
 
   if (phase === 'title') return null;
   if (phase === 'intro') {
@@ -62,6 +64,7 @@ export function Root() {
         {panel === 'bag' ? <BagPanel /> : null}
         {panel === 'mart' ? <ResumeMart /> : null}
         {panel === 'hof' ? <HallOfFame /> : null}
+        {panel === 'contact' ? <ContactPanel /> : null}
         {dialog ? <Dialog dialog={dialog} /> : null}
         {travel ? <TravelCard travel={travel} /> : null}
         <p className="pq-sr" aria-live="polite">

@@ -51,7 +51,7 @@ src/game/                  Phaser only
   battle/{engine,moves}.ts
 src/ui/                    React overlays: Dialog, Menu, Dex, TrainerCard, PatchCenter, Options, Touch, RecruiterMode, SkipLink
 src/resume/{Resume.tsx,theme.ts,main.ts}
-netlify/functions/tally.ts
+netlify/functions/tally.ts   (thin Netlify wrapper; the testable handler is netlify/lib/tally.ts, path /api/tally)
 scripts/{check-content.ts,prerender-resume.tsx,size-check.ts,check-licenses.ts}
 e2e/smoke.spec.ts
 ```
@@ -159,3 +159,19 @@ The Phase 0 spike keeps its own throwaway Playwright tests on chromium, firefox 
 - KaneAI tower is barely taller than its neighbours; consider one custom skyscraper sprite.
 - `--gold` token is used in title.css but not listed in `.anbu/art-direction.md`.
 - Mart "Downloading..." transient state has no e2e.
+
+## Launch checklist (only a real deploy can prove these)
+Phase 5 proves the code locally: Vitest runs the tally handler against an in-memory store with etags, and Playwright mocks both endpoints. None of it touches Netlify. Do these once, on the first deploy preview or production deploy.
+
+1. Contact form is registered. Netlify dashboard, Forms tab, lists a `contact` form after the deploy (detected from the static form on `/resume/`). Forms detection must be on for the site.
+2. Notification is set. Forms > Form notifications > add an email notification to the address on the resume. Without it, submissions land in the dashboard only.
+3. A game submission arrives. In the game, talk to the Patch Center nurse (Gear City), send a message. Expect "Message sent. I will reply to ..." in the panel, then the entry in the dashboard with name, email, message, and the email in the inbox.
+4. The honeypot works. POST once with `bot-field` filled (`curl -d 'form-name=contact&name=x&email=x@x.co&message=0123456789&bot-field=spam' https://<site>/`). Expect the entry under Spam, not Verified.
+5. The tally function is live. `curl https://<site>/api/tally` returns `{"a":0,"b":0}` (or real counts) with status 200. `curl -X PUT` returns 405. A body of `{"path":"c"}` returns 400.
+6. Two browsers vote. Open the game in two different browsers (or one normal and one private window), walk each into a fork path. `GET /api/tally` shows both votes added, and the Analyst reads the new split in his line.
+7. A visitor votes once. Walk into both paths twice in one browser: the count rises by one. A new game in the same browser may vote again (the flag lives in the save).
+8. The tally survives a redeploy. Trigger a new deploy (clear cache and deploy site), then `GET /api/tally`: counts are unchanged. Blobs are site-wide, so this should hold; confirm it.
+9. Failure is quiet. In DevTools block `/api/tally`, talk to the Analyst: his fact shows and no tally line follows.
+10. Per-IP daily dedupe is the real guard: the same visitor counts once per UTC day. `rateLimit` is not enforced on the current plan (7 GETs in seconds all returned 200), so leave it in place but do not rely on it. Set `TALLY_SALT` as a secret env var on the production site at launch; without it POST returns 503.
+11. Remaining launch gate items stay in Phase 6 (Lighthouse, axe, DNS).
+- If production moves to a different Netlify site than `portfolio-quest-preview`, enable form detection there (new sites default to `ignore_html_forms: true`), add the email notification (New form submission, Any form, devanshchoudhary999@gmail.com), and set the `TALLY_SALT` secret.

@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { isTyping } from '../game/input/typing';
 import { useCaptureKeys } from './useCaptureKeys';
 import { useFocusTrap } from './useFocusTrap';
 import { actions } from './useGame';
@@ -14,6 +15,7 @@ export function usePanel(onClose: () => void, onKey?: (event: KeyboardEvent) => 
   const ref = useRef<HTMLDivElement>(null);
   useFocusTrap(ref, onClose);
   useCaptureKeys((event) => {
+    if (isTyping(event)) return false;
     if (onKey?.(event)) return true;
     if (CLOSE_KEYS.includes(event.key)) onClose();
     else if (ACCEPT_KEYS.includes(event.key)) (document.activeElement as HTMLElement | null)?.click();

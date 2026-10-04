@@ -19,6 +19,7 @@ import { interactWith, lockedLine } from '../world/interact';
 import { PLANTED_LINE, survivedLine } from '../world/lines';
 import { objectAt, readObjects, zoneAt } from '../world/objects';
 import type { WorldObject } from '../world/objects';
+import { castVote } from '../../net/tally';
 import { inRegion, parseRegions } from '../world/regions';
 import type { Region } from '../world/regions';
 import type { Dir } from '../world/save';
@@ -219,6 +220,8 @@ export class Overworld extends Phaser.Scene {
     const region = this.regions.find((r) => inRegion(r, tile)) ?? null;
     const { actions } = store.getState();
     if (announce && region?.hall && region !== this.lastRegion) actions.openPanel('hof');
+    const fork = announce ? this.regions.find((r) => r.vote && inRegion(r, tile)) : undefined;
+    if (fork?.vote) void castVote(fork.vote);
     this.lastRegion = region;
     actions.setPlace(region?.name || null);
   }

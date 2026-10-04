@@ -39,7 +39,7 @@ const FACT_LAYERS = new Set(['npcs', 'signs', 'items']);
 const FACT_KINDS = new Set(['npc', 'sign', 'item']);
 // maps hold no free text: any property key outside its kind's list is an error
 const KEYS_BY_KIND: Record<string, string[]> = {
-  npc: ['kind', 'factId', 'sprite', 'face', 'speaker', 'portrait', 'flag', 'cycle', 'fills', 'guide', 'battle', 'shop'],
+  npc: ['kind', 'factId', 'sprite', 'face', 'speaker', 'portrait', 'flag', 'cycle', 'fills', 'guide', 'battle', 'shop', 'contact', 'tally'],
   sign: ['kind', 'factId', 'speaker'],
   item: ['kind', 'factId', 'speaker', 'portrait', 'flag'],
   warp: ['kind', 'to', 'spawn', 'needs', 'unless'],

@@ -160,6 +160,7 @@ objects
   npcs     core-leader    77,10 sprite=core face=down factId=skill.core speaker="Core Leader" battle=core
   warps    gym-exit       77,16 to=gear spawn=gym-door
   warps    gym-in         77,15 kind=door face=up
+  npcs     nurse          101,11 sprite=reception face=left factId=testmu.bugs speaker="Nurse" contact=yes
   items    pc-box         98,9 factId=patch-center.koalalab speaker="PC"
   warps    patch-exit     98,15 to=gear spawn=patch-door
   warps    patch-in       98,14 kind=door face=up

@@ -89,8 +89,7 @@ test('the Elite Four fall in order, the Champion opens the Hall of Fame, and its
   await expect(pdf).toHaveAttribute('download', resumePdfName);
   const [download] = await Promise.all([page.waitForEvent('download'), pdf.click()]);
   expect(new URL(download.url()).pathname).toBe('/resume.pdf');
-  // no form button until the Patch Center ships
-  await expect(hall.getByRole('button')).toHaveCount(1);
+  await expect(hall.getByRole('button')).toHaveText(['Send a message', 'Keep exploring']);
 
   await hall.getByRole('button', { name: 'Keep exploring' }).click();
   await expect(hall).toBeHidden();

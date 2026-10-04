@@ -1,7 +1,7 @@
 import type { RefObject } from 'react';
 import { useCaptureKeys } from './useCaptureKeys';
 
-const FOCUSABLE = 'a[href], button, input';
+const FOCUSABLE = 'a[href], button:not(:disabled), input:not([tabindex="-1"]), textarea';
 
 // Tab stays inside the panel and Escape closes it; the panel keeps any keys of its own
 export function useFocusTrap(panel: RefObject<HTMLElement | null>, onClose: () => void) {

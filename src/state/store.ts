@@ -2,6 +2,8 @@ import { createStore } from 'zustand/vanilla';
 import { factById } from '../content';
 import type { DestId, FactId, FlagId, SpeciesId, TownId } from '../content';
 import type { BattleRequest, BattleUi } from '../game/battle/session';
+import { EMPTY_DRAFT } from '../net/draft';
+import type { ContactDraft } from '../net/draft';
 import { BADGES_THREE, BADGES_THREE_COUNT, SEEN_TEN, SEEN_TEN_COUNT, countBadges } from '../game/world/conditions';
 import { factText } from '../game/world/factText';
 import type { Dir, Mode, SaveV1, Starter } from '../game/world/save';
@@ -11,7 +13,7 @@ import type { TextSpeed } from './prefs';
 
 export type Phase = 'title' | 'intro' | 'play';
 export type LoadStatus = 'idle' | 'loading' | 'ready' | 'error';
-export type Panel = 'none' | 'menu' | 'options' | 'recruiter' | 'ask' | 'skilldex' | 'bugdex' | 'card' | 'bag' | 'mart' | 'hof';
+export type Panel = 'none' | 'menu' | 'options' | 'recruiter' | 'ask' | 'skilldex' | 'bugdex' | 'card' | 'bag' | 'mart' | 'hof' | 'contact';
 export type Portrait = 'devansh' | 'mom' | 'professor';
 
 // the title bar's first 40% is the game chunk itself, the shared atlas fills the rest
@@ -23,7 +25,7 @@ export interface DialogState {
   lines: string[];
   index: number;
   // what the Overworld does once the player closes this dialog
-  after?: 'stepBack' | 'ask' | 'battle' | 'shop';
+  after?: 'stepBack' | 'ask' | 'battle' | 'shop' | 'contact';
   // the fight a gym leader's talk leads into
   battle?: BattleRequest;
 }
@@ -88,6 +90,11 @@ export interface State {
   shownCounts: Record<string, number>;
   dialog: DialogState | null;
   panel: Panel;
+  // the panel the contact form returns to on close: the Hall of Fame, or none when a nurse opened it
+  contactBack: 'hof' | 'none';
+  notice: string;
+  // typed text lives only in memory: it survives closing the panel, never a reload
+  contactDraft: ContactDraft;
   held: Dir | null;
   run: boolean;
   aPulse: number;
@@ -149,6 +156,13 @@ interface Actions {
   bumpLoop: () => void;
   setNav: (nav: DestId | null) => void;
   openPanel: (panel: Panel) => void;
+  openContact: (back: 'hof' | 'none') => void;
+  setContactDraft: (patch: Partial<ContactDraft>) => void;
+  clearContact: () => void;
+  // adds a line to the open dialog of this speaker, if it is still open
+  appendDialogLine: (speaker: string, line: string) => void;
+  // a line for Root's live region that no visible dialog or battle carries
+  setNotice: (notice: string) => void;
   closePanel: () => void;
   setHeld: (dir: Dir | null) => void;
   setRun: (run: boolean) => void;
@@ -200,6 +214,9 @@ export const store = createStore<State>()((set, get) => ({
   textSpeed: readTextSpeed(),
   reducedMotion: false,
   wildBugsPref: readWildBugs(),
+  contactBack: 'none',
+  notice: '',
+  contactDraft: EMPTY_DRAFT,
   town: START.town,
   place: null,
   pos: { x: 0, y: 0 },
@@ -295,6 +312,7 @@ export const store = createStore<State>()((set, get) => ({
       set({ dialog: null, typing: false });
       if (dialog?.after === 'ask') actions.openPanel('ask');
       else if (dialog?.after === 'shop') actions.openPanel('mart');
+      else if (dialog?.after === 'contact') actions.openContact('none');
     },
     addFlag: (flag) => {
       const { flags, seen, actions } = get();
@@ -311,7 +329,15 @@ export const store = createStore<State>()((set, get) => ({
     bumpLoop: () => set((s) => ({ loops: s.loops + 1 })),
     setNav: (nav) => set({ nav }),
     openPanel: (panel) => set({ panel, held: null, run: false }),
-    closePanel: () => set({ panel: 'none' }),
+    openContact: (contactBack) => set({ panel: 'contact', contactBack, held: null, run: false }),
+    setContactDraft: (patch) => set((s) => ({ contactDraft: { ...s.contactDraft, ...patch } })),
+    clearContact: () => set({ contactDraft: EMPTY_DRAFT }),
+    closePanel: () => set((s) => ({ panel: s.panel === 'contact' && s.contactBack === 'hof' ? 'hof' : 'none' })),
+    setNotice: (notice) => set({ notice }),
+    appendDialogLine: (speaker, line) => {
+      const dialog = get().dialog;
+      if (dialog?.speaker === speaker) set({ dialog: { ...dialog, lines: [...dialog.lines, line] } });
+    },
     setHeld: (held) => set({ held }),
     setRun: (run) => set({ run }),
     pressA: () => {

@@ -36,3 +36,6 @@
   from = "/resume"
   to = "/resume/"
   status = 301
+
+[functions]
+  directory = "netlify/functions"

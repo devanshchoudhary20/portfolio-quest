@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { factById, facts, factId } from '../src/content';
-import { TOWNS, closeDialog, interact, runFromBattle, startAt, state, walk, waitAt, warpTo } from './helpers';
+import { TOWNS, closeDialog, interact, startAt, state, walk, waitAt, warpTo } from './helpers';
 import { FACE_BACK } from '../scripts/tiledMap';
 import { factObjects, readTown, roadDirection, standingSpot } from './world';
 
@@ -82,7 +82,8 @@ test('every fact-bearing object in every town shows its fact, and all facts get 
       expect((await state(page)).seen).toContain(id);
       shown.add(id);
       await closeDialog(page);
-      await runFromBattle(page);
+      // a fact opens a fight on some objects; battles have their own specs
+      await page.evaluate(() => window.__pq!.closeBattle());
       // the robot asks where to go and the clerk opens the Mart once their lines are done; Esc leaves, and the clerk says goodbye
       if ((await state(page)).panel !== 'none') await page.keyboard.press('Escape');
       await closeDialog(page);

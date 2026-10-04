@@ -1,3 +1,4 @@
+import type { AbPath } from '../../../netlify/lib/tally';
 import type { Tile } from '../movement/GridMover';
 
 export interface Region {
@@ -13,9 +14,11 @@ export interface Region {
   maze: boolean;
   // the Hall of Fame: entering the room opens its panel
   hall: boolean;
+  // entering a fork path casts the visitor's A/B vote
+  vote: AbPath | null;
 }
 
-// the map's "regions" property: "x,y,w,h[,indoor][,maze][,hall],name=<name>" tile rectangles joined by semicolons
+// the map's "regions" property: "x,y,w,h[,indoor][,maze][,hall][,vote=a|b],name=<name>" tile rectangles joined by semicolons
 export function parseRegions(properties: unknown): Region[] {
   const raw = (Array.isArray(properties) ? (properties as { name: string; value: unknown }[]).find((p) => p.name === 'regions')?.value : '') ?? '';
   return String(raw)
@@ -31,6 +34,7 @@ export function parseRegions(properties: unknown): Region[] {
       indoor: kinds.includes('indoor'),
       maze: kinds.includes('maze'),
       hall: kinds.includes('hall'),
+      vote: kinds.includes('vote=a') ? 'a' : kinds.includes('vote=b') ? 'b' : null,
     }));
 }
 

@@ -1,5 +1,6 @@
 import { store } from '../../state/store';
 import type { Dir } from '../world/save';
+import { isTyping } from './typing';
 
 const DIR_KEYS: Record<string, Dir> = {
   ArrowUp: 'up', w: 'up', W: 'up',
@@ -17,11 +18,9 @@ export function startKeyboard() {
 
   const sync = () => actions.setHeld(down.at(-1) ?? null);
 
-  // a text field owns its key presses: typing "x" must not run, and Enter submits the form. Releases always count, or a key held while a prompt opens would stay down
-  const typing = (event: KeyboardEvent) => event.target instanceof HTMLElement && event.target.closest('input, textarea') !== null;
-
   const onKeyDown = (event: KeyboardEvent) => {
-    if (typing(event) || event.ctrlKey || event.metaKey || event.altKey || store.getState().phase !== 'play') return;
+    // releases always count (see onKeyUp), or a key held while a prompt opens would stay down
+    if (isTyping(event) || event.ctrlKey || event.metaKey || event.altKey || store.getState().phase !== 'play') return;
     const dir = DIR_KEYS[event.key];
     if (dir) {
       if (!down.includes(dir)) down.push(dir);
